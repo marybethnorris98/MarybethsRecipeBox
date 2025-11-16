@@ -1,29 +1,31 @@
+/* GLOBAL */
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: Poppins, Arial, sans-serif;
-  background: #FFE6F7;
+  background: #FFF7FC;
   color: #2A2A2A;
 }
 
 /* HEADER */
 header {
   background: #FF0AB4;
-  padding: 24px;
+  padding: 26px;
   text-align: center;
   color: white;
   font-family: "Playfair Display", serif;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 12px rgba(255, 10, 180, 0.35);
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 18px rgba(255, 10, 180, 0.35);
+  border-bottom: 4px solid #FFD7E8;
 }
 
 /* CONTROLS */
 .controls {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   padding: 20px;
   justify-content: center;
 }
@@ -32,47 +34,48 @@ header {
 .controls select {
   padding: 12px;
   font-size: 16px;
-  border: 2px solid #FFB3E5;
-  border-radius: 8px;
-  background: white;
+  background: #FFF7FC;
+  border: 2px solid #FFD7E8;
+  border-radius: 10px;
 }
 
-/* BUTTON */
+/* ADD BUTTON */
 #addRecipeBtn {
-  padding: 12px 18px;
-  background: #FF0AB4;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.2s ease;
-  box-shadow: 0 4px 10px rgba(255, 10, 180, 0.3);
+  transition: 0.25s ease;
+  box-shadow: 0 4px 12px rgba(255, 10, 180, 0.3);
 }
 #addRecipeBtn:hover {
-  background: #d70094;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 10, 180, 0.45);
 }
 
 /* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 22px;
-  padding: 20px 24px;
+  gap: 24px;
+  padding: 24px;
 }
 
 /* CARD */
 .card {
-  background: white;
-  border-radius: 14px;
+  background: #FFF9FD;
+  border: 2px solid #FFD7E8;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(255,0,120,0.15);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 3px 10px rgba(255, 180, 220, 0.25);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 .card:hover {
-  transform: scale(1.04);
-  box-shadow: 0 6px 16px rgba(255, 10, 180, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.25);
 }
 
 .card-title {
@@ -83,22 +86,22 @@ header {
 }
 
 .card-category {
-  font-size: 14px;
-  color: #777;
+  color: #D986A8;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
 .card-desc {
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* MODAL */
 .modal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
+  top:0; left:0;
+  width: 100%; height:100%;
+  background: rgba(0,0,0,0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -107,34 +110,37 @@ header {
 .hidden { display: none; }
 
 .modal-content {
-  background: #FFF0F9;
-  padding: 24px;
-  border-radius: 16px;
+  background: #FFF9FD;
+  padding: 26px;
+  border-radius: 20px;
   width: 90%;
   max-width: 420px;
-  box-shadow: 0 6px 16px rgba(255, 10, 180, 0.25);
+  border: 2px solid #FFD7E8;
+  box-shadow: 0 6px 20px rgba(255, 150, 200, 0.25);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
   padding: 12px;
-  background: white;
-  border-radius: 8px;
-  border: 2px solid #FFB3E5;
+  background: #FFF7FC;
+  border: 2px solid #FFD7E8;
+  border-radius: 12px;
 }
 
+/* MODAL BUTTONS */
 .save {
   background: #FF0AB4;
   color: white;
   border: none;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
+  transition: 0.2s;
 }
 .save:hover { background: #d70094; }
 
@@ -142,7 +148,9 @@ header {
   background: #ccc;
   border: none;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
 }
 .cancel:hover { background: #bbb; }
+
+
