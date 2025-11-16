@@ -1,156 +1,192 @@
-/* GLOBAL */
-* { box-sizing: border-box; }
-
+/* GLOBAL -------------------------------------------------- */
 body {
   margin: 0;
-  font-family: Poppins, Arial, sans-serif;
-  background: #FFF7FC;
-  color: #2A2A2A;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: #fff7fb; /* soft blush pink */
+  color: #333;
 }
 
-/* HEADER */
+/* HEADER -------------------------------------------------- */
 header {
-  background: #FF0AB4;
-  padding: 26px;
   text-align: center;
-  color: white;
-  font-family: "Playfair Display", serif;
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 18px rgba(255, 10, 180, 0.35);
-  border-bottom: 4px solid #FFD7E8;
+  padding: 40px 20px;
 }
 
-/* CONTROLS */
+header h1 {
+  font-family: "Parisienne", cursive;
+  font-size: 3.2rem;
+  color: #d5419d;   /* Barbie pink */
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(213, 65, 157, 0.22);
+}
+
+/* CONTROLS -------------------------------------------------- */
 .controls {
   display: flex;
-  gap: 14px;
-  padding: 20px;
   justify-content: center;
+  gap: 15px;
+  padding: 20px;
+  flex-wrap: wrap;
 }
 
 .controls input,
 .controls select {
-  padding: 12px;
-  font-size: 16px;
-  background: #FFF7FC;
-  border: 2px solid #FFD7E8;
+  padding: 12px 16px;
   border-radius: 10px;
+  border: 1px solid #ffd0ea;
+  background: white;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(255, 115, 200, 0.1);
+  transition: 0.2s ease;
 }
 
-/* ADD BUTTON */
+.controls input:focus,
+.controls select:focus {
+  border-color: #ff8ed6;
+  box-shadow: 0 4px 10px rgba(255, 115, 200, 0.18);
+}
+
 #addRecipeBtn {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
+  background: #ff82c8;
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(255, 115, 200, 0.25);
   transition: 0.25s ease;
-  box-shadow: 0 4px 12px rgba(255, 10, 180, 0.3);
-}
-#addRecipeBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(255, 10, 180, 0.45);
 }
 
-/* GRID */
+#addRecipeBtn:hover {
+  background: #ff5eb9;
+  transform: translateY(-2px);
+}
+
+/* GRID -------------------------------------------------- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
-  padding: 24px;
+  gap: 25px;
+  padding: 40px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
-/* CARD */
+/* RECIPE CARD -------------------------------------------------- */
 .card {
-  background: #FFF9FD;
-  border: 2px solid #FFD7E8;
-  border-radius: 18px;
+  background: white;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(255, 180, 220, 0.25);
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: 0.25s ease;
 }
+
 .card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(255, 88, 179, 0.18);
 }
 
-.card-title {
-  font-family: "Playfair Display", serif;
-  font-size: 22px;
-  color: #FF0AB4;
-  margin-bottom: 8px;
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
 }
 
-.card-category {
-  color: #D986A8;
+.card .content {
+  padding: 18px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #c72b94;
   font-weight: 600;
-  margin-bottom: 10px;
 }
 
-.card-desc {
-  font-size: 14px;
-  line-height: 1.6;
+.card p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 6px;
 }
 
-/* MODAL */
+/* MODAL -------------------------------------------------- */
 .modal {
   position: fixed;
-  top:0; left:0;
-  width: 100%; height:100%;
-  background: rgba(0,0,0,0.45);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 182, 227, 0.45);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 
 .modal-content {
-  background: #FFF9FD;
-  padding: 26px;
+  background: white;
+  padding: 25px;
+  width: 95%;
+  max-width: 450px;
   border-radius: 20px;
-  width: 90%;
-  max-width: 420px;
-  border: 2px solid #FFD7E8;
-  box-shadow: 0 6px 20px rgba(255, 150, 200, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  box-shadow: 0 8px 30px rgba(255, 115, 200, 0.25);
+  animation: pop 0.25s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: #d5419d;
+  font-family: "Poppins", sans-serif;
+  margin-bottom: 20px;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
+  width: 100%;
   padding: 12px;
-  background: #FFF7FC;
-  border: 2px solid #FFD7E8;
-  border-radius: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ffd0ea;
+  font-size: 1rem;
 }
 
-/* MODAL BUTTONS */
-.save {
-  background: #FF0AB4;
-  color: white;
-  border: none;
+.save,
+.cancel {
+  width: 100%;
   padding: 12px;
-  border-radius: 12px;
-  font-size: 16px;
+  margin-top: 12px;
+  border-radius: 10px;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: 0.2s;
+  border: none;
 }
-.save:hover { background: #d70094; }
+
+.save {
+  background: #ff82c8;
+  color: white;
+}
+
+.save:hover {
+  background: #ff5eb9;
+}
 
 .cancel {
-  background: #ccc;
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  cursor: pointer;
+  background: #ddd;
 }
-.cancel:hover { background: #bbb; }
 
-
+.cancel:hover {
+  background: #ccc;
+}
