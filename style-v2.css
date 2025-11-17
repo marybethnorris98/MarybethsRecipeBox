@@ -11,23 +11,34 @@ body {
   line-height: 1.4;
 }
 
-/* HEADER ------------------------------------------------------ */
-header {
-  background: linear-gradient(135deg, #FF0AB4, #FF6BCF);
-  padding: 34px 20px;
+/* HEADER — CLEAN BARBIE VERSION (C) */
+.luxe-header {
   text-align: center;
-  color: white;
-  border-bottom: 4px solid #FFD7E8;
-  box-shadow: 0 6px 26px rgba(255, 10, 180, 0.35);
+  padding: 40px 20px 20px;
 }
 
-header h1 {
-  font-family: "Parisienne", cursive !important;
-  font-size: 66px;
-  font-weight: 400;
+.luxe-header .barbie-title {
+  font-family: "Pacifico", cursive;
+  font-size: 4.5rem;
   margin: 0;
-  letter-spacing: 1.4px;
-  text-shadow: 0 3px 10px rgba(255, 90, 190, 0.3);
+  color: #ffffff;
+
+  /* Darker Barbie-pink shadow (exact look you liked) */
+  text-shadow:
+    0px 6px 0px #d83388,      /* strong hot-pink offset */
+    0px 12px 22px rgba(0, 0, 0, 0.25); /* soft glow */
+}
+
+/* SPARKLES */
+.sparkles {
+  margin-top: 15px;
+}
+
+.sparkles span {
+  font-size: 1.8rem;
+  color: #ffffff;
+  text-shadow: 0px 0px 10px #ffffffaa;
+  margin: 0 10px;
 }
 
 /* CONTROLS ------------------------------------------------------ */
