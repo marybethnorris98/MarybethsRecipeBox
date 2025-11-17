@@ -1,69 +1,80 @@
-<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recipe Book</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recipe Book</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bartex:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css" />
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bartex:wght@400;700&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Luxe Header -->
-  <header class="luxe-header">
-    <h1>Marybeth's Recipe Book</h1>
 
-    <div class="sparkles">
-      <span>✦</span>
-      <span>✦</span>
-      <span>✦</span>
-    </div>
-  </header>
+<!-- Luxe Header -->
+<header class="luxe-header">
+<h1>Marybeth's Recipe Book</h1>
 
-  <!-- Controls -->
-  <section class="controls">
-    <input id="searchInput" type="text" placeholder="Search recipes..." />
 
-    <select id="categoryFilter">
-      <option value="all">All Categories</option>
-      <option value="breakfast">Breakfast</option>
-      <option value="lunch">Lunch</option>
-      <option value="dinner">Dinner</option>
-      <option value="dessert">Dessert</option>
-    </select>
+<div class="sparkles">
+<span>✦</span>
+<span>✦</span>
+<span>✦</span>
+</div>
+</header>
 
-    <button id="addRecipeBtn">+ Add Recipe</button>
-  </section>
 
-  <!-- Recipe Grid -->
-  <section id="recipeGrid" class="grid"></section>
+<!-- Controls -->
+<section class="controls">
+<input id="searchInput" type="text" placeholder="Search recipes..." />
 
-  <!-- Add Recipe Modal -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Add New Recipe</h2>
 
-      <input id="newTitle" type="text" placeholder="Recipe title" />
-      
-      <select id="newCategory">
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="dessert">Dessert</option>
-      </select>
+<select id="categoryFilter">
+<option value="all">All Categories</option>
+<option value="breakfast">Breakfast</option>
+<option value="lunch">Lunch</option>
+<option value="dinner">Dinner</option>
+<option value="dessert">Dessert</option>
+</select>
 
-      <input id="newImage" type="text" placeholder="Image URL" />
-      <textarea id="newDesc" placeholder="Recipe description"></textarea>
 
-      <button id="saveRecipeBtn" class="save">Save Recipe</button>
-      <button id="closeModalBtn" class="cancel">Cancel</button>
-    </div>
-  </div>
+<button id="addRecipeBtn">+ Add Recipe</button>
+</section>
 
-  <script src="script.js"></script>
+
+<!-- Recipe Grid -->
+<section id="recipeGrid" class="grid"></section>
+
+
+<!-- Add Recipe Modal -->
+<div id="modal" class="modal hidden">
+<div class="modal-content">
+<h2>Add New Recipe</h2>
+
+
+<input id="newTitle" type="text" placeholder="Recipe title" />
+<select id="newCategory">
+<option value="breakfast">Breakfast</option>
+<option value="lunch">Lunch</option>
+<option value="dinner">Dinner</option>
+<option value="dessert">Dessert</option>
+</select>
+
+
+<input id="newImage" type="text" placeholder="Image URL" />
+<textarea id="newDesc" placeholder="Recipe description"></textarea>
+
+
+<button id="saveRecipeBtn" class="save">Save Recipe</button>
+<button id="closeModalBtn" class="cancel">Cancel</button>
+</div>
+</div>
+
+
+<script src="script.js"></script>
 </body>
 </html>
