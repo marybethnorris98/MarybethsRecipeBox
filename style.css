@@ -55,7 +55,7 @@ body {
 
 /* ✨ STAR SPARKLES — matches image */
 .star {
-  position: absolute;
+  position: relative;
   font-size: 42px;
   color: white;
   opacity: 0.95;
