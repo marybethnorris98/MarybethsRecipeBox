@@ -117,3 +117,37 @@ categoryFilter.addEventListener("change", renderRecipes);
 
 // --- INITIAL RENDER ---
 renderRecipes();
+
+<script>
+function openRecipeModal(recipe) {
+  document.getElementById("recipeModal").style.display = "flex";
+
+  // Fill content
+  document.getElementById("modalTitle").textContent = recipe.title;
+  document.getElementById("modalImage").src = recipe.image;
+  document.getElementById("modalCategory").textContent = recipe.category;
+
+  // Ingredients
+  const ingList = document.getElementById("modalIngredients");
+  ingList.innerHTML = "";
+  recipe.ingredients.forEach(i => {
+    let li = document.createElement("li");
+    li.textContent = i;
+    ingList.appendChild(li);
+  });
+
+  // Instructions
+  const stepList = document.getElementById("modalInstructions");
+  stepList.innerHTML = "";
+  recipe.instructions.forEach(step => {
+    let li = document.createElement("li");
+    li.textContent = step;
+    stepList.appendChild(li);
+  });
+}
+
+function closeRecipeModal() {
+  document.getElementById("recipeModal").style.display = "none";
+}
+</script>
+
