@@ -1,6 +1,8 @@
-console.log("secure admin script loaded");
+console.log("FULL admin + viewer script loaded");
 
-/* ----- DEFAULT RECIPES ----- */
+/* ============================================================
+   DEFAULT RECIPES
+============================================================ */
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
@@ -28,39 +30,66 @@ const defaultRecipes = [
   }
 ];
 
-/* ----- STORED RECIPES ----- */
-let customRecipes = JSON.parse(localStorage.getItem("customRecipes")) || [];
-
-/* Combined recipes for viewing */
-function getAllRecipes() {
-  return [...defaultRecipes, ...customRecipes];
+/* ============================================================
+   STORAGE (ENCRYPTED)
+============================================================ */
+function encrypt(str) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(str))));
+}
+function decrypt(str) {
+  try {
+    return JSON.parse(decodeURIComponent(escape(atob(str))));
+  } catch {
+    return null;
+  }
 }
 
-/* DOM */
+let stored = localStorage.getItem("pinkrecipes-data");
+let recipes = stored ? decrypt(stored) : defaultRecipes;
+
+function saveRecipes() {
+  localStorage.setItem("pinkrecipes-data", encrypt(recipes));
+}
+
+/* ============================================================
+   DOM ELEMENTS
+============================================================ */
 const recipeGrid = document.getElementById("recipeGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
 
-/* RENDER */
-function renderRecipes() {
-  const recipes = getAllRecipes();
-  const searchTerm = (searchInput.value || "").toLowerCase();
-  const selectedCategory = categoryFilter ? categoryFilter.value : "all";
+/* Admin elements */
+const loginModal = document.getElementById("loginModal");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
 
-  const filtered = recipes.filter(recipe => {
+const addRecipeModal = document.getElementById("addRecipeModal");
+const saveRecipeBtn = document.getElementById("saveRecipeBtn");
+
+/* Admin mode flag */
+let isAdmin = false;
+
+/* ============================================================
+   RENDER
+============================================================ */
+function renderRecipes() {
+  const searchTerm = (searchInput.value || "").toLowerCase();
+  const selectedCategory = categoryFilter.value;
+
+  const filtered = recipes.filter(r => {
     const matchesSearch =
-      (recipe.title || "").toLowerCase().includes(searchTerm) ||
-      (recipe.description || "").toLowerCase().includes(searchTerm);
+      r.title.toLowerCase().includes(searchTerm) ||
+      r.description.toLowerCase().includes(searchTerm);
 
     const matchesCategory =
-      selectedCategory === "all" || recipe.category === selectedCategory;
+      selectedCategory === "all" || r.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
 
   recipeGrid.innerHTML = filtered.map(recipe => `
     <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${recipe.image}" alt="${recipe.title}">
+      <img src="${recipe.image}">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
@@ -68,21 +97,26 @@ function renderRecipes() {
       </div>
     </div>
   `).join("");
+
+  if (isAdmin) injectAdminButton();
 }
 
-/* VIEWER */
-function openRecipeModal(recipe) {
-  const viewer = document.getElementById("recipeModal");
-  viewer.style.display = "flex";
-  viewer.setAttribute("aria-hidden","false");
+renderRecipes();
 
-  document.getElementById("modalTitle").textContent = recipe.title || "";
-  document.getElementById("modalImage").src = recipe.image || "";
-  document.getElementById("modalCategory").textContent = recipe.category || "";
+/* ============================================================
+   RECIPE VIEWER
+============================================================ */
+function openRecipeModal(recipe) {
+  const modal = document.getElementById("recipeModal");
+  modal.style.display = "flex";
+
+  document.getElementById("modalTitle").textContent = recipe.title;
+  document.getElementById("modalImage").src = recipe.image;
+  document.getElementById("modalCategory").textContent = recipe.category;
 
   const ingList = document.getElementById("modalIngredients");
   ingList.innerHTML = "";
-  (recipe.ingredients || []).forEach(i => {
+  recipe.ingredients.forEach(i => {
     const li = document.createElement("li");
     li.textContent = i;
     ingList.appendChild(li);
@@ -90,97 +124,112 @@ function openRecipeModal(recipe) {
 
   const stepList = document.getElementById("modalInstructions");
   stepList.innerHTML = "";
-  (recipe.instructions || []).forEach(step => {
+  recipe.instructions.forEach(s => {
     const li = document.createElement("li");
-    li.textContent = step;
+    li.textContent = s;
     stepList.appendChild(li);
   });
 }
 
-function closeRecipeModal() {
-  const viewer = document.getElementById("recipeModal");
-  viewer.style.display = "none";
-  viewer.setAttribute("aria-hidden","true");
+document.getElementById("closeViewerBtn").onclick = () => {
+  document.getElementById("recipeModal").style.display = "none";
+};
+
+/* ============================================================
+   ADMIN LOGIN SYSTEM
+============================================================ */
+function openLoginModal() {
+  loginModal.classList.remove("hidden");
+}
+function closeLoginModal() {
+  loginModal.classList.add("hidden");
 }
 
-document.getElementById("closeViewerBtn").addEventListener("click", closeRecipeModal);
-document.getElementById("recipeModal").addEventListener("click", (e) => {
-  if (e.target.id === "recipeModal") closeRecipeModal();
-});
+loginBtn.onclick = () => {
+  const pw = document.getElementById("adminPassword").value.trim();
 
-/* ----- 🔐 ADMIN LOGIN SYSTEM ----- */
-
-const passwordHash = "d7d824a2b0a4c32f175f0c7a826f7994a2bd06cdd1eacafc69a63c2cd58b3c77"; // SHA-256 of "pinkrecipes"
-
-async function sha256(str) {
-  const buffer = new TextEncoder().encode(str);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-  return [...new Uint8Array(hashBuffer)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-const loginModal = document.getElementById("loginModal");
-const loginBtn = document.getElementById("loginBtn");
-const loginError = document.getElementById("loginError");
-const adminPassword = document.getElementById("adminPassword");
-
-let adminUnlocked = false;
-
-/* Hold SHIFT + click the header to open login */
-document.querySelector(".barbie-header").addEventListener("click", (e) => {
-  if (e.shiftKey) loginModal.classList.remove("hidden");
-});
-
-loginBtn.onclick = async () => {
-  const entered = adminPassword.value;
-  const hashed = await sha256(entered);
-
-  if (hashed === passwordHash) {
-    adminUnlocked = true;
-    loginModal.classList.add("hidden");
-    addAdminButton();
+  if (pw === "pinkrecipes") {
+    isAdmin = true;
+    loginError.style.display = "none";
+    closeLoginModal();
+    renderRecipes();
+    showAddRecipeButton();
   } else {
     loginError.style.display = "block";
   }
 };
 
-/* ----- ADD RECIPE MODAL ----- */
-const addRecipeModal = document.getElementById("addRecipeModal");
-const saveRecipeBtn = document.getElementById("saveRecipeBtn");
+/* ============================================================
+   ADMIN ENTRY SHORTCUTS
+============================================================ */
+// SHIFT+click anywhere
+document.addEventListener("click", (e) => {
+  if (e.shiftKey && !isAdmin) {
+    openLoginModal();
+  }
+});
 
-function addAdminButton() {
-  const btn = document.createElement("button");
-  btn.textContent = "Add Recipe";
-  btn.style = "position:fixed;bottom:20px;right:20px;padding:14px 18px;background:#ff3ebf;color:white;border:none;border-radius:16px;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,0.18);cursor:pointer;z-index:900;";
-  btn.onclick = () => addRecipeModal.classList.remove("hidden");
-  document.body.appendChild(btn);
+// URL ?admin
+if (window.location.search.includes("admin") && !isAdmin) {
+  openLoginModal();
 }
 
+/* ============================================================
+   ADD RECIPE BUTTON (appears only in admin)
+============================================================ */
+function injectAdminButton() {
+  if (document.getElementById("addRecipeBtn")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "addRecipeBtn";
+  btn.textContent = "+ Add Recipe";
+  btn.className = "admin-add-button";
+
+  document.body.appendChild(btn);
+
+  btn.onclick = () => {
+    addRecipeModal.classList.remove("hidden");
+  };
+}
+
+function showAddRecipeButton() {
+  injectAdminButton();
+}
+
+/* ============================================================
+   ADD RECIPE FORM
+============================================================ */
 saveRecipeBtn.onclick = () => {
   const title = document.getElementById("newTitle").value.trim();
   const category = document.getElementById("newCategory").value;
   const image = document.getElementById("newImage").value.trim();
-  const desc = document.getElementById("newDesc").value.trim();
+  const description = document.getElementById("newDesc").value.trim();
 
-  if (!title || !image || !desc) {
-    alert("Please fill in all fields.");
+  if (!title || !image || !description) {
+    alert("Please fill out all fields");
     return;
   }
 
-  customRecipes.push({
-    title, category, image, description: desc,
-    ingredients: ["No ingredients added"],
-    instructions: ["No instructions added"]
-  });
+  const newRecipe = {
+    title,
+    category,
+    image,
+    description,
+    ingredients: [],
+    instructions: []
+  };
 
-  localStorage.setItem("customRecipes", JSON.stringify(customRecipes));
-
+  recipes.push(newRecipe);
+  saveRecipes();
   addRecipeModal.classList.add("hidden");
   renderRecipes();
 };
 
-/* SEARCH / FILTER */
-if (searchInput) searchInput.addEventListener("input", renderRecipes);
-if (categoryFilter) categoryFilter.addEventListener("change", renderRecipes);
+/* Close add recipe modal when clicking background */
+addRecipeModal.addEventListener("click", (e) => {
+  if (e.target === addRecipeModal) addRecipeModal.classList.add("hidden");
+});
 
-/* INITIAL RENDER */
-renderRecipes();
+/* SEARCH & FILTER */
+searchInput.addEventListener("input", renderRecipes);
+categoryFilter.addEventListener("change", renderRecipes);
