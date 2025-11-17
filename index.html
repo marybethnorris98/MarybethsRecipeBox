@@ -41,10 +41,8 @@
     </select>
   </section>
 
-  <!-- Grid: cards will be injected here -->
+  <!-- Grid -->
   <section id="recipeGrid" class="grid"></section>
-
-  </div>
 
   <!-- RECIPE VIEWER MODAL -->
   <div id="recipeModal" class="modal-overlay" style="display:none" aria-hidden="true">
@@ -63,7 +61,35 @@
     </div>
   </div>
 
-  <!-- SCRIPT -->
+  <!-- 🔐 LOGIN MODAL (HIDDEN) -->
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-content">
+      <h2 style="margin-top:0;">Admin Login</h2>
+      <input id="adminPassword" type="password" placeholder="Enter password" style="width:100%;padding:12px;margin:12px 0;">
+      <button id="loginBtn" style="padding:12px 18px;border:none;background:#ff3ebf;color:white;border-radius:12px;font-size:16px;width:100%;">Unlock</button>
+      <p id="loginError" style="color:red;display:none;margin-top:10px;">Incorrect password.</p>
+    </div>
+  </div>
+
+  <!-- 🔐 ADD RECIPE MODAL (HIDDEN UNTIL AUTH) -->
+  <div id="addRecipeModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Add Recipe</h2>
+
+      <input id="newTitle" placeholder="Title" style="width:100%;padding:10px;margin:8px 0;">
+      <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;">
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+        <option value="dessert">Dessert</option>
+      </select>
+      <input id="newImage" placeholder="Image URL" style="width:100%;padding:10px;margin:8px 0;">
+      <textarea id="newDesc" placeholder="Short description" style="width:100%;padding:10px;margin:8px 0;"></textarea>
+
+      <button id="saveRecipeBtn" style="padding:10px 16px;background:#ff3ebf;color:white;border:none;border-radius:12px;width:100%;">Save Recipe</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
