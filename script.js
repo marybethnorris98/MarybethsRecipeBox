@@ -1,13 +1,14 @@
-console.log("FULL admin + viewer script loaded");
+/* script.js — Admin + Drafts + Image Upload (base64) */
+console.log("FULL admin + viewer script loaded (with image upload)");
 
-/* -------------------------------------------------
-   DEFAULT RECIPES
-------------------------------------------------- */
+// -----------------------------
+// DEFAULT RECIPES
+// -----------------------------
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
     category: "breakfast",
-    image: "images/pancakes.jpg",
+    image: "", // left blank so preview will fallback if missing
     description: "Fluffy homemade pancakes loaded with fresh blueberries.",
     ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
     instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."]
@@ -15,7 +16,7 @@ const defaultRecipes = [
   {
     title: "Chicken Caesar Salad",
     category: "lunch",
-    image: "images/salad.jpg",
+    image: "",
     description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
     ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
     instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."]
@@ -23,25 +24,25 @@ const defaultRecipes = [
   {
     title: "Sample Pasta",
     category: "dinner",
-    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
+    image: "",
     description: "A quick sample pasta for testing the modal.",
     ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
     instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."]
   }
 ];
 
-/* -------------------------------------------------
-   STORAGE KEYS + LOAD
-------------------------------------------------- */
+// -----------------------------
+// STORAGE KEYS + LOAD
+// -----------------------------
 const RECIPES_KEY = "recipes";
 const DRAFTS_KEY = "drafts_recipes";
 
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
 let drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY)) || [];
 
-/* -------------------------------------------------
-   DOM ELEMENTS
-------------------------------------------------- */
+// -----------------------------
+// DOM ELEMENTS
+// -----------------------------
 const recipeGrid = document.getElementById("recipeGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
@@ -50,7 +51,7 @@ const categoryFilter = document.getElementById("categoryFilter");
 const addRecipeModal = document.getElementById("addRecipeModal");
 const newTitle = document.getElementById("newTitle");
 const newCategory = document.getElementById("newCategory");
-const newImage = document.getElementById("newImage");
+const newImageInputFallback = document.getElementById("newImage"); // kept but not required
 const newDesc = document.getElementById("newDesc");
 
 const ingredientsList = document.getElementById("ingredientsList");
@@ -64,13 +65,100 @@ const loginModal = document.getElementById("loginModal");
 const loginBtn = document.getElementById("loginBtn");
 const loginError = document.getElementById("loginError");
 
-let isAdmin = false;           // becomes true after successful login
-let editingDraftId = null;     // id of draft being edited (null if creating new)
-let editingRecipeIndex = null; // optional feature if you later choose to edit saved recipes
+let isAdmin = false;
+let editingDraftId = null;
 
-/* -------------------------------------------------
-   RENDER RECIPE CARDS
-------------------------------------------------- */
+// -----------------------------
+// IMAGE UPLOAD (injected at top of modal)
+// -----------------------------
+let uploadedImageBase64 = ""; // when set, used as recipe.image
+
+function injectImageUploadUI() {
+  // Only inject once
+  if (document.getElementById("imageUploadSection")) return;
+
+  const modalContent = addRecipeModal.querySelector(".modal-content");
+  if (!modalContent) return;
+
+  // container
+  const wrapper = document.createElement("div");
+  wrapper.id = "imageUploadSection";
+  wrapper.style = "margin-bottom:12px;display:flex;flex-direction:column;gap:8px;";
+
+  // label
+  const label = document.createElement("label");
+  label.textContent = "Recipe Image";
+  label.style = "font-weight:700;color:#a00064;";
+
+  // file input (hidden style can be changed by CSS)
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.id = "imageInput";
+  fileInput.style = "display:block;";
+
+  // preview image element
+  const preview = document.createElement("img");
+  preview.id = "imagePreview";
+  preview.style = "display:none;width:100%;max-height:200px;object-fit:cover;border-radius:12px;border:1px solid #ffb6e8;";
+
+  // small helper text
+  const hint = document.createElement("div");
+  hint.textContent = "Choose an image from your computer. It will be stored locally in your browser.";
+  hint.style = "font-size:13px;color:#8b5873;";
+
+  // append
+  wrapper.appendChild(label);
+  wrapper.appendChild(fileInput);
+  wrapper.appendChild(preview);
+  wrapper.appendChild(hint);
+
+  // insert at top of modal-content (before existing children)
+  modalContent.insertBefore(wrapper, modalContent.firstChild);
+
+  // handlers
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    handleImageFile(file);
+  });
+
+  // clicking label should open file chooser (accessible)
+  label.addEventListener("click", () => fileInput.click());
+}
+
+function handleImageFile(file) {
+  if (!file) return;
+  // limit file size to prevent huge localStorage bloat (soft limit 2.5MB)
+  const maxBytes = 2.5 * 1024 * 1024; // 2.5 MB
+  if (file.size > maxBytes) {
+    alert("Image is too large. Please choose an image under ~2.5 MB.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    uploadedImageBase64 = e.target.result; // data:image/...;base64,...
+    const preview = document.getElementById("imagePreview");
+    if (preview) {
+      preview.src = uploadedImageBase64;
+      preview.style.display = "block";
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImagePreview() {
+  uploadedImageBase64 = "";
+  const preview = document.getElementById("imagePreview");
+  if (preview) {
+    preview.src = "";
+    preview.style.display = "none";
+  }
+}
+
+// -----------------------------
+// RENDER RECIPE CARDS
+// -----------------------------
 function renderRecipes() {
   const searchTerm = (searchInput.value || "").toLowerCase();
   const selectedCategory = categoryFilter ? categoryFilter.value : "all";
@@ -88,7 +176,7 @@ function renderRecipes() {
 
   recipeGrid.innerHTML = filtered.map(recipe => `
     <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${recipe.image}" alt="${recipe.title}">
+      <img src="${recipe.image || ''}" alt="${recipe.title}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22><rect width=%22200%22 height=%22120%22 fill=%22%23ffeef8%22/><text x=%2210%22 y=%2268%22 font-size=%2214%22 fill=%22%23d04f8a%22>no+image</text></svg>'">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
@@ -98,9 +186,9 @@ function renderRecipes() {
   `).join("");
 }
 
-/* -------------------------------------------------
-   VIEWER
-------------------------------------------------- */
+// -----------------------------
+// VIEWER
+// -----------------------------
 function openRecipeModal(recipe) {
   const viewer = document.getElementById("recipeModal");
   viewer.style.display = "flex";
@@ -131,16 +219,16 @@ document.getElementById("closeViewerBtn").addEventListener("click", () => {
   document.getElementById("recipeModal").style.display = "none";
 });
 
-/* -------------------------------------------------
-   SEARCH + FILTER
-------------------------------------------------- */
+// -----------------------------
+// SEARCH + FILTER
+// -----------------------------
 if (searchInput) searchInput.addEventListener("input", renderRecipes);
 if (categoryFilter) categoryFilter.addEventListener("change", renderRecipes);
 
-/* -------------------------------------------------
-   ADMIN LOGIN (keeps existing obfuscation)
-------------------------------------------------- */
-const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join(""); // same as before
+// -----------------------------
+// ADMIN LOGIN
+// -----------------------------
+const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join("");
 
 function openLoginModal() {
   loginError.style.display = "none";
@@ -156,64 +244,57 @@ loginBtn.addEventListener("click", () => {
   if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
     isAdmin = true;
     closeLoginModal();
-    injectAdminUI(); // create Add + Drafts buttons
+    injectAdminUI();
   } else {
     loginError.style.display = "block";
   }
 });
 
-// keyboard secret remains
+// keyboard secret: CTRL+ALT+A
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "a") {
     openLoginModal();
   }
 });
 
-/* -------------------------------------------------
-   ADMIN UI: inject Add + Drafts buttons (bottom-right)
-   These are only created after isAdmin === true
-------------------------------------------------- */
+// -----------------------------
+// ADMIN UI
+// -----------------------------
 function injectAdminUI() {
-  if (document.getElementById("adminControlsContainer")) return; // already injected
+  if (document.getElementById("adminControlsContainer")) return;
 
   const container = document.createElement("div");
   container.id = "adminControlsContainer";
   container.style = "position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:1200;";
 
-  // Add Recipe button
   const addBtn = document.createElement("button");
   addBtn.id = "adminAddBtn";
   addBtn.textContent = "+ Add Recipe";
   addBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
   addBtn.addEventListener("click", () => {
-    editingDraftId = null; // new recipe, not editing a draft
+    editingDraftId = null;
     openAddRecipeModal();
-    populateAddModalFromDraft(null); // clear
+    populateAddModalFromDraft(null);
   });
 
-  // Drafts button (per your choice: under the Add Recipe button)
   const draftsBtn = document.createElement("button");
   draftsBtn.id = "adminDraftsBtn";
   draftsBtn.textContent = "Drafts";
   draftsBtn.style = "background:#ffd6ee;color:#a00064;padding:10px 16px;border-radius:12px;border:2px solid #ffb1db;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);";
-  draftsBtn.addEventListener("click", () => {
-    openDraftsModal();
-  });
+  draftsBtn.addEventListener("click", () => openDraftsModal());
 
   container.appendChild(addBtn);
   container.appendChild(draftsBtn);
   document.body.appendChild(container);
 }
 
-/* -------------------------------------------------
-   ADD-RECIPE MODAL HELPERS
-   - add/remove ingredient & step rows
-   - clear, populate, and close modal
-------------------------------------------------- */
+// -----------------------------
+// ADD-RECIPE HELPERS (rows, clear, populate)
+// -----------------------------
 function makeRowInput(placeholder = "", type = "ingredient") {
   const row = document.createElement("div");
   row.className = "admin-row";
-  // input and small remove button
+
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = placeholder;
@@ -234,44 +315,54 @@ function makeRowInput(placeholder = "", type = "ingredient") {
 function clearAddModal() {
   newTitle.value = "";
   newCategory.value = "breakfast";
-  newImage.value = "";
+  // we keep fallback input value for compatibility
+  if (newImageInputFallback) newImageInputFallback.value = "";
   newDesc.value = "";
 
   ingredientsList.innerHTML = "";
   instructionsList.innerHTML = "";
 
-  // reset editing state
+  clearImagePreview();
+
   editingDraftId = null;
 }
 
 function populateAddModalFromDraft(draft) {
-  // if draft is null -> clear
   clearAddModal();
-
   if (!draft) return;
 
   newTitle.value = draft.title || "";
   newCategory.value = draft.category || "breakfast";
-  newImage.value = draft.image || "";
   newDesc.value = draft.description || "";
 
-  // ingredients
+  // If draft has image (base64 or URL), show it
+  uploadedImageBase64 = draft.image || "";
+  const preview = document.getElementById("imagePreview");
+  if (uploadedImageBase64 && preview) {
+    preview.src = uploadedImageBase64;
+    preview.style.display = "block";
+  }
+
   (draft.ingredients || []).forEach(ing => {
     const r = makeRowInput("Ingredient", "ingredient");
     r.querySelector("input").value = ing;
     ingredientsList.appendChild(r);
   });
 
-  // instructions
   (draft.instructions || []).forEach(step => {
     const r = makeRowInput("Step", "step");
     r.querySelector("input").value = step;
     instructionsList.appendChild(r);
   });
+
+  // set editing id
+  editingDraftId = draft.id || null;
 }
 
-// ensure the Add Recipe modal has a big close (trash) 'X' at top-right and a Save Draft button
+// ensure big close X and Save Draft btn are present
 function ensureAddModalControls() {
+  injectImageUploadUI();
+
   const modalContent = addRecipeModal.querySelector(".modal-content");
   if (!modalContent) return;
 
@@ -284,29 +375,24 @@ function ensureAddModalControls() {
     x.title = "Close and discard";
     x.style = "position:absolute;right:18px;top:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#a00;";
     x.addEventListener("click", () => {
-      // discard current edits (do not save)
       if (confirm("Discard changes and close?")) {
         clearAddModal();
         addRecipeModal.classList.add("hidden");
       }
     });
-    // ensure position relative on modal-content to place absolute button
     modalContent.style.position = modalContent.style.position || "relative";
     modalContent.appendChild(x);
   }
 
-  // Save Draft button (placed above Save Recipe)
+  // Save Draft button
   if (!modalContent.querySelector("#saveDraftBtn")) {
     const saveDraftBtn = document.createElement("button");
     saveDraftBtn.id = "saveDraftBtn";
     saveDraftBtn.type = "button";
     saveDraftBtn.innerText = "Save Draft";
     saveDraftBtn.style = "background:#ffb6dd;color:#6a003a;padding:10px;border-radius:12px;border:none;margin-top:12px;cursor:pointer;width:100%;";
-    saveDraftBtn.addEventListener("click", () => {
-      saveDraftFromModal();
-    });
+    saveDraftBtn.addEventListener("click", () => saveDraftFromModal());
 
-    // insert before the Save Recipe button (if present)
     const saveBtn = modalContent.querySelector("#saveRecipeBtn");
     if (saveBtn) {
       saveBtn.parentNode.insertBefore(saveDraftBtn, saveBtn);
@@ -316,7 +402,7 @@ function ensureAddModalControls() {
   }
 }
 
-/* attach add/remove behaviors */
+// attach add/remove behaviors for rows
 addIngredientBtn.addEventListener("click", () => {
   ingredientsList.appendChild(makeRowInput("Ingredient", "ingredient"));
 });
@@ -324,17 +410,19 @@ addInstructionBtn.addEventListener("click", () => {
   instructionsList.appendChild(makeRowInput("Step", "step"));
 });
 
-/* -------------------------------------------------
-   SAVE RECIPE (final)
-------------------------------------------------- */
+// -----------------------------
+// SAVE RECIPE
+// -----------------------------
 saveRecipeBtn.addEventListener("click", () => {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
-  const image = (newImage.value || "").trim();
   const description = (newDesc.value || "").trim();
 
+  // image preference: uploaded base64 first, then fallback input value, then empty
+  let image = uploadedImageBase64 || (newImageInputFallback ? newImageInputFallback.value.trim() : "");
+
   if (!title || !image || !description) {
-    alert("Please fill in title, image, and description.");
+    alert("Please fill in title, image (upload or provide URL) and description.");
     return;
   }
 
@@ -356,7 +444,7 @@ saveRecipeBtn.addEventListener("click", () => {
   recipes.push(newRecipe);
   localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
 
-  // if we were editing a draft, remove it (user converted draft to recipe)
+  // if converting a draft, remove it
   if (editingDraftId) {
     drafts = drafts.filter(d => d.id !== editingDraftId);
     localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
@@ -369,14 +457,12 @@ saveRecipeBtn.addEventListener("click", () => {
   renderRecipes();
 });
 
-/* -------------------------------------------------
-   DRAFTS: Save / Load / List / Delete
-------------------------------------------------- */
-// helper to build a draft object from modal (allows empty title)
+// -----------------------------
+// DRAFTS: create, save, list, delete
+// -----------------------------
 function buildDraftFromModal() {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
-  const image = (newImage.value || "").trim();
   const description = (newDesc.value || "").trim();
   const ingredients = [...ingredientsList.querySelectorAll("input")]
     .map(i => i.value.trim()).filter(Boolean);
@@ -387,7 +473,7 @@ function buildDraftFromModal() {
     id: editingDraftId || ("draft_" + Date.now()),
     title: title || "Untitled Draft",
     category,
-    image,
+    image: uploadedImageBase64 || "", // store base64 if present
     description,
     ingredients,
     instructions
@@ -396,26 +482,20 @@ function buildDraftFromModal() {
 
 function saveDraftFromModal() {
   const draft = buildDraftFromModal();
-
-  // if editing an existing draft, replace it
   const existsIndex = drafts.findIndex(d => d.id === draft.id);
-  if (existsIndex >= 0) {
-    drafts[existsIndex] = draft;
-  } else {
-    drafts.push(draft);
-  }
+  if (existsIndex >= 0) drafts[existsIndex] = draft;
+  else drafts.push(draft);
 
-  // persist and notify
   drafts.sort((a,b) => (a.title || "").localeCompare(b.title || ""));
   localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
   alert("Draft saved.");
-  // remain in modal so user can continue editing
   editingDraftId = draft.id;
 }
 
-/* Drafts Modal creation (dynamically inject to DOM) */
+// -----------------------------
+// DRAFTS MODAL (injected)
+// -----------------------------
 function openDraftsModal() {
-  // create modal if not exists
   let draftsModal = document.getElementById("draftsModal");
   if (!draftsModal) {
     draftsModal = document.createElement("div");
@@ -440,11 +520,9 @@ function openDraftsModal() {
     });
   }
 
-  // populate list
   const listContainer = draftsModal.querySelector("#draftsList");
   listContainer.innerHTML = "";
 
-  // sort alphabetically by title
   drafts.sort((a,b) => (a.title || "").localeCompare(b.title || ""));
 
   if (drafts.length === 0) {
@@ -467,10 +545,9 @@ function openDraftsModal() {
       editBtn.textContent = "Edit";
       editBtn.style = "background:#ff3ebf;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;";
       editBtn.addEventListener("click", () => {
-        // load this draft into add modal and open
         editingDraftId = d.id;
         populateAddModalFromDraft(d);
-        addRecipeModal.classList.remove("hidden");
+        openAddRecipeModal();
         draftsModal.classList.add("hidden");
       });
 
@@ -481,7 +558,7 @@ function openDraftsModal() {
         if (!confirm(`Delete draft "${d.title}"?`)) return;
         drafts = drafts.filter(x => x.id !== d.id);
         localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
-        openDraftsModal(); // refresh
+        openDraftsModal();
       });
 
       actions.appendChild(editBtn);
@@ -497,24 +574,62 @@ function openDraftsModal() {
   draftsModal.classList.remove("hidden");
 }
 
-/* -------------------------------------------------
-   UTILITY: when opening add modal ensure controls exist
-------------------------------------------------- */
+// -----------------------------
+// OPEN / CLOSE ADD MODAL HELPERS
+// -----------------------------
 function openAddRecipeModal() {
-  ensureAddModalControls();
+  ensureAddModalControls(); // inject controls + image UI + Save Draft + X
   addRecipeModal.classList.remove("hidden");
 
-  // if we're editing a draft, populate
   if (editingDraftId) {
     const d = drafts.find(x => x.id === editingDraftId);
     if (d) populateAddModalFromDraft(d);
   }
 }
 
-/* ensure controls at script load (in case admin logs in immediately) */
-ensureAddModalControls();
+function ensureAddModalControls() {
+  injectImageUploadUI();
 
-/* close addRecipeModal when clicking background overlay (optional) */
+  const modalContent = addRecipeModal.querySelector(".modal-content");
+  if (!modalContent) return;
+
+  // big X close button
+  if (!modalContent.querySelector(".add-modal-close-x")) {
+    const x = document.createElement("button");
+    x.className = "add-modal-close-x";
+    x.type = "button";
+    x.innerText = "✖";
+    x.title = "Close and discard";
+    x.style = "position:absolute;right:18px;top:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#a00;";
+    x.addEventListener("click", () => {
+      if (confirm("Discard changes and close?")) {
+        clearAddModal();
+        addRecipeModal.classList.add("hidden");
+      }
+    });
+    modalContent.style.position = modalContent.style.position || "relative";
+    modalContent.appendChild(x);
+  }
+
+  // Save Draft button
+  if (!modalContent.querySelector("#saveDraftBtn")) {
+    const saveDraftBtn = document.createElement("button");
+    saveDraftBtn.id = "saveDraftBtn";
+    saveDraftBtn.type = "button";
+    saveDraftBtn.innerText = "Save Draft";
+    saveDraftBtn.style = "background:#ffb6dd;color:#6a003a;padding:10px;border-radius:12px;border:none;margin-top:12px;cursor:pointer;width:100%;";
+    saveDraftBtn.addEventListener("click", () => saveDraftFromModal());
+
+    const saveBtn = modalContent.querySelector("#saveRecipeBtn");
+    if (saveBtn) {
+      saveBtn.parentNode.insertBefore(saveDraftBtn, saveBtn);
+    } else {
+      modalContent.appendChild(saveDraftBtn);
+    }
+  }
+}
+
+// close addRecipeModal when clicking background overlay (confirm)
 addRecipeModal.addEventListener("click", (e) => {
   if (e.target === addRecipeModal) {
     if (confirm("Discard changes and close?")) {
@@ -524,10 +639,11 @@ addRecipeModal.addEventListener("click", (e) => {
   }
 });
 
-/* -------------------------------------------------
-   INITIAL RENDER
-------------------------------------------------- */
+// -----------------------------
+// INITIAL RENDER + UI
+// -----------------------------
 renderRecipes();
+ensureAddModalControls(); // prepare UI in case admin logs in immediately
 
-/* Make sure to inject admin UI if already authenticated (unlikely) */
+// If admin already unlocked earlier (unlikely in single session), inject UI
 if (isAdmin) injectAdminUI();
