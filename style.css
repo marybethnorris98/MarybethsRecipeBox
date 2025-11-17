@@ -9,25 +9,6 @@ body {
   line-height: 1.4;
 }
 
-/* HEADER ------------------------------------------------------ */
-header {
-  background: linear-gradient(135deg, #FF0AB4, #FF6BCF);
-  padding: 34px 20px;
-  text-align: center;
-  color: white;
-  border-bottom: 4px solid #FFD7E8;
-  box-shadow: 0 6px 26px rgba(255, 10, 180, 0.35);
-}
-
-header h1 {
-  font-family: "Parisienne", cursive !important;
-  font-size: 66px;
-  font-weight: 400;
-  margin: 0;
-  letter-spacing: 1.4px;
-  text-shadow: 0 3px 10px rgba(255, 90, 190, 0.3);
-}
-
 /* CONTROLS ------------------------------------------------------ */
 .controls {
   display: flex;
@@ -204,44 +185,7 @@ header h1 {
 }
 .cancel:hover { background: #c7c7c7; }
 
-/* ✨ Barbie Gradient Header Bar ✨ */
-.barbie-header {
-  width: 100%;
-  padding: 40px 0;
-  text-align: center;
-  background: linear-gradient(135deg, #ff4fbc, #ff82d4 35%, #ffc6ef);
-  position: relative;
-  overflow: visible;
-}
-
-.barbie-logo { display: inline-block; position: relative; }
-
-.barbie-title {
-  font-family: 'Bartex', cursive !important;
-  font-size: 62px;
-  color: white;
-  margin: 0;
-  letter-spacing: 1px;
-  text-shadow:
-    0 0 12px #ff42c4,
-    0 0 25px #ff42c4,
-    0 4px 0 #e3009d;
-}
-
-.sparkle {
-  font-size: 36px;
-  color: white;
-  text-shadow:
-    0 0 10px #ffffff,
-    0 0 16px #ffb4eb;
-  position: absolute;
-  top: 10px;
-}
-
-.sparkle-1 { left: -45px; rotate: -18deg; }
-.sparkle-2 { right: -45px; rotate: 18deg; }
-
-/* LUXE HEADER */
+/* ⭐⭐⭐ LUXE HEADER — CLEAN + FINAL ⭐⭐⭐ */
 .luxe-header {
   background: #FF0AB4;
   padding: 45px 20px;
