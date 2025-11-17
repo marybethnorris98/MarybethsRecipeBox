@@ -1,220 +1,81 @@
-/* GLOBAL ------------------------------------------------------ */
-* { box-sizing: border-box; }
-
+/* PAGE BASE */
 body {
   margin: 0;
-  font-family: "Poppins", Arial, sans-serif;
-  background: #FFF7FC;
-  color: #2A2A2A;
-  line-height: 1.4;
+  font-family: Poppins, sans-serif;
+  background: #ff4eb5;
+  color: #333;
 }
 
-/* CONTROLS ------------------------------------------------------ */
+/* HEADER — EXACT MATCH TO IMAGE */
+.luxe-header {
+  text-align: center;
+  padding: 40px 20px 20px;
+}
+
+.luxe-header h1 {
+  font-family: "Pacifico", cursive;
+  font-size: 4.5rem;
+  margin: 0;
+  color: #ffffff;
+
+  /* Pink drop shadow EXACT like image */
+  text-shadow:
+    0px 6px 0px #d83388,
+    0px 12px 22px rgba(0, 0, 0, 0.25);
+}
+
+/* SPARKLES */
+.sparkles {
+  margin-top: 15px;
+}
+
+.sparkles span {
+  font-size: 1.8rem;
+  color: #ffffff;
+  text-shadow: 0px 0px 10px #ffffffaa;
+  margin: 0 10px;
+}
+
+/* CONTROLS */
 .controls {
   display: flex;
-  gap: 16px;
-  padding: 24px;
+  gap: 10px;
+  padding: 20px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .controls input,
-.controls select {
-  padding: 14px 16px;
-  font-size: 16px;
-  background: #ffffff;
-  border: 2px solid #FFD7E8;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(255, 140, 200, 0.15);
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+.controls select,
+.controls button {
+  padding: 10px 15px;
+  font-size: 1rem;
 }
 
-.controls input:focus,
-.controls select:focus {
-  border-color: #FF0AB4;
-  box-shadow: 0 3px 10px rgba(255, 70, 180, 0.25);
-}
-
-/* ADD BUTTON ------------------------------------------------------ */
-#addRecipeBtn {
-  padding: 14px 26px;
-  background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
-  color: white;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  transition: 0.25s ease;
-  box-shadow: 0 4px 14px rgba(255, 10, 180, 0.3);
-}
-
-#addRecipeBtn:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.45);
-}
-
-/* GRID ------------------------------------------------------ */
+/* GRID */
 .grid {
+  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 26px;
-  padding: 28px;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-/* CARD ------------------------------------------------------ */
-.card {
-  background: #FFF9FD;
-  border: 2px solid #FFD7E8;
-  border-radius: 22px;
-  padding: 18px;
-  margin: 6px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(255, 120, 180, 0.22);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+/* MODAL */
+.modal.hidden {
+  display: none;
 }
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 30px rgba(255, 10, 180, 0.32);
-}
-
-.card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 14px;
-}
-
-.card-content { padding: 4px 2px; }
-
-.card-title {
-  font-family: "Playfair Display", serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #FF0AB4;
-  margin-bottom: 8px;
-  letter-spacing: 0.3px;
-}
-
-.card-category {
-  font-size: 14px;
-  color: #D986A8;
-  font-weight: 600;
-  text-transform: capitalize;
-  margin-bottom: 10px;
-}
-
-.card-desc {
-  font-size: 15px;
-  color: #3b3b3b;
-  line-height: 1.55;
-  opacity: 0.9;
-}
-
-/* MODAL ------------------------------------------------------ */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-
-.hidden { display: none; }
-
-.modal-content {
-  background: #FFF9FD;
-  padding: 28px;
-  border-radius: 22px;
-  width: 90%;
-  max-width: 440px;
-  border: 2px solid #FFD7E8;
-  box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  padding: 14px;
-  background: white;
-  border: 2px solid #FFD7E8;
-  border-radius: 14px;
-  font-size: 15px;
-  transition: 0.2s ease;
-  box-shadow: 0 2px 5px rgba(255, 150, 200, 0.15);
-}
-
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus {
-  border-color: #FF0AB4;
-  box-shadow: 0 3px 12px rgba(255, 10, 180, 0.3);
-}
-
-/* MODAL BUTTONS ------------------------------------------------------ */
-.save {
-  background: #FF0AB4;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.25s;
-  box-shadow: 0 3px 10px rgba(255, 10, 180, 0.25);
-}
-.save:hover {
-  background: #d70094;
-  transform: translateY(-2px);
-}
-
-.cancel {
-  background: #e0e0e0;
-  border: none;
-  padding: 14px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-.cancel:hover { background: #c7c7c7; }
-
-/* ⭐⭐⭐ LUXE HEADER — CLEAN + FINAL ⭐⭐⭐ */
-.luxe-header {
-  background: #FF0AB4;
-  padding: 45px 20px;
-  text-align: center;
-  position: relative;
-  border-bottom: 4px solid #FFD7E8;
-  box-shadow: 0 4px 18px rgba(255, 10, 180, 0.35);
-}
-
-.luxe-header h1 {
-  font-family: "Sacramento", cursive;
-  font-size: 90px;
-  margin: 0;
-  color: white;
-  text-shadow:
-      0px 4px 8px rgba(0,0,0,0.25),
-      0px 0px 2px rgba(255, 255, 255, 0.7);
-  letter-spacing: 2px;
-}
-
-.sparkles {
-  margin-top: 10px;
-  display: flex;
-  gap: 20px;
   justify-content: center;
 }
-
-.sparkles span {
-  font-size: 28px;
-  color: #FFD677;
-  filter: drop-shadow(0px 0px 4px #ffefb0);
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
 }
