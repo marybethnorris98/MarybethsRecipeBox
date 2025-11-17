@@ -6,23 +6,27 @@
   <title>Recipe Book</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bartex:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Parisienne&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style-v2.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-  <h1 class="barbie-title">Marybeth's Recipe Book</h1>
+  <!-- HEADER -->
+  <header class="barbie-header">
+  <h1 class="barbie-text">Marybeth’s<br>Recipe Book</h1>
 
   <div class="sparkles">
-    <span>✦</span>
-    <span>✦</span>
-    <span>✦</span>
-  </div>
+  <span class="star star-1">✦</span>
+  <span class="star star-2">✦</span>
+  <span class="star star-3">✦</span>
+  <span class="star star-4">✦</span>
+
+  <span class="dot dot-1">•</span>
+  <span class="dot dot-2">•</span>
+  <span class="dot dot-3">•</span>
+  <span class="dot dot-4">•</span>
+</div>
 </header>
 
   <!-- Controls -->
@@ -40,16 +44,16 @@
     <button id="addRecipeBtn">+ Add Recipe</button>
   </section>
 
-  <!-- Recipe Grid -->
+  <!-- Grid -->
   <section id="recipeGrid" class="grid"></section>
 
-  <!-- Add Recipe Modal -->
+  <!-- Modal -->
   <div id="modal" class="modal hidden">
     <div class="modal-content">
       <h2>Add New Recipe</h2>
 
       <input id="newTitle" type="text" placeholder="Recipe title" />
-      
+
       <select id="newCategory">
         <option value="breakfast">Breakfast</option>
         <option value="lunch">Lunch</option>
