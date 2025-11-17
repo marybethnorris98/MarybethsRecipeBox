@@ -1,92 +1,182 @@
-/* IMPORT FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap');
-
-/* PAGE BASE */
+/* ----------------------------
+   GLOBAL RESET & BASE COLORS
+-----------------------------*/
 body {
   margin: 0;
-  font-family: Poppins, sans-serif;
-
-  /* EXACT SOFT BARBIE GRADIENT */
-  background: linear-gradient(180deg, #ff5ec4 0%, #ff3fa3 100%);
+  background: #faf5fb;
+  font-family: 'Poppins', sans-serif;
   color: #333;
 }
 
-/* HEADER — PERFECT MATCH */
+/* ----------------------------
+   HEADER (Matches Your Image C)
+-----------------------------*/
 .luxe-header {
   text-align: center;
-  padding: 60px 20px 0;
+  padding: 40px 20px 20px;
 }
 
 .barbie-title {
-  font-family: "Pacifico", cursive;
-  font-size: 5.4rem;
-  margin: 0;
-  color: #ffffff;
-
-  /* LAYERED SHADOW — IDENTICAL TO IMAGE */
+  font-family: 'Sacramento', cursive;
+  font-size: 80px;
+  color: white;
   text-shadow:
-      0px 2px 0px #ffffff,             /* bright rim highlight */
-      0px 8px 0px #d8368a,             /* pink hard shadow */
-      0px 14px 20px rgba(0,0,0,0.22);  /* soft ambient shadow */
-}
-
-/* SPARKLES — BIGGER + GLOW LIKE IMAGE */
-.sparkles {
-  margin-top: 40px;
+    0 0 6px #ff8fcb,
+    0 0 12px #ff5eaf,
+    0 0 20px #ff2d98;
+  margin: 0;
+  letter-spacing: 2px;
 }
 
 .sparkles span {
-  font-size: 2.6rem;
-  color: #ffffff;
-  margin: 0 18px;
-  text-shadow:
-    0px 0px 6px #fff,
-    0px 0px 14px #ffffffa0,
-    0px 0px 20px #ffffff70;
+  font-size: 28px;
+  color: #ff6abd;
+  animation: twinkle 1.5s infinite ease-in-out;
+  padding: 0 6px;
 }
 
-/* CONTROLS */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+/* ----------------------------
+   CONTROLS
+-----------------------------*/
 .controls {
   display: flex;
-  gap: 10px;
-  padding: 20px;
   justify-content: center;
+  gap: 12px;
+  padding: 20px;
   flex-wrap: wrap;
 }
 
 .controls input,
-.controls select,
-.controls button {
-  padding: 10px 15px;
-  font-size: 1rem;
+.controls select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid #ffb7df;
+  outline: none;
+  background: white;
 }
 
-/* GRID */
+#addRecipeBtn {
+  background: #ff7ecf;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 122, 199, 0.4);
+}
+
+#addRecipeBtn:hover {
+  background: #ff4fba;
+}
+
+/* ----------------------------
+   CARD GRID (Restored Cute Boxes)
+-----------------------------*/
 .grid {
-  padding: 20px;
   display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 28px;
+  padding: 30px;
 }
 
-/* MODAL */
-.modal.hidden {
-  display: none;
+.recipe-card {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+  overflow: hidden;
+  transition: 0.25s ease;
+  border: 2px solid #ffd4ec;
 }
 
+.recipe-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(255, 100, 180, 0.3);
+}
+
+.recipe-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 18px;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  margin: 0 0 10px;
+  color: #ff4fad;
+}
+
+.card-desc {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* ----------------------------
+   MODAL
+-----------------------------*/
 .modal {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.hidden { display: none; }
+
 .modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 2px solid #ffd0ea;
+  font-size: 16px;
+}
+
+.save {
+  background: #ff85d8;
+  padding: 12px;
+  border: none;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.cancel {
+  background: #ccc;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
 }
