@@ -1,35 +1,36 @@
-<script>
-// --- DEFAULT RECIPES ---
+console.log("script.js loaded");
+
+/* DEFAULT RECIPES */
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
     category: "breakfast",
     image: "images/pancakes.jpg",
-    description: "Fluffy homemade pancakes loaded with fresh blueberries."
+    description: "Fluffy homemade pancakes loaded with fresh blueberries.",
+    ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
+    instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."]
   },
   {
     title: "Chicken Caesar Salad",
     category: "lunch",
     image: "images/salad.jpg",
-    description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing."
+    description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
+    ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
+    instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."]
   },
   {
-    title: "Spaghetti Bolognese",
+    title: "Sample Pasta",
     category: "dinner",
-    image: "images/spaghetti.jpg",
-    description: "Rich tomato-meat sauce served over al dente pasta."
-  },
-  {
-    title: "Chocolate Cake",
-    category: "dessert",
-    image: "images/cake.jpg",
-    description: "Moist chocolate layers with smooth chocolate frosting."
+    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
+    description: "A quick sample pasta for testing the modal.",
+    ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
+    instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."]
   }
 ];
 
 let recipes = JSON.parse(localStorage.getItem("recipes")) || defaultRecipes;
 
-// --- DOM ELEMENTS ---
+/* DOM */
 const recipeGrid = document.getElementById("recipeGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
@@ -44,40 +45,16 @@ const newCategory = document.getElementById("newCategory");
 const newImage = document.getElementById("newImage");
 const newDesc = document.getElementById("newDesc");
 
-// ----------------------
-// ADMIN MODE CHECK
-// ----------------------
-function checkAdminMode() {
-  const urlParams = new URLSearchParams(window.location.search);
-
-  // Always hide the add button at first
-  addRecipeBtn.classList.add("hidden");
-
-  if (urlParams.has("admin")) {
-    const entered = prompt("Enter admin password:");
-    if (entered === "pinkrecipes") {
-      addRecipeBtn.classList.remove("hidden");
-      alert("Admin mode unlocked ✨");
-    }
-  }
-}
-checkAdminMode();
-
-// ----------------------
-// RENDER RECIPE CARDS
-// ----------------------
+/* RENDER */
 function renderRecipes() {
-  const searchTerm = searchInput.value.toLowerCase();
-  const selectedCategory = categoryFilter.value;
+  const searchTerm = (searchInput.value || "").toLowerCase();
+  const selectedCategory = categoryFilter ? categoryFilter.value : "all";
 
-  const filtered = recipes.filter(r => {
+  const filtered = recipes.filter(recipe => {
     const matchesSearch =
-      r.title.toLowerCase().includes(searchTerm) ||
-      r.description.toLowerCase().includes(searchTerm);
-
-    const matchesCategory =
-      selectedCategory === "all" || r.category === selectedCategory;
-
+      (recipe.title || "").toLowerCase().includes(searchTerm) ||
+      (recipe.description || "").toLowerCase().includes(searchTerm);
+    const matchesCategory = selectedCategory === "all" || recipe.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -93,33 +70,10 @@ function renderRecipes() {
   `).join("");
 }
 
-// ----------------------
-// OPEN RECIPE MODAL
-// ----------------------
-function openRecipeModal(recipe) {
-  document.getElementById("recipeModal").style.display = "flex";
+/* ADD-RECIPE MODAL */
+addRecipeBtn.onclick = () => modal.classList.remove("hidden");
+closeModalBtn.onclick = () => modal.classList.add("hidden");
 
-  document.getElementById("modalTitle").textContent = recipe.title;
-  document.getElementById("modalImage").src = recipe.image;
-  document.getElementById("modalCategory").textContent = recipe.category;
-
-  // Ingredients & instructions not used yet:
-  document.getElementById("modalIngredients").innerHTML = `
-    <li>${recipe.description}</li>
-  `;
-
-  document.getElementById("modalInstructions").innerHTML = `
-    <li>Full instructions coming soon...</li>
-  `;
-}
-
-function closeRecipeModal() {
-  document.getElementById("recipeModal").style.display = "none";
-}
-
-// ----------------------
-// ADD NEW RECIPE
-// ----------------------
 saveRecipeBtn.onclick = () => {
   const titleVal = newTitle.value.trim();
   const categoryVal = newCategory.value;
@@ -130,34 +84,64 @@ saveRecipeBtn.onclick = () => {
     alert("Please fill in all fields.");
     return;
   }
-
   const newRecipe = {
     title: titleVal,
     category: categoryVal,
     image: imageVal,
-    description: descVal
+    description: descVal,
+    ingredients: ["No ingredients added"],
+    instructions: ["No instructions added"]
   };
-
   recipes.push(newRecipe);
   localStorage.setItem("recipes", JSON.stringify(recipes));
 
-  newTitle.value = "";
-  newImage.value = "";
-  newDesc.value = "";
-
+  newTitle.value = ""; newImage.value = ""; newDesc.value = "";
   modal.classList.add("hidden");
   renderRecipes();
 };
 
-// ----------------------
-// EVENTS
-// ----------------------
-searchInput.addEventListener("input", renderRecipes);
-categoryFilter.addEventListener("change", renderRecipes);
+/* VIEWER */
+function openRecipeModal(recipe) {
+  const viewer = document.getElementById("recipeModal");
+  viewer.style.display = "flex";
+  viewer.setAttribute("aria-hidden","false");
 
-// ----------------------
-// INITIAL LOAD
-// ----------------------
+  document.getElementById("modalTitle").textContent = recipe.title || "";
+  document.getElementById("modalImage").src = recipe.image || "";
+  document.getElementById("modalCategory").textContent = recipe.category || "";
+
+  const ingList = document.getElementById("modalIngredients");
+  ingList.innerHTML = "";
+  (recipe.ingredients || []).forEach(i => {
+    const li = document.createElement("li");
+    li.textContent = i;
+    ingList.appendChild(li);
+  });
+
+  const stepList = document.getElementById("modalInstructions");
+  stepList.innerHTML = "";
+  (recipe.instructions || recipe.steps || []).forEach(step => {
+    const li = document.createElement("li");
+    li.textContent = step;
+    stepList.appendChild(li);
+  });
+}
+
+function closeRecipeModal() {
+  const viewer = document.getElementById("recipeModal");
+  viewer.style.display = "none";
+  viewer.setAttribute("aria-hidden","true");
+}
+
+/* Close viewer button + overlay click to close */
+document.getElementById("closeViewerBtn").addEventListener("click", closeRecipeModal);
+document.getElementById("recipeModal").addEventListener("click", (e) => {
+  if (e.target.id === "recipeModal") closeRecipeModal();
+});
+
+/* SEARCH + FILTER */
+if (searchInput) searchInput.addEventListener("input", renderRecipes);
+if (categoryFilter) categoryFilter.addEventListener("change", renderRecipes);
+
+/* INITIAL RENDER */
 renderRecipes();
-
-</script>
