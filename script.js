@@ -155,6 +155,65 @@ document.addEventListener("keydown", (e) => {
     openLoginModal();
   }
 });
+/* --------------------------
+   ADMIN: Add Ingredient Rows
+--------------------------- */
+const ingredientsList = document.getElementById("ingredientsList");
+const instructionsList = document.getElementById("instructionsList");
+const addIngredientBtn = document.getElementById("addIngredientBtn");
+const addInstructionBtn = document.getElementById("addInstructionBtn");
+
+addIngredientBtn.addEventListener("click", () => {
+  const row = document.createElement("div");
+  row.classList.add("admin-row");
+  row.innerHTML = `<input type="text" placeholder="Ingredient">`;
+  ingredientsList.appendChild(row);
+});
+
+addInstructionBtn.addEventListener("click", () => {
+  const row = document.createElement("div");
+  row.classList.add("admin-row");
+  row.innerHTML = `<input type="text" placeholder="Step">`;
+  instructionsList.appendChild(row);
+});
+
+/* --------------------------
+   ADMIN: Save Recipe
+--------------------------- */
+document.getElementById("saveRecipeBtn").addEventListener("click", () => {
+  const title = newTitle.value.trim();
+  const category = newCategory.value;
+  const image = newImage.value.trim();
+  const description = newDesc.value.trim();
+
+  if (!title || !image || !description) {
+    alert("Please fill in title, image, and description.");
+    return;
+  }
+
+  const ingredients = [...ingredientsList.querySelectorAll("input")]
+    .map(input => input.value.trim())
+    .filter(v => v);
+
+  const instructions = [...instructionsList.querySelectorAll("input")]
+    .map(input => input.value.trim())
+    .filter(v => v);
+
+  const newRecipe = {
+    title,
+    category,
+    image,
+    description,
+    ingredients,
+    instructions
+  };
+
+  recipes.push(newRecipe);
+  localStorage.setItem("recipes", JSON.stringify(recipes));
+
+  alert("Recipe added!");
+  location.reload();
+});
 
 /* -------------------------------------------------
    SAVE NEW RECIPE
