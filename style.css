@@ -218,4 +218,57 @@ header h1 {
 }
 .cancel:hover { 
   background: #c7c7c7; 
+
+  /* ✨ Barbie Gradient Header Bar ✨ */
+.barbie-header {
+  width: 100%;
+  padding: 40px 0;
+  text-align: center;
+  background: linear-gradient(135deg, #ff4fbc, #ff82d4 35%, #ffc6ef);
+  position: relative;
+  overflow: visible;
+}
+
+/* Centered Logo Container */
+.barbie-logo {
+  display: inline-block;
+  position: relative;
+}
+
+/* ✨ Barbie Title — ONLY affects the header ✨ */
+.barbie-title {
+  font-family: 'Bartex', cursive !important;
+  font-size: 62px;
+  color: white;
+  margin: 0;
+  letter-spacing: 1px;
+
+  /* Barbie neon glow */
+  text-shadow:
+    0 0 12px #ff42c4,
+    0 0 25px #ff42c4,
+    0 4px 0 #e3009d;
+}
+
+/* Sparkles */
+.sparkle {
+  font-size: 36px;
+  color: white;
+  text-shadow:
+    0 0 10px #ffffff,
+    0 0 16px #ffb4eb;
+  position: absolute;
+  top: 10px;
+}
+
+.sparkle-1 {
+  left: -45px;
+  rotate: -18deg;
+}
+
+.sparkle-2 {
+  right: -45px;
+  rotate: 18deg;
+}
+
 }
