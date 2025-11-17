@@ -70,5 +70,21 @@
   </div>
 
   <script src="script.js"></script>
+<div id="recipeModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeRecipeModal()">✖</button>
+
+    <img id="modalImage" class="modal-image" src="" alt="">
+    <h1 id="modalTitle" class="modal-title"></h1>
+    <div id="modalCategory" class="modal-category"></div>
+
+    <h2>Ingredients</h2>
+    <ul id="modalIngredients" class="modal-ingredients"></ul>
+
+    <h2>Instructions</h2>
+    <ol id="modalInstructions" class="modal-instructions"></ol>
+  </div>
+</div>
+  
 </body>
 </html>
