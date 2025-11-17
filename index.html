@@ -14,20 +14,20 @@
 
   <!-- HEADER -->
   <header class="barbie-header">
-  <h1 class="barbie-text">Marybeth’s<br>Recipe Book</h1>
+    <h1 class="barbie-text">Marybeth’s<br>Recipe Book</h1>
 
-  <div class="sparkles">
-  <span class="star star-1">✦</span>
-  <span class="star star-2">✦</span>
-  <span class="star star-3">✦</span>
-  <span class="star star-4">✦</span>
+    <div class="sparkles">
+      <span class="star star-1">✦</span>
+      <span class="star star-2">✦</span>
+      <span class="star star-3">✦</span>
+      <span class="star star-4">✦</span>
 
-  <span class="dot dot-1">•</span>
-  <span class="dot dot-2">•</span>
-  <span class="dot dot-3">•</span>
-  <span class="dot dot-4">•</span>
-</div>
-</header>
+      <span class="dot dot-1">•</span>
+      <span class="dot dot-2">•</span>
+      <span class="dot dot-3">•</span>
+      <span class="dot dot-4">•</span>
+    </div>
+  </header>
 
   <!-- Controls -->
   <section class="controls">
@@ -45,9 +45,17 @@
   </section>
 
   <!-- Grid -->
-  <section id="recipeGrid" class="grid"></section>
+  <section id="recipeGrid" class="grid">
 
-  <!-- Modal -->
+    <!-- SAMPLE RECIPE CARD (now in correct place) -->
+    <div class="recipe-card" onclick="openRecipeModal(recipes[0])">
+      <img src="https://via.placeholder.com/400x250?text=Pasta" />
+      <h3>Sample Pasta</h3>
+    </div>
+
+  </section>
+
+  <!-- ADD RECIPE MODAL -->
   <div id="modal" class="modal hidden">
     <div class="modal-content">
       <h2>Add New Recipe</h2>
@@ -62,6 +70,7 @@
       </select>
 
       <input id="newImage" type="text" placeholder="Image URL" />
+
       <textarea id="newDesc" placeholder="Recipe description"></textarea>
 
       <button id="saveRecipeBtn" class="save">Save Recipe</button>
@@ -69,26 +78,25 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
-<div id="recipeModal" class="modal-overlay">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeRecipeModal()">✖</button>
+  <!-- RECIPE VIEWER MODAL -->
+  <div id="recipeModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeRecipeModal()">✖</button>
 
-    <img id="modalImage" class="modal-image" src="" alt="">
-    <h1 id="modalTitle" class="modal-title"></h1>
-    <div id="modalCategory" class="modal-category"></div>
+      <img id="modalImage" class="modal-image" src="" alt="">
+      <h1 id="modalTitle" class="modal-title"></h1>
+      <div id="modalCategory" class="modal-category"></div>
 
-    <h2>Ingredients</h2>
-    <ul id="modalIngredients" class="modal-ingredients"></ul>
+      <h2>Ingredients</h2>
+      <ul id="modalIngredients" class="modal-ingredients"></ul>
 
-    <h2>Instructions</h2>
-    <ol id="modalInstructions" class="modal-instructions"></ol>
+      <h2>Instructions</h2>
+      <ol id="modalInstructions" class="modal-instructions"></ol>
+    </div>
   </div>
 
-  <div class="recipe-card" onclick="openRecipeModal(recipes[0])">
-  <img src="https://via.placeholder.com/400x250?text=Pasta">
-  <h3>Sample Pasta</h3>
-</div>
+  <!-- SCRIPT -->
+  <script src="script.js"></script>
   
 </body>
 </html>
