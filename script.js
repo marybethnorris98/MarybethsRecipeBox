@@ -1,6 +1,6 @@
-console.log("clean viewer-only script loaded");
+console.log("secure admin script loaded");
 
-/* DEFAULT RECIPES */
+/* ----- DEFAULT RECIPES ----- */
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
@@ -28,8 +28,13 @@ const defaultRecipes = [
   }
 ];
 
-/* Use default recipes only */
-let recipes = defaultRecipes;
+/* ----- STORED RECIPES ----- */
+let customRecipes = JSON.parse(localStorage.getItem("customRecipes")) || [];
+
+/* Combined recipes for viewing */
+function getAllRecipes() {
+  return [...defaultRecipes, ...customRecipes];
+}
 
 /* DOM */
 const recipeGrid = document.getElementById("recipeGrid");
@@ -38,6 +43,7 @@ const categoryFilter = document.getElementById("categoryFilter");
 
 /* RENDER */
 function renderRecipes() {
+  const recipes = getAllRecipes();
   const searchTerm = (searchInput.value || "").toLowerCase();
   const selectedCategory = categoryFilter ? categoryFilter.value : "all";
 
@@ -97,13 +103,82 @@ function closeRecipeModal() {
   viewer.setAttribute("aria-hidden","true");
 }
 
-/* Close viewer button + overlay click to close */
 document.getElementById("closeViewerBtn").addEventListener("click", closeRecipeModal);
 document.getElementById("recipeModal").addEventListener("click", (e) => {
   if (e.target.id === "recipeModal") closeRecipeModal();
 });
 
-/* SEARCH + FILTER */
+/* ----- 🔐 ADMIN LOGIN SYSTEM ----- */
+
+const passwordHash = "d7d824a2b0a4c32f175f0c7a826f7994a2bd06cdd1eacafc69a63c2cd58b3c77"; // SHA-256 of "pinkrecipes"
+
+async function sha256(str) {
+  const buffer = new TextEncoder().encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  return [...new Uint8Array(hashBuffer)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+const loginModal = document.getElementById("loginModal");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+const adminPassword = document.getElementById("adminPassword");
+
+let adminUnlocked = false;
+
+/* Hold SHIFT + click the header to open login */
+document.querySelector(".barbie-header").addEventListener("click", (e) => {
+  if (e.shiftKey) loginModal.classList.remove("hidden");
+});
+
+loginBtn.onclick = async () => {
+  const entered = adminPassword.value;
+  const hashed = await sha256(entered);
+
+  if (hashed === passwordHash) {
+    adminUnlocked = true;
+    loginModal.classList.add("hidden");
+    addAdminButton();
+  } else {
+    loginError.style.display = "block";
+  }
+};
+
+/* ----- ADD RECIPE MODAL ----- */
+const addRecipeModal = document.getElementById("addRecipeModal");
+const saveRecipeBtn = document.getElementById("saveRecipeBtn");
+
+function addAdminButton() {
+  const btn = document.createElement("button");
+  btn.textContent = "Add Recipe";
+  btn.style = "position:fixed;bottom:20px;right:20px;padding:14px 18px;background:#ff3ebf;color:white;border:none;border-radius:16px;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,0.18);cursor:pointer;z-index:900;";
+  btn.onclick = () => addRecipeModal.classList.remove("hidden");
+  document.body.appendChild(btn);
+}
+
+saveRecipeBtn.onclick = () => {
+  const title = document.getElementById("newTitle").value.trim();
+  const category = document.getElementById("newCategory").value;
+  const image = document.getElementById("newImage").value.trim();
+  const desc = document.getElementById("newDesc").value.trim();
+
+  if (!title || !image || !desc) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  customRecipes.push({
+    title, category, image, description: desc,
+    ingredients: ["No ingredients added"],
+    instructions: ["No instructions added"]
+  });
+
+  localStorage.setItem("customRecipes", JSON.stringify(customRecipes));
+
+  addRecipeModal.classList.add("hidden");
+  renderRecipes();
+};
+
+/* SEARCH / FILTER */
 if (searchInput) searchInput.addEventListener("input", renderRecipes);
 if (categoryFilter) categoryFilter.addEventListener("change", renderRecipes);
 
