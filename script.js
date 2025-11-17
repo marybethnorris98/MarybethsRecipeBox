@@ -44,10 +44,15 @@ const newCategory = document.getElementById("newCategory");
 const newImage = document.getElementById("newImage");
 const newDesc = document.getElementById("newDesc");
 
-// --- ADMIN MODE CHECK ---
+// ----------------------
+// ADMIN MODE CHECK
+// ----------------------
 function checkAdminMode() {
   const urlParams = new URLSearchParams(window.location.search);
-  
+
+  // Always hide the add button at first
+  addRecipeBtn.classList.add("hidden");
+
   if (urlParams.has("admin")) {
     const entered = prompt("Enter admin password:");
     if (entered === "pinkrecipes") {
@@ -58,24 +63,26 @@ function checkAdminMode() {
 }
 checkAdminMode();
 
-// --- RENDER RECIPES ---
+// ----------------------
+// RENDER RECIPE CARDS
+// ----------------------
 function renderRecipes() {
   const searchTerm = searchInput.value.toLowerCase();
   const selectedCategory = categoryFilter.value;
 
-  const filtered = recipes.filter(recipe => {
+  const filtered = recipes.filter(r => {
     const matchesSearch =
-      recipe.title.toLowerCase().includes(searchTerm) ||
-      recipe.description.toLowerCase().includes(searchTerm);
+      r.title.toLowerCase().includes(searchTerm) ||
+      r.description.toLowerCase().includes(searchTerm);
 
     const matchesCategory =
-      selectedCategory === "all" || recipe.category === selectedCategory;
+      selectedCategory === "all" || r.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
 
   recipeGrid.innerHTML = filtered.map(recipe => `
-    <div class="card">
+    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
       <img src="${recipe.image}" alt="${recipe.title}">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
@@ -86,11 +93,33 @@ function renderRecipes() {
   `).join("");
 }
 
-// --- OPEN / CLOSE ADD RECIPE MODAL ---
-addRecipeBtn.onclick = () => modal.classList.remove("hidden");
-closeModalBtn.onclick = () => modal.classList.add("hidden");
+// ----------------------
+// OPEN RECIPE MODAL
+// ----------------------
+function openRecipeModal(recipe) {
+  document.getElementById("recipeModal").style.display = "flex";
 
-// --- SAVE NEW RECIPE ---
+  document.getElementById("modalTitle").textContent = recipe.title;
+  document.getElementById("modalImage").src = recipe.image;
+  document.getElementById("modalCategory").textContent = recipe.category;
+
+  // Ingredients & instructions not used yet:
+  document.getElementById("modalIngredients").innerHTML = `
+    <li>${recipe.description}</li>
+  `;
+
+  document.getElementById("modalInstructions").innerHTML = `
+    <li>Full instructions coming soon...</li>
+  `;
+}
+
+function closeRecipeModal() {
+  document.getElementById("recipeModal").style.display = "none";
+}
+
+// ----------------------
+// ADD NEW RECIPE
+// ----------------------
 saveRecipeBtn.onclick = () => {
   const titleVal = newTitle.value.trim();
   const categoryVal = newCategory.value;
@@ -112,7 +141,6 @@ saveRecipeBtn.onclick = () => {
   recipes.push(newRecipe);
   localStorage.setItem("recipes", JSON.stringify(recipes));
 
-  // Reset form
   newTitle.value = "";
   newImage.value = "";
   newDesc.value = "";
@@ -121,10 +149,15 @@ saveRecipeBtn.onclick = () => {
   renderRecipes();
 };
 
-// --- SEARCH + FILTER EVENTS ---
+// ----------------------
+// EVENTS
+// ----------------------
 searchInput.addEventListener("input", renderRecipes);
 categoryFilter.addEventListener("change", renderRecipes);
 
-// --- INITIAL RENDER ---
+// ----------------------
+// INITIAL LOAD
+// ----------------------
 renderRecipes();
+
 </script>
