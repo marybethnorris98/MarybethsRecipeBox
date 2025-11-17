@@ -1,44 +1,48 @@
+/* IMPORT FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap');
+
 /* PAGE BASE */
 body {
   margin: 0;
   font-family: Poppins, sans-serif;
-  background: #ff4eb5;
+
+  /* EXACT SOFT BARBIE GRADIENT */
+  background: linear-gradient(180deg, #ff5ec4 0%, #ff3fa3 100%);
   color: #333;
 }
 
-/* HEADER — EXACT LIKE THE IMAGE */
+/* HEADER — PERFECT MATCH */
 .luxe-header {
   text-align: center;
-  padding: 60px 20px 10px;
-  background: #ff48b4;
+  padding: 60px 20px 0;
 }
 
-/* MAIN TITLE */
 .barbie-title {
-  font-family: "Pacifico", cursive !important;
-  font-size: 5rem;
+  font-family: "Pacifico", cursive;
+  font-size: 5.4rem;
   margin: 0;
   color: #ffffff;
 
-  /* PERFECT MATCH DROP SHADOW */
+  /* LAYERED SHADOW — IDENTICAL TO IMAGE */
   text-shadow:
-    0px 6px 0px #d83388,
-    0px 12px 22px rgba(0, 0, 0, 0.25);
+      0px 2px 0px #ffffff,             /* bright rim highlight */
+      0px 8px 0px #d8368a,             /* pink hard shadow */
+      0px 14px 20px rgba(0,0,0,0.22);  /* soft ambient shadow */
 }
 
-/* SPARKLES */
+/* SPARKLES — BIGGER + GLOW LIKE IMAGE */
 .sparkles {
-  margin-top: 25px;
+  margin-top: 40px;
 }
 
 .sparkles span {
+  font-size: 2.6rem;
   color: #ffffff;
-  font-size: 2.2rem;
-  margin: 0 12px;
-
+  margin: 0 18px;
   text-shadow:
-    0px 0px 6px #ffffff,
-    0px 0px 14px #ffffffaa;
+    0px 0px 6px #fff,
+    0px 0px 14px #ffffffa0,
+    0px 0px 20px #ffffff70;
 }
 
 /* CONTROLS */
@@ -69,6 +73,7 @@ body {
 .modal.hidden {
   display: none;
 }
+
 .modal {
   position: fixed;
   inset: 0;
@@ -77,6 +82,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .modal-content {
   background: #fff;
   padding: 20px;
