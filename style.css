@@ -350,6 +350,30 @@ body {
   margin-bottom: 8px;
   line-height: 1.5;
 }
+.recipe-card {
+  width: 240px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-4px);
+}
+
+.recipe-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.recipe-card h3 {
+  padding: 12px;
+  font-size: 1.1rem;
+}
 
    
 }
