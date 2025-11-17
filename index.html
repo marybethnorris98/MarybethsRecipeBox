@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Recipe Book</title>
 
   <!-- Google Fonts -->
@@ -16,7 +16,7 @@
   <header class="barbie-header">
     <h1 class="barbie-text">Marybeth’s<br>Recipe Book</h1>
 
-    <div class="sparkles">
+    <div class="sparkles" aria-hidden="true">
       <span class="star star-1">✦</span>
       <span class="star star-2">✦</span>
       <span class="star star-3">✦</span>
@@ -32,7 +32,6 @@
   <!-- Controls -->
   <section class="controls">
     <input id="searchInput" type="text" placeholder="Search recipes..." />
-
     <select id="categoryFilter">
       <option value="all">All Categories</option>
       <option value="breakfast">Breakfast</option>
@@ -40,48 +39,38 @@
       <option value="dinner">Dinner</option>
       <option value="dessert">Dessert</option>
     </select>
-
     <button id="addRecipeBtn">+ Add Recipe</button>
   </section>
 
-  <!-- Grid -->
-  <section id="recipeGrid" class="grid">
+  <!-- Grid: cards will be injected here -->
+  <section id="recipeGrid" class="grid"></section>
 
-    <!-- SAMPLE RECIPE CARD (now in correct place) -->
-    <div class="recipe-card" onclick="openRecipeModal(recipes[0])">
-      <img src="https://via.placeholder.com/400x250?text=Pasta" />
-      <h3>Sample Pasta</h3>
-    </div>
-
-  </section>
-
-  <!-- ADD RECIPE MODAL -->
-  <div id="modal" class="modal hidden">
+  <!-- ADD RECIPE MODAL (admin modal) -->
+  <div id="modal" class="modal hidden" aria-hidden="true">
     <div class="modal-content">
       <h2>Add New Recipe</h2>
 
       <input id="newTitle" type="text" placeholder="Recipe title" />
-
       <select id="newCategory">
         <option value="breakfast">Breakfast</option>
         <option value="lunch">Lunch</option>
         <option value="dinner">Dinner</option>
         <option value="dessert">Dessert</option>
       </select>
-
       <input id="newImage" type="text" placeholder="Image URL" />
-
       <textarea id="newDesc" placeholder="Recipe description"></textarea>
 
-      <button id="saveRecipeBtn" class="save">Save Recipe</button>
-      <button id="closeModalBtn" class="cancel">Cancel</button>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:12px">
+        <button id="saveRecipeBtn" class="save">Save Recipe</button>
+        <button id="closeModalBtn" class="cancel">Cancel</button>
+      </div>
     </div>
   </div>
 
   <!-- RECIPE VIEWER MODAL -->
-  <div id="recipeModal" class="modal-overlay">
+  <div id="recipeModal" class="modal-overlay" style="display:none" aria-hidden="true">
     <div class="modal-content">
-      <button class="close-btn" onclick="closeRecipeModal()">✖</button>
+      <button class="close-btn" id="closeViewerBtn">✖</button>
 
       <img id="modalImage" class="modal-image" src="" alt="">
       <h1 id="modalTitle" class="modal-title"></h1>
@@ -97,6 +86,5 @@
 
   <!-- SCRIPT -->
   <script src="script.js"></script>
-  
 </body>
 </html>
