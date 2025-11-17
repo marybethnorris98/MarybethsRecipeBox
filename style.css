@@ -1,126 +1,172 @@
-/* GLOBAL */
-* { box-sizing: border-box; }
+/* GLOBAL ------------------------------------------------------ */
+* { 
+  box-sizing: border-box; 
+}
 
 body {
   margin: 0;
   font-family: "Poppins", Arial, sans-serif;
   background: #FFF7FC;
   color: #2A2A2A;
+  line-height: 1.4;
 }
 
-/* HEADER */
+/* HEADER ------------------------------------------------------ */
 header {
-  background: #FF0AB4;
-  padding: 28px;
+  background: linear-gradient(135deg, #FF0AB4, #FF6BCF);
+  padding: 34px 20px;
   text-align: center;
   color: white;
   border-bottom: 4px solid #FFD7E8;
-  box-shadow: 0 4px 18px rgba(255, 10, 180, 0.35);
+  box-shadow: 0 6px 26px rgba(255, 10, 180, 0.35);
 }
 
 header h1 {
   font-family: "Parisienne", cursive !important;
-  font-size: 62px;
+  font-size: 66px;
   font-weight: 400;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 1.4px;
+  text-shadow: 0 3px 10px rgba(255, 90, 190, 0.3);
 }
 
-/* CONTROLS */
+/* CONTROLS ------------------------------------------------------ */
 .controls {
   display: flex;
-  gap: 14px;
-  padding: 20px;
+  gap: 16px;
+  padding: 24px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .controls input,
 .controls select {
-  padding: 12px;
+  padding: 14px 16px;
   font-size: 16px;
-  background: #FFF7FC;
+  background: #ffffff;
   border: 2px solid #FFD7E8;
-  border-radius: 10px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(255, 140, 200, 0.15);
+  transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ADD BUTTON */
+.controls input:focus,
+.controls select:focus {
+  border-color: #FF0AB4;
+  box-shadow: 0 3px 10px rgba(255, 70, 180, 0.25);
+}
+
+/* ADD BUTTON ------------------------------------------------------ */
 #addRecipeBtn {
-  padding: 12px 20px;
+  padding: 14px 26px;
   background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
+  font-size: 15px;
   font-weight: 600;
+  letter-spacing: 0.3px;
   transition: 0.25s ease;
-  box-shadow: 0 4px 12px rgba(255, 10, 180, 0.3);
-}
-#addRecipeBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(255, 10, 180, 0.45);
+  box-shadow: 0 4px 14px rgba(255, 10, 180, 0.3);
 }
 
-/* GRID */
+#addRecipeBtn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.45);
+}
+
+/* GRID ------------------------------------------------------ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
-  padding: 24px;
+  gap: 26px;
+  padding: 28px;
 }
 
-/* CARD */
+/* CARD ------------------------------------------------------ */
 .card {
   background: #FFF9FD;
   border: 2px solid #FFD7E8;
-  border-radius: 18px;
+  border-radius: 22px;
+
+  /* spacing */
+  padding: 18px;
+  margin: 6px;
+
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(255, 180, 220, 0.25);
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 120, 180, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(255, 10, 180, 0.32);
+}
+
+/* Card Image */
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+
+/* Card Inner */
+.card-content {
+  padding: 4px 2px;
+}
+
+/* Card Title */
 .card-title {
   font-family: "Playfair Display", serif;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 600;
   color: #FF0AB4;
   margin-bottom: 8px;
+  letter-spacing: 0.3px;
 }
 
+/* Category */
 .card-category {
+  font-size: 14px;
   color: #D986A8;
   font-weight: 600;
+  text-transform: capitalize;
   margin-bottom: 10px;
 }
 
+/* Description */
 .card-desc {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  color: #3b3b3b;
+  line-height: 1.55;
+  opacity: 0.9;
 }
 
-/* MODAL */
+/* MODAL ------------------------------------------------------ */
 .modal {
   position: fixed;
-  top:0; left:0;
-  width: 100%; height:100%;
+  inset: 0;
   background: rgba(0,0,0,0.45);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.hidden { display: none; }
+.hidden { 
+  display: none; 
+}
 
 .modal-content {
   background: #FFF9FD;
-  padding: 26px;
-  border-radius: 20px;
+  padding: 28px;
+  border-radius: 22px;
   width: 90%;
-  max-width: 420px;
+  max-width: 440px;
   border: 2px solid #FFD7E8;
-  box-shadow: 0 6px 20px rgba(255, 150, 200, 0.25);
+  box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -129,30 +175,47 @@ header h1 {
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
-  padding: 12px;
-  background: #FFF7FC;
+  padding: 14px;
+  background: white;
   border: 2px solid #FFD7E8;
-  border-radius: 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 5px rgba(255, 150, 200, 0.15);
 }
 
-/* MODAL BUTTONS */
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: #FF0AB4;
+  box-shadow: 0 3px 12px rgba(255, 10, 180, 0.3);
+}
+
+/* MODAL BUTTONS ------------------------------------------------------ */
 .save {
   background: #FF0AB4;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.25s;
+  box-shadow: 0 3px 10px rgba(255, 10, 180, 0.25);
 }
-.save:hover { background: #d70094; }
+.save:hover { 
+  background: #d70094; 
+  transform: translateY(-2px);
+}
 
 .cancel {
-  background: #ccc;
+  background: #e0e0e0;
   border: none;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
   cursor: pointer;
+  transition: 0.2s ease;
 }
-.cancel:hover { background: #bbb; }
+.cancel:hover { 
+  background: #c7c7c7; 
+}
