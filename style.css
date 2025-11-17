@@ -1,10 +1,5 @@
-/* ============================================================
-   GLOBAL
-============================================================ */
-* {
-  box-sizing: border-box;
-}
-
+/* GLOBAL */
+* { box-sizing: border-box; }
 body {
   margin: 0;
   font-family: "Poppins", Arial, sans-serif;
@@ -13,20 +8,7 @@ body {
   line-height: 1.4;
 }
 
-/* GLOBAL ------------------------------------------------------ */
-* { 
-  box-sizing: border-box; 
-}
-
-body {
-  margin: 0;
-  font-family: "Poppins", Arial, sans-serif;
-  background: #FFF7FC;
-  color: #2A2A2A;
-  line-height: 1.4;
-}
-
-/* ⭐ BARBIE HEADER (paste here!) ⭐ */
+/* BARBIE HEADER */
 .barbie-header {
   width: 100%;
   padding: 80px 0 100px;
@@ -35,62 +17,34 @@ body {
   position: relative;
   overflow: visible;
 }
-
 .barbie-text {
-  font-family: 'Pacifico', cursive !important;
-  font-size: 110px;
+  font-family: 'Pacifico', cursive;
+  font-size: 88px;
   font-weight: 400;
   line-height: 1.0;
   color: white;
   margin: 0;
   text-shadow: 7px 8px 0 #e91a8c;
 }
+.sparkles { position: relative; width: 100%; height: 0; }
 
-/* ✨ Sparkle Container */
-.sparkles {
-  position: relative;
-  width: 100%;
-  height: 0;
+/* Sparkle positions */
+.star { position: absolute; font-size: 42px; color: white; opacity: 0.95;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 14px rgba(255,255,255,0.9), 0 0 22px rgba(255,255,255,0.85);
 }
-
-/* ✨ STAR SPARKLES — matches image */
-.star {
-  position: relative;
-  font-size: 42px;
-  color: white;
-  opacity: 0.95;
-
-  text-shadow:
-    0 0 8px rgba(255,255,255,0.9),
-    0 0 14px rgba(255,255,255,0.9),
-    0 0 22px rgba(255,255,255,0.85);
-}
-
-/* Exact sparkle positions from your picture */
 .star-1 { top: -240px; left: 14%; transform: rotate(-5deg); }
 .star-2 { top: -260px; right: 20%; transform: rotate(8deg); }
 .star-3 { top: -125px; left: 28%; transform: rotate(6deg); }
 .star-4 { top: -10px; right: 25%; transform: rotate(-8deg); }
-
-/* ✦ Small dot sparkles */
-.dot {
-  position: absolute;
-  font-size: 18px;
-  color: white;
-  opacity: 0.9;
-  text-shadow: 
-    0 0 6px rgba(255,255,255,0.8),
-    0 0 10px rgba(255,255,255,0.6);
+.dot { position: absolute; font-size: 18px; color: white; opacity: 0.9;
+  text-shadow: 0 0 6px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.6);
 }
-
-/* Dot positions (random like image) */
 .dot-1 { top: -400px; left: 50%; }
 .dot-2 { top: -250px; right: 40%; }
 .dot-3 { top: 45px; left: 46%; }
 .dot-4 { top: -100px; right: 43%; }
 
-/* (your existing card/grid/modal styles stay below this!) */
-
+/* CONTROLS */
 .controls {
   display: flex;
   gap: 16px;
@@ -98,25 +52,15 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
-
-.controls input,
-.controls select {
+.controls input, .controls select {
   padding: 14px 16px;
   font-size: 16px;
-  background: #ffffff;
+  background: #fff;
   border: 2px solid #FFD7E8;
   border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(255, 140, 200, 0.15);
-  transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-.controls input:focus,
-.controls select:focus {
-  border-color: #FF0AB4;
-  box-shadow: 0 3px 10px rgba(255, 70, 180, 0.25);
-}
-
-/* ADD RECIPE BUTTON */
+/* ADD BUTTON */
 #addRecipeBtn {
   padding: 14px 26px;
   background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
@@ -124,21 +68,9 @@ body {
   border: none;
   border-radius: 16px;
   cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  transition: 0.25s ease;
-  box-shadow: 0 4px 14px rgba(255, 10, 180, 0.3);
 }
 
-#addRecipeBtn:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(255, 10, 180, 0.45);
-}
-
-/* ============================================================
-   GRID
-============================================================ */
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -146,140 +78,32 @@ body {
   padding: 28px;
 }
 
-/* ============================================================
-   CARDS (RESTORED EXACTLY TO YOUR VERSION)
-============================================================ */
+/* CARD */
 .card {
   background: #FFF9FD;
   border: 2px solid #FFD7E8;
   border-radius: 22px;
   padding: 18px;
-  margin: 6px;
   overflow: hidden;
-
   box-shadow: 0 4px 12px rgba(255, 120, 180, 0.22);
+  cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(255, 10, 180, 0.32); }
+.card img { width: 100%; height: 180px; object-fit: cover; border-radius: 16px; margin-bottom: 14px; }
+.card-title { font-family: "Playfair Display", serif; font-size: 24px; font-weight: 600; color: #FF0AB4; margin-bottom: 8px; }
+.card-category { font-size: 14px; color: #D986A8; font-weight: 600; text-transform: capitalize; margin-bottom: 10px; }
+.card-desc { font-size: 15px; color: #3b3b3b; line-height: 1.55; opacity: 0.9; }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 30px rgba(255, 10, 180, 0.32);
-}
+/* ADD-RECIPE MODAL (admin) */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; justify-content: center; align-items: center; z-index: 1000; }
+.modal .modal-content { background: #FFF9FD; padding: 28px; border-radius: 22px; width: 90%; max-width: 440px; border: 2px solid #FFD7E8; box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28); }
 
-.card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 14px;
-}
-
-.card-content {
-  padding: 4px 2px;
-}
-
-.card-title {
-  font-family: "Playfair Display", serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #FF0AB4;
-  margin-bottom: 8px;
-}
-
-.card-category {
-  font-size: 14px;
-  color: #D986A8;
-  font-weight: 600;
-  text-transform: capitalize;
-  margin-bottom: 10px;
-}
-
-.card-desc {
-  font-size: 15px;
-  color: #3b3b3b;
-  line-height: 1.55;
-  opacity: 0.9;
-}
-
-/* ============================================================
-   MODAL
-============================================================ */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.hidden {
-  display: none;
-}
-
-.modal-content {
-  background: #FFF9FD;
-  padding: 28px;
-  border-radius: 22px;
-  width: 90%;
-  max-width: 440px;
-  border: 2px solid #FFD7E8;
-  box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  padding: 14px;
-  background: white;
-  border: 2px solid #FFD7E8;
-  border-radius: 14px;
-  font-size: 15px;
-  transition: 0.2s ease;
-  box-shadow: 0 2px 5px rgba(255, 150, 200, 0.15);
-}
-
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus {
-  border-color: #FF0AB4;
-  box-shadow: 0 3px 12px rgba(255, 10, 180, 0.3);
-}
-
-/* MODAL BUTTONS */
-.save {
-  background: #FF0AB4;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.25s;
-}
-.save:hover {
-  background: #d70094;
-  transform: translateY(-2px);
-}
-
-.cancel {
-  background: #e0e0e0;
-  border: none;
-  padding: 14px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-.cancel:hover {
-  background: #c7c7c7;
-/* MODAL OVERLAY */
+/* RECIPE VIEWER OVERLAY (style A) */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 230, 245, 0.6); /* soft pink tint */
+  background: rgba(255, 230, 245, 0.6);
   backdrop-filter: blur(10px);
   display: none;
   justify-content: center;
@@ -287,9 +111,7 @@ body {
   padding: 20px;
   z-index: 999;
 }
-
-/* MODAL CONTENT */
-.modal-content {
+.modal-overlay .modal-content {
   background: white;
   width: 95%;
   max-width: 700px;
@@ -298,82 +120,12 @@ body {
   border-radius: 24px;
   padding: 24px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  animation: fadeInUp 0.25s ease;
 }
+.close-btn { border: none; background: none; font-size: 24px; cursor: pointer; position: absolute; right: 32px; top: 24px; }
+.modal-image { width: 100%; border-radius: 18px; margin-bottom: 20px; }
+.modal-title { font-family: "Parisienne", cursive; font-size: 42px; margin: 0; text-align: center; }
+.modal-category { display: inline-block; background: #ffd8f2; padding: 6px 16px; border-radius: 20px; margin: 10px auto 20px auto; color: #a50065; font-weight: 600; text-align: center; }
+.modal-ingredients li, .modal-instructions li { margin-bottom: 8px; line-height: 1.5; }
 
-/* Animation */
-@keyframes fadeInUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-
-/* Close Button */
-.close-btn {
-  border: none;
-  background: none;
-  font-size: 24px;
-  cursor: pointer;
-  position: absolute;
-  right: 32px;
-  top: 24px;
-}
-
-/* Image */
-.modal-image {
-  width: 100%;
-  border-radius: 18px;
-  margin-bottom: 20px;
-}
-
-/* Typography */
-.modal-title {
-  font-family: "Parisienne", cursive;
-  font-size: 42px;
-  margin: 0;
-  text-align: center;
-}
-
-.modal-category {
-  display: inline-block;
-  background: #ffd8f2;
-  padding: 6px 16px;
-  border-radius: 20px;
-  margin: 10px auto 20px auto;
-  color: #a50065;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Lists */
-.modal-ingredients li,
-.modal-instructions li {
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-.recipe-card {
-  width: 240px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.recipe-card:hover {
-  transform: translateY(-4px);
-}
-
-.recipe-card img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.recipe-card h3 {
-  padding: 12px;
-  font-size: 1.1rem;
-}
-
-   
-}
+/* UTIL */
+.hidden { display: none; }
