@@ -1,34 +1,52 @@
-// --- LOAD RECIPES (localStorage OR defaults) ---
+/* -------------------------------------------
+   DEFAULT RECIPES
+------------------------------------------- */
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
     category: "breakfast",
     image: "images/pancakes.jpg",
-    description: "Fluffy homemade pancakes loaded with fresh blueberries."
+    description: "Fluffy homemade pancakes loaded with fresh blueberries.",
+    ingredients: [
+      "1 cup flour",
+      "1 cup blueberries",
+      "1 egg",
+      "1 tbsp sugar",
+      "1 cup milk"
+    ],
+    instructions: [
+      "Mix dry ingredients.",
+      "Add egg & milk.",
+      "Fold in blueberries.",
+      "Cook on skillet until golden."
+    ]
   },
   {
     title: "Chicken Caesar Salad",
     category: "lunch",
     image: "images/salad.jpg",
-    description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing."
-  },
-  {
-    title: "Spaghetti Bolognese",
-    category: "dinner",
-    image: "images/spaghetti.jpg",
-    description: "Rich tomato-meat sauce served over al dente pasta."
-  },
-  {
-    title: "Chocolate Cake",
-    category: "dessert",
-    image: "images/cake.jpg",
-    description: "Moist chocolate layers with smooth chocolate frosting."
+    description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
+    ingredients: [
+      "Romaine lettuce",
+      "Grilled chicken",
+      "Parmesan",
+      "Croutons",
+      "Caesar dressing"
+    ],
+    instructions: [
+      "Chop lettuce.",
+      "Slice chicken.",
+      "Toss with dressing.",
+      "Top with cheese & croutons."
+    ]
   }
 ];
 
 let recipes = JSON.parse(localStorage.getItem("recipes")) || defaultRecipes;
 
-// --- DOM ELEMENTS ---
+/* -------------------------------------------
+   DOM ELEMENTS
+------------------------------------------- */
 const recipeGrid = document.getElementById("recipeGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
@@ -43,8 +61,9 @@ const newCategory = document.getElementById("newCategory");
 const newImage = document.getElementById("newImage");
 const newDesc = document.getElementById("newDesc");
 
-
-// --- RENDER RECIPES ---
+/* -------------------------------------------
+   RENDER RECIPE GRID
+------------------------------------------- */
 function renderRecipes() {
   const searchTerm = searchInput.value.toLowerCase();
   const selectedCategory = categoryFilter.value;
@@ -60,25 +79,27 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => `
-    <div class="card">
+  recipeGrid.innerHTML = filtered
+    .map(
+      recipe => `
+    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
       <img src="${recipe.image}" alt="${recipe.title}">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
         <div class="card-desc">${recipe.description}</div>
       </div>
-    </div>
-  `).join("");
+    </div>`
+    )
+    .join("");
 }
 
-
-// --- OPEN / CLOSE MODAL ---
+/* -------------------------------------------
+   ADD NEW RECIPE MODAL
+------------------------------------------- */
 addRecipeBtn.onclick = () => modal.classList.remove("hidden");
 closeModalBtn.onclick = () => modal.classList.add("hidden");
 
-
-// --- SAVE NEW RECIPE ---
 saveRecipeBtn.onclick = () => {
   const titleVal = newTitle.value.trim();
   const categoryVal = newCategory.value;
@@ -94,13 +115,14 @@ saveRecipeBtn.onclick = () => {
     title: titleVal,
     category: categoryVal,
     image: imageVal,
-    description: descVal
+    description: descVal,
+    ingredients: ["No ingredients added"],
+    instructions: ["No instructions added"]
   };
 
   recipes.push(newRecipe);
   localStorage.setItem("recipes", JSON.stringify(recipes));
 
-  // Clear form
   newTitle.value = "";
   newImage.value = "";
   newDesc.value = "";
@@ -108,38 +130,14 @@ saveRecipeBtn.onclick = () => {
   modal.classList.add("hidden");
   renderRecipes();
 };
-const recipes = [
-  {
-    title: "Sample Pasta",
-    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
-    ingredients: [
-      "2 cups pasta",
-      "1 tbsp olive oil",
-      "Salt",
-      "Parmesan cheese"
-    ],
-    steps: [
-      "Boil pasta until tender.",
-      "Drain and toss with olive oil.",
-      "Season with salt.",
-      "Top with parmesan and serve."
-    ]
-  }
-];
 
-// --- SEARCH + FILTER EVENTS ---
-searchInput.addEventListener("input", renderRecipes);
-categoryFilter.addEventListener("change", renderRecipes);
-
-
-// --- INITIAL RENDER ---
-renderRecipes();
-
-<script>
+/* -------------------------------------------
+   VIEW RECIPE MODAL
+------------------------------------------- */
 function openRecipeModal(recipe) {
-  document.getElementById("recipeModal").style.display = "flex";
+  const viewer = document.getElementById("recipeModal");
+  viewer.style.display = "flex";
 
-  // Fill content
   document.getElementById("modalTitle").textContent = recipe.title;
   document.getElementById("modalImage").src = recipe.image;
   document.getElementById("modalCategory").textContent = recipe.category;
@@ -147,8 +145,8 @@ function openRecipeModal(recipe) {
   // Ingredients
   const ingList = document.getElementById("modalIngredients");
   ingList.innerHTML = "";
-  recipe.ingredients.forEach(i => {
-    let li = document.createElement("li");
+  (recipe.ingredients || []).forEach(i => {
+    const li = document.createElement("li");
     li.textContent = i;
     ingList.appendChild(li);
   });
@@ -156,8 +154,8 @@ function openRecipeModal(recipe) {
   // Instructions
   const stepList = document.getElementById("modalInstructions");
   stepList.innerHTML = "";
-  recipe.instructions.forEach(step => {
-    let li = document.createElement("li");
+  (recipe.instructions || []).forEach(step => {
+    const li = document.createElement("li");
     li.textContent = step;
     stepList.appendChild(li);
   });
@@ -166,16 +164,14 @@ function openRecipeModal(recipe) {
 function closeRecipeModal() {
   document.getElementById("recipeModal").style.display = "none";
 }
-</script>
 
-recipes.forEach(recipe => {
-  container.innerHTML += `
-    <div class="recipe-card">
-      <img src="${recipe.image}">
-      <h3>${recipe.title}</h3>
-    </div>
-  `;
-});
+/* -------------------------------------------
+   SEARCH + FILTER LISTENERS
+------------------------------------------- */
+searchInput.addEventListener("input", renderRecipes);
+categoryFilter.addEventListener("change", renderRecipes);
 
-}
-
+/* -------------------------------------------
+   INITIAL RENDER
+------------------------------------------- */
+renderRecipes();
