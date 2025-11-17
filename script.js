@@ -151,3 +151,14 @@ function closeRecipeModal() {
 }
 </script>
 
+recipes.forEach(recipe => {
+  container.innerHTML += `
+    <div class="recipe-card">
+      <img src="${recipe.image}">
+      <h3>${recipe.title}</h3>
+    </div>
+  `;
+});
+
+}
+
