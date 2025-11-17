@@ -269,6 +269,42 @@ header h1 {
 .sparkle-2 {
   right: -45px;
   rotate: 18deg;
+
+  /* LUXE HEADER */
+.luxe-header {
+  background: #FF0AB4;
+  padding: 45px 20px;
+  text-align: center;
+  position: relative;
+  border-bottom: 4px solid #FFD7E8;
+  box-shadow: 0 4px 18px rgba(255, 10, 180, 0.35);
+}
+
+/* MAIN TITLE */
+.luxe-header h1 {
+  font-family: "Sacramento", cursive;
+  font-size: 90px;
+  margin: 0;
+  color: white;
+  text-shadow:
+      0px 4px 8px rgba(0,0,0,0.25),
+      0px 0px 2px rgba(255, 255, 255, 0.7);
+  letter-spacing: 2px;
+}
+
+/* GOLD SPARKLES */
+.sparkles {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.sparkles span {
+  font-size: 28px;
+  color: #FFD677;     /* brighter gold */
+  filter: drop-shadow(0px 0px 4px #ffefb0);
 }
 
 }
+
