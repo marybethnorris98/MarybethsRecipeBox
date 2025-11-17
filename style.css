@@ -132,3 +132,49 @@ body {
 
 /* UTIL */
 .hidden { display: none; }
+
+.admin-input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 2px solid #FFD7E8;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.small-add-btn {
+  background: #ff3ebf;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.save-btn {
+  background: #ff3ebf;
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  font-size: 18px;
+  border-radius: 12px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.admin-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.admin-row input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #FFC3E4;
+}
+
