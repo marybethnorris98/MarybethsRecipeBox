@@ -60,16 +60,6 @@ body {
   border-radius: 14px;
 }
 
-/* ADD BUTTON */
-#addRecipeBtn {
-  padding: 14px 26px;
-  background: linear-gradient(135deg, #FF0AB4, #FFD7E8);
-  color: white;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-}
-
 /* GRID */
 .grid {
   display: grid;
