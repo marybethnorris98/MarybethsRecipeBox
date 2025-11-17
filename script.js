@@ -216,25 +216,6 @@ document.getElementById("saveRecipeBtn").addEventListener("click", () => {
 });
 
 /* -------------------------------------------------
-   SAVE NEW RECIPE
-------------------------------------------------- */
-document.getElementById("saveRecipeBtn").addEventListener("click", () => {
-  const newRecipe = {
-    title: document.getElementById("newTitle").value,
-    category: document.getElementById("newCategory").value,
-    image: document.getElementById("newImage").value,
-    description: document.getElementById("newDesc").value,
-    ingredients: ["(No ingredients yet — we will add full editor later)"],
-    instructions: ["(No instructions yet — full editor coming next)"]
-  };
-
-  recipes.push(newRecipe);
-  renderRecipes();
-  alert("Recipe added!");
-  document.getElementById("addRecipeModal").classList.add("hidden");
-});
-
-/* -------------------------------------------------
    INITIAL RENDER
 ------------------------------------------------- */
 renderRecipes();
