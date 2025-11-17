@@ -1,4 +1,4 @@
-console.log("script.js loaded");
+console.log("clean viewer-only script loaded");
 
 /* DEFAULT RECIPES */
 const defaultRecipes = [
@@ -28,22 +28,13 @@ const defaultRecipes = [
   }
 ];
 
-let recipes = JSON.parse(localStorage.getItem("recipes")) || defaultRecipes;
+/* Use default recipes only */
+let recipes = defaultRecipes;
 
 /* DOM */
 const recipeGrid = document.getElementById("recipeGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
-
-const modal = document.getElementById("modal");
-const addRecipeBtn = document.getElementById("addRecipeBtn");
-const closeModalBtn = document.getElementById("closeModalBtn");
-const saveRecipeBtn = document.getElementById("saveRecipeBtn");
-
-const newTitle = document.getElementById("newTitle");
-const newCategory = document.getElementById("newCategory");
-const newImage = document.getElementById("newImage");
-const newDesc = document.getElementById("newDesc");
 
 /* RENDER */
 function renderRecipes() {
@@ -54,7 +45,10 @@ function renderRecipes() {
     const matchesSearch =
       (recipe.title || "").toLowerCase().includes(searchTerm) ||
       (recipe.description || "").toLowerCase().includes(searchTerm);
-    const matchesCategory = selectedCategory === "all" || recipe.category === selectedCategory;
+
+    const matchesCategory =
+      selectedCategory === "all" || recipe.category === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -69,36 +63,6 @@ function renderRecipes() {
     </div>
   `).join("");
 }
-
-/* ADD-RECIPE MODAL */
-addRecipeBtn.onclick = () => modal.classList.remove("hidden");
-closeModalBtn.onclick = () => modal.classList.add("hidden");
-
-saveRecipeBtn.onclick = () => {
-  const titleVal = newTitle.value.trim();
-  const categoryVal = newCategory.value;
-  const imageVal = newImage.value.trim();
-  const descVal = newDesc.value.trim();
-
-  if (!titleVal || !imageVal || !descVal) {
-    alert("Please fill in all fields.");
-    return;
-  }
-  const newRecipe = {
-    title: titleVal,
-    category: categoryVal,
-    image: imageVal,
-    description: descVal,
-    ingredients: ["No ingredients added"],
-    instructions: ["No instructions added"]
-  };
-  recipes.push(newRecipe);
-  localStorage.setItem("recipes", JSON.stringify(recipes));
-
-  newTitle.value = ""; newImage.value = ""; newDesc.value = "";
-  modal.classList.add("hidden");
-  renderRecipes();
-};
 
 /* VIEWER */
 function openRecipeModal(recipe) {
@@ -120,7 +84,7 @@ function openRecipeModal(recipe) {
 
   const stepList = document.getElementById("modalInstructions");
   stepList.innerHTML = "";
-  (recipe.instructions || recipe.steps || []).forEach(step => {
+  (recipe.instructions || []).forEach(step => {
     const li = document.createElement("li");
     li.textContent = step;
     stepList.appendChild(li);
