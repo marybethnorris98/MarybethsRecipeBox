@@ -108,7 +108,24 @@ saveRecipeBtn.onclick = () => {
   modal.classList.add("hidden");
   renderRecipes();
 };
-
+const recipes = [
+  {
+    title: "Sample Pasta",
+    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
+    ingredients: [
+      "2 cups pasta",
+      "1 tbsp olive oil",
+      "Salt",
+      "Parmesan cheese"
+    ],
+    steps: [
+      "Boil pasta until tender.",
+      "Drain and toss with olive oil.",
+      "Season with salt.",
+      "Top with parmesan and serve."
+    ]
+  }
+];
 
 // --- SEARCH + FILTER EVENTS ---
 searchInput.addEventListener("input", renderRecipes);
