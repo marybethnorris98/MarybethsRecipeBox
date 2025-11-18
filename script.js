@@ -177,11 +177,10 @@ function renderRecipes() {
   return matchesSearch && matchesCategory && isVisible;
    
   });
-
- recipeGrid.innerHTML = filtered.map(recipe => `
+recipeGrid.innerHTML = filtered.map(recipe => `
   <div class="card">
 
-    <!-- IMAGE + TEXT (CLICKABLE FOR VIEWING) -->
+    <!-- Main card body (opens viewer) -->
     <div class="card-main" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
       <img src="${recipe.image || ''}" alt="${recipe.title}"
         onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22><rect width=%22200%22 height=%22120%22 fill=%22%23ffeef8%22/><text x=%2210%22 y=%2268%22 font-size=%2214%22 fill=%22%23d04f8a%22>no+image</text></svg>'">
@@ -193,15 +192,17 @@ function renderRecipes() {
       </div>
     </div>
 
-    <!-- 🔐 ADMIN BUTTONS (Only appear after login) -->
+    <!-- Admin button row -->
     <div class="admin-buttons ${isAdmin ? "" : "hidden"}">
-      <button class="edit-btn" onclick='editRecipe("${recipe.id}")'>Edit</button>
-      <button class="delete-btn" onclick='deleteRecipe("${recipe.id}")'>Delete</button>
-      <button class="hide-btn" onclick='moveToDrafts("${recipe.id}")'>Move to Drafts</button>
+      <button class="edit-btn" onclick='event.stopPropagation(); editRecipe("${recipe.id}")'>Edit</button>
+      <button class="delete-btn" onclick='event.stopPropagation(); deleteRecipe("${recipe.id}")'>Delete</button>
+      <button class="hide-btn" onclick='event.stopPropagation(); moveToDrafts("${recipe.id}")'>Move to Drafts</button>
     </div>
 
   </div>
 `).join("");
+
+
 
 }
 
