@@ -174,16 +174,31 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => `
-    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${recipe.image || ''}" alt="${recipe.title}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22><rect width=%22200%22 height=%22120%22 fill=%22%23ffeef8%22/><text x=%2210%22 y=%2268%22 font-size=%2214%22 fill=%22%23d04f8a%22>no+image</text></svg>'">
+ recipeGrid.innerHTML = filtered.map(recipe => `
+  <div class="card">
+
+    <!-- IMAGE + TEXT (CLICKABLE FOR VIEWING) -->
+    <div class="card-main" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
+      <img src="${recipe.image || ''}" alt="${recipe.title}"
+        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22><rect width=%22200%22 height=%22120%22 fill=%22%23ffeef8%22/><text x=%2210%22 y=%2268%22 font-size=%2214%22 fill=%22%23d04f8a%22>no+image</text></svg>'">
+
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
         <div class="card-desc">${recipe.description}</div>
       </div>
     </div>
-  `).join("");
+
+    <!-- 🔐 ADMIN BUTTONS (Only appear after login) -->
+    <div class="admin-buttons ${isAdmin ? "" : "hidden"}">
+      <button class="edit-btn" onclick='editRecipe("${recipe.id}")'>Edit</button>
+      <button class="delete-btn" onclick='deleteRecipe("${recipe.id}")'>Delete</button>
+      <button class="hide-btn" onclick='moveToDrafts("${recipe.id}")'>Move to Drafts</button>
+    </div>
+
+  </div>
+`).join("");
+
 }
 
 // -----------------------------
