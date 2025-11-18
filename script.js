@@ -171,7 +171,11 @@ function renderRecipes() {
     const matchesCategory =
       selectedCategory === "all" || recipe.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+      // 👇 NEW — hide drafts unless admin
+  const isVisible = !recipe.draft || isAdmin;
+
+  return matchesSearch && matchesCategory && isVisible;
+   
   });
 
  recipeGrid.innerHTML = filtered.map(recipe => `
@@ -662,3 +666,47 @@ ensureAddModalControls(); // prepare UI in case admin logs in immediately
 
 // If admin already unlocked earlier (unlikely in single session), inject UI
 if (isAdmin) injectAdminUI();
+function editRecipe(id) {
+  const recipe = recipes.find(r => r.id === id);
+  if (!recipe) return;
+
+  // Show modal
+  document.getElementById("addRecipeModal").classList.remove("hidden");
+
+  // Fill fields
+  document.getElementById("newTitle").value = recipe.title;
+  document.getElementById("newCategory").value = recipe.category;
+  document.getElementById("newImage").value = recipe.image;
+  document.getElementById("newDesc").value = recipe.description;
+
+  // Fill Ingredients
+  const ingList = document.getElementById("ingredientsList");
+  ingList.innerHTML = "";
+  recipe.ingredients.forEach(ing => {
+    const item = document.createElement("input");
+    item.className = "dynamic-input";
+    item.value = ing;
+    ingList.appendChild(item);
+  });
+
+  // Fill Instructions
+  const instrList = document.getElementById("instructionsList");
+  instrList.innerHTML = "";
+  recipe.instructions.forEach(step => {
+    const item = document.createElement("input");
+    item.className = "dynamic-input";
+    item.value = step;
+    instrList.appendChild(item);
+  });
+
+  // Save ID so we know we're editing, not creating new
+  window.editingId = id;
+}
+function moveToDrafts(id) {
+  const recipe = recipes.find(r => r.id === id);
+  if (!recipe) return;
+
+  recipe.draft = true; // mark as hidden
+  localStorage.setItem("recipes", JSON.stringify(recipes));
+  loadRecipes();
+}
