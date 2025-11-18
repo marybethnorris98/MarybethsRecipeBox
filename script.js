@@ -270,11 +270,16 @@ loginBtn.addEventListener("click", () => {
   }
 });
 
-// keyboard secret: CTRL+ALT+A
+// KEYBOARD SHORTCUTS (Ctrl+Shift+A or Cmd+Shift+A)
 document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "a") {
-    openLoginModal();
+  const usingCtrl = e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a";
+  const usingCmd  = e.metaKey && e.shiftKey && e.key.toLowerCase() === "a"; // Mac support
+
+  if (usingCtrl || usingCmd) {
+    openAdminLogin();  // <-- replace with your real admin login function
   }
+});
+
 });
 
 // -----------------------------
