@@ -194,4 +194,25 @@ body {
   border-radius: 10px;
   border: 1px solid #FFC3E4;
 }
+.admin-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.admin-buttons.hidden {
+  display: none;
+}
+
+.admin-buttons button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.edit-btn { background: #ffd1f0; }
+.delete-btn { background: #ff6b9a; color: white; }
+.hide-btn { background: #cfa7ff; color: white; }
 
