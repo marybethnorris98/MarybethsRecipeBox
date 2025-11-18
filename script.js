@@ -432,13 +432,17 @@ addInstructionBtn.addEventListener("click", () => {
 // -----------------------------
 // SAVE RECIPE
 // -----------------------------
+// SAVE RECIPE (CREATE or EDIT)
+// -----------------------------
 saveRecipeBtn.addEventListener("click", () => {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
   const description = (newDesc.value || "").trim();
 
-  // image preference: uploaded base64 first, then fallback input value, then empty
-  let image = uploadedImageBase64 || (newImageInputFallback ? newImageInputFallback.value.trim() : "");
+  // use uploaded base64 first, fallback URL second
+  let image =
+    uploadedImageBase64 ||
+    (newImageInputFallback ? newImageInputFallback.value.trim() : "");
 
   if (!title || !image || !description) {
     alert("Please fill in title, image (upload or provide URL) and description.");
@@ -446,35 +450,68 @@ saveRecipeBtn.addEventListener("click", () => {
   }
 
   const ingredients = [...ingredientsList.querySelectorAll("input")]
-    .map(i => i.value.trim()).filter(Boolean);
+    .map(i => i.value.trim())
+    .filter(Boolean);
 
   const instructions = [...instructionsList.querySelectorAll("input")]
-    .map(i => i.value.trim()).filter(Boolean);
+    .map(i => i.value.trim())
+    .filter(Boolean);
 
-  const newRecipe = {
-    title,
-    category,
-    image,
-    description,
-    ingredients,
-    instructions
-  };
+  // 🔥 IF EDITING an existing recipe
+  if (window.editingId) {
+    const recipe = recipes.find(r => r.id === window.editingId);
 
-  recipes.push(newRecipe);
-  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+    if (recipe) {
+      recipe.title = title;
+      recipe.category = category;
+      recipe.image = image;
+      recipe.description = description;
+      recipe.ingredients = ingredients;
+      recipe.instructions = instructions;
+    }
 
-  // if converting a draft, remove it
+    window.editingId = null; // exit edit mode
+  }
+
+  // ➕ OTHERWISE CREATE NEW RECIPE
+  else {
+    const newRecipe = {
+      id: Date.now().toString(),
+      title,
+      category,
+      image,
+      description,
+      ingredients,
+      instructions,
+      draft: false
+    };
+
+    recipes.push(newRecipe);
+  }
+
+  // If this was a draft being converted, remove it
   if (editingDraftId) {
     drafts = drafts.filter(d => d.id !== editingDraftId);
     localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
     editingDraftId = null;
   }
 
+  // Save all recipes
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+
   alert("Recipe saved!");
+
+  // Clear + close modal
   clearAddModal();
   addRecipeModal.classList.add("hidden");
+
+  // Reload UI
   renderRecipes();
+
+  // Reset uploaded image
+  uploadedImageBase64 = null;
 });
+
 
 // -----------------------------
 // DRAFTS: create, save, list, delete
