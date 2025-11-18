@@ -130,6 +130,23 @@ body {
 .modal-category { display: inline-block; background: #ffd8f2; padding: 6px 16px; border-radius: 20px; margin: 10px auto 20px auto; color: #a50065; font-weight: 600; text-align: center; }
 .modal-ingredients li, .modal-instructions li { margin-bottom: 8px; line-height: 1.5; }
 
+#addRecipeModal .modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+/* optional cute scrollbar */
+#addRecipeModal .modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+#addRecipeModal .modal-content::-webkit-scrollbar-thumb {
+  background: #ff3ebf;
+  border-radius: 6px;
+}
+
+
 /* UTIL */
 .hidden { display: none; }
 
