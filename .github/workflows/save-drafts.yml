@@ -1,0 +1,27 @@
+name: Save Drafts to JSON
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "drafts.json"
+
+jobs:
+  update-drafts:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Commit updated drafts.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add drafts.json
+          git commit -m "Update drafts.json from site" || echo "No changes"
+          git push
