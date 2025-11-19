@@ -1,6 +1,8 @@
 // FULL admin + viewer script loaded (GitHub draft sync merged)
 console.log("FULL admin + viewer script loaded");
 
+const placeholderImage = "https://via.placeholder.com/800x500?text=Recipe+Image";
+
 /* -------------------------------------------------
    DEFAULT RECIPES
 ------------------------------------------------- */
@@ -8,7 +10,7 @@ const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
     category: "breakfast",
-    image: "images/pancakes.jpg",
+    image: placeholderImage,
     description: "Fluffy homemade pancakes loaded with fresh blueberries.",
     ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
     instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."]
@@ -16,7 +18,7 @@ const defaultRecipes = [
   {
     title: "Chicken Caesar Salad",
     category: "lunch",
-    image: "images/salad.jpg",
+    image: placeholderImage,
     description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
     ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
     instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."]
@@ -24,7 +26,7 @@ const defaultRecipes = [
   {
     title: "Sample Pasta",
     category: "dinner",
-    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
+    image: placeholderImage,
     description: "A quick sample pasta for testing the modal.",
     ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
     instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."]
@@ -176,8 +178,11 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => `
+  recipeGrid.innerHTML = filtered.map(recipe => 
+  const imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : placeholderImage;
+  return 
     <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
+
       <img src="${recipe.image}" alt="${recipe.title}">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
@@ -437,6 +442,7 @@ saveRecipeBtn.addEventListener("click", async () => {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
   const image = (newImage.value || "").trim();
+  if (!image || image.trim() === "") image = placeholderImage;
   const description = (newDesc.value || "").trim();
 
   if (!title || !image || !description) {
