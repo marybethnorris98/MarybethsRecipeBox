@@ -41,6 +41,36 @@ const DRAFTS_KEY = "drafts_recipes";
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
 let drafts = []; // now loaded from GitHub on init
 
+async function loadDraftsFromGitHub() {
+  try {
+    const response = await fetch("drafts.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("Network error loading drafts.json");
+
+    const remoteDrafts = await response.json();
+
+    if (Array.isArray(remoteDrafts)) {
+      drafts = remoteDrafts;
+      localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+      console.log("Drafts loaded from GitHub:", drafts);
+    }
+  } catch (err) {
+    console.warn("Could not load drafts.json from GitHub:", err);
+  }
+}
+async function saveDraftsToGitHub() {
+  try {
+    await fetch("drafts.json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(drafts, null, 2)
+    });
+
+    console.log("Drafts saved to GitHub (waiting for action to commit).");
+  } catch (err) {
+    console.error("Error saving drafts to GitHub:", err);
+  }
+}
+
 /* -------------------------------------------------
    GITHUB DRAFTS: load & trigger save via GitHub Actions
    - loadDraftsFromGitHub()  -> fetches raw drafts.json
@@ -375,6 +405,9 @@ function ensureAddModalControls() {
     saveDraftBtn.style = "background:#ffb6dd;color:#6a003a;padding:10px;border-radius:12px;border:none;margin-top:12px;cursor:pointer;width:100%;";
     saveDraftBtn.addEventListener("click", () => {
       saveDraftFromModal();
+
+       saveDraftsToGitHub();
+
     });
 
     // insert before the Save Recipe button (if present)
@@ -439,6 +472,9 @@ saveRecipeBtn.addEventListener("click", async () => {
   clearAddModal();
   addRecipeModal.classList.add("hidden");
   renderRecipes();
+
+  loadDraftsFromGitHub();
+ 
 });
 
 /* -------------------------------------------------
