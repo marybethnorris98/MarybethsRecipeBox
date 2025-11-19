@@ -90,7 +90,7 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45);
-  display: flex;            /* ← Allow modal to show */
+  display: flex;            /* â† Allow modal to show */
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -98,7 +98,7 @@ body {
 
 /* Hidden state */
 .hidden {
-  display: none !important;  /* ← NOW hidden works */
+  display: none !important;  /* â† NOW hidden works */
 }
 .modal .modal-content { background: #FFF9FD; padding: 28px; border-radius: 22px; width: 90%; max-width: 440px; border: 2px solid #FFD7E8; box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28); }
 
