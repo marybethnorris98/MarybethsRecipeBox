@@ -654,3 +654,5 @@ addRecipeModal.addEventListener("click", (e) => {
   // if admin already authenticated (unlikely)
   if (isAdmin) injectAdminUI();
 })();
+
+}
