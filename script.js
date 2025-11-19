@@ -1,7 +1,7 @@
 // FULL admin + viewer script loaded (GitHub draft sync merged)
 console.log("FULL admin + viewer script loaded");
 
-const placeholderImage = "https://via.placeholder.com/800x500?text=Recipe+Image";
+
 
 /* -------------------------------------------------
    DEFAULT RECIPES
@@ -178,19 +178,20 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => 
+ recipeGrid.innerHTML = filtered.map(recipe => {
   const imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : placeholderImage;
-  return 
+  return `
     <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-
-      <img src="${recipe.image}" alt="${recipe.title}">
+      <img src="${imgSrc}" alt="${recipe.title}">
       <div class="card-content">
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
         <div class="card-desc">${recipe.description}</div>
       </div>
     </div>
-  `).join("");
+  `;
+}).join("");
+
 }
 
 /* -------------------------------------------------
