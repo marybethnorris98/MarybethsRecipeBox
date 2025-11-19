@@ -1,8 +1,6 @@
 // FULL admin + viewer script loaded (GitHub draft sync merged)
 console.log("FULL admin + viewer script loaded");
-
-
-
+const placeholderImage = "https://via.placeholder.com/800x500?text=Recipe+Image";
 /* -------------------------------------------------
    DEFAULT RECIPES
 ------------------------------------------------- */
