@@ -93,6 +93,7 @@ async function loadDraftsFromGitHub() {
 
 async function triggerGitHubDraftSave(draftsObj) {
   // this triggers the workflow you created (save-drafts.yml)
+   const GITHUB_TOKEN = "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";
   const workflowURL = "https://api.github.com/repos/marybethnorris98/RecipeBook/actions/workflows/save-drafts.yml/dispatches";
 
   try {
@@ -101,6 +102,7 @@ async function triggerGitHubDraftSave(draftsObj) {
       headers: {
         "Accept": "application/vnd.github+json",
         "Content-Type": "application/json",
+         "Authorization": `Bearer ${GITHUB_TOKEN}`
       },
       body: JSON.stringify({
         ref: "main",
