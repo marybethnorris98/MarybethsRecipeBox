@@ -163,7 +163,7 @@ loginBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.altKey && e.key.toLowerCase() === "a") {
+  if ((e.metaKey || e.ctrlKey) && e.altKey && e.key.toLowerCase() === "m") {
     console.log("Detected! Firing openLoginModal()");
     openLoginModal();
   }
