@@ -177,7 +177,12 @@ function renderRecipes() {
   });
 
  recipeGrid.innerHTML = filtered.map(recipe => {
-  const imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : placeholderImage;
+  let imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : placeholderImage;
+
+// Fix broken placeholder without domain
+if (imgSrc.startsWith("800x") || imgSrc.startsWith("300x") || imgSrc === "800x500?text=Recipe+Image") {
+  imgSrc = placeholderImage;
+}
   return `
     <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
       <img src="${imgSrc}" alt="${recipe.title}">
@@ -438,8 +443,14 @@ addInstructionBtn.addEventListener("click", () => {
 saveRecipeBtn.addEventListener("click", async () => {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
-  const image = (newImage.value || "").trim();
-  if (!image || image.trim() === "") image = placeholderImage;
+ let image = (newImage.value || "").trim();
+if (!image || image.trim() === "") image = placeholderImage;
+
+// Fix bad URLs like "800x500?text=Recipe+Image"
+if (image.startsWith("800x") || image === "800x500?text=Recipe+Image") {
+  image = placeholderImage;
+}
+
   const description = (newDesc.value || "").trim();
 
   if (!title || !image || !description) {
@@ -646,9 +657,14 @@ addRecipeModal.addEventListener("click", (e) => {
 ------------------------------------------------- */
 (async function init() {
   drafts = await loadDraftsFromGitHub();
+   drafts = drafts.map(d => ({
+  ...d,
+  image: (!d.image || d.image.startsWith("800x")) ? placeholderImage : d.image
+}));
   console.log("Loaded drafts from GitHub:", drafts);
   renderRecipes();
 
   // if admin already authenticated (unlikely)
   if (isAdmin) injectAdminUI();
+
 })();
