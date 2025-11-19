@@ -163,12 +163,24 @@ loginBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.altKey && e.key.toLowerCase() === "m") {
-    console.log("Detected! Firing openLoginModal()");
+  const key = e.key?.toLowerCase();
+
+  const mac = navigator.userAgent.includes("Mac");
+  const cmd = e.metaKey;
+  const ctrl = e.ctrlKey;
+  const shift = e.shiftKey;
+
+  // Mac: Command + Shift + M
+  // Windows: Ctrl + Shift + M
+  const shouldOpen =
+    (mac && cmd && shift && key === "m") ||
+    (!mac && ctrl && shift && key === "m");
+
+  if (shouldOpen) {
+    console.log("Shortcut matched → openLoginModal()");
     openLoginModal();
   }
-});
- 
+}); 
 /* -------------------------------------------------
    ADMIN UI: inject Add + Drafts buttons (bottom-right)
    These are only created after isAdmin === true
