@@ -1,3 +1,4 @@
+// FULL admin + viewer script loaded (GitHub draft sync merged)
 console.log("FULL admin + viewer script loaded");
 
 /* -------------------------------------------------
@@ -31,13 +32,70 @@ const defaultRecipes = [
 ];
 
 /* -------------------------------------------------
-   STORAGE KEYS + LOAD
+   STORAGE KEYS + LOAD (recipes still in localStorage)
 ------------------------------------------------- */
 const RECIPES_KEY = "recipes";
+// keep key constant for possible backward-compat, but drafts not read from localStorage anymore
 const DRAFTS_KEY = "drafts_recipes";
 
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
-let drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY)) || [];
+let drafts = []; // now loaded from GitHub on init
+
+/* -------------------------------------------------
+   GITHUB DRAFTS: load & trigger save via GitHub Actions
+   - loadDraftsFromGitHub()  -> fetches raw drafts.json
+   - triggerGitHubDraftSave() -> dispatches your workflow which commits drafts.json
+------------------------------------------------- */
+async function loadDraftsFromGitHub() {
+  const url = "https://raw.githubusercontent.com/marybethnorris98/RecipeBook/main/drafts.json";
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      // no drafts file yet or network issue
+      return [];
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn("Failed to load drafts from GitHub:", err);
+    return [];
+  }
+}
+
+async function triggerGitHubDraftSave(draftsObj) {
+  // this triggers the workflow you created (save-drafts.yml)
+  const workflowURL = "https://api.github.com/repos/marybethnorris98/RecipeBook/actions/workflows/save-drafts.yml/dispatches";
+
+  try {
+    const resp = await fetch(workflowURL, {
+      method: "POST",
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ref: "main",
+        inputs: {
+          drafts: JSON.stringify(draftsObj, null, 2)
+        }
+      })
+    });
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      console.error("GitHub action dispatch failed:", txt);
+      alert("❌ Could not save drafts to GitHub (see console).");
+      return false;
+    }
+
+    // success: action dispatched; the workflow will commit drafts.json shortly
+    console.log("GitHub Action dispatched to save drafts.");
+    return true;
+  } catch (err) {
+    console.error("Error dispatching GitHub Action:", err);
+    alert("❌ Error saving drafts (see console).");
+    return false;
+  }
+}
 
 /* -------------------------------------------------
    DOM ELEMENTS
@@ -181,6 +239,7 @@ document.addEventListener("keydown", (e) => {
     openLoginModal();
   }
 }); 
+
 /* -------------------------------------------------
    ADMIN UI: inject Add + Drafts buttons (bottom-right)
    These are only created after isAdmin === true
@@ -339,7 +398,7 @@ addInstructionBtn.addEventListener("click", () => {
 /* -------------------------------------------------
    SAVE RECIPE (final)
 ------------------------------------------------- */
-saveRecipeBtn.addEventListener("click", () => {
+saveRecipeBtn.addEventListener("click", async () => {
   const title = (newTitle.value || "").trim();
   const category = newCategory.value || "breakfast";
   const image = (newImage.value || "").trim();
@@ -371,7 +430,8 @@ saveRecipeBtn.addEventListener("click", () => {
   // if we were editing a draft, remove it (user converted draft to recipe)
   if (editingDraftId) {
     drafts = drafts.filter(d => d.id !== editingDraftId);
-    localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+    // persist updated drafts to GitHub
+    await triggerGitHubDraftSave(drafts);
     editingDraftId = null;
   }
 
@@ -406,7 +466,7 @@ function buildDraftFromModal() {
   };
 }
 
-function saveDraftFromModal() {
+async function saveDraftFromModal() {
   const draft = buildDraftFromModal();
 
   // if editing an existing draft, replace it
@@ -417,11 +477,13 @@ function saveDraftFromModal() {
     drafts.push(draft);
   }
 
-  // persist and notify
+  // sort
   drafts.sort((a,b) => (a.title || "").localeCompare(b.title || ""));
-  localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
-  alert("Draft saved.");
-  // remain in modal so user can continue editing
+
+  // persist to GitHub (replaces localStorage behavior)
+  alert("Saving draft to GitHub...");
+  const ok = await triggerGitHubDraftSave(drafts);
+  if (ok) alert("Draft saved.");
   editingDraftId = draft.id;
 }
 
@@ -489,10 +551,11 @@ function openDraftsModal() {
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
       deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
-      deleteBtn.addEventListener("click", () => {
+      deleteBtn.addEventListener("click", async () => {
         if (!confirm(`Delete draft "${d.title}"?`)) return;
         drafts = drafts.filter(x => x.id !== d.id);
-        localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+        // save updated drafts to GitHub
+        await triggerGitHubDraftSave(drafts);
         openDraftsModal(); // refresh
       });
 
@@ -538,8 +601,13 @@ addRecipeModal.addEventListener("click", (e) => {
 
 /* -------------------------------------------------
    INITIAL RENDER
+   -> load drafts from GitHub first, then render
 ------------------------------------------------- */
-renderRecipes();
+(async function init() {
+  drafts = await loadDraftsFromGitHub();
+  console.log("Loaded drafts from GitHub:", drafts);
+  renderRecipes();
 
-/* Make sure to inject admin UI if already authenticated (unlikely) */
-if (isAdmin) injectAdminUI();
+  // if admin already authenticated (unlikely)
+  if (isAdmin) injectAdminUI();
+})();
