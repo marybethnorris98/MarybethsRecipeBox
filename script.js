@@ -163,17 +163,12 @@ loginBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  const isMac = navigator.platform.toUpperCase().includes("MAC");
-
-  const correctCombo =
-    (isMac && e.metaKey && e.altKey) ||
-    (!isMac && e.ctrlKey && e.altKey);
-
-  if (correctCombo && e.key.toLowerCase() === "a") {
+  if ((e.metaKey || e.ctrlKey) && e.altKey && e.key.toLowerCase() === "a") {
+    console.log("Detected! Firing openLoginModal()");
     openLoginModal();
   }
 });
-
+ 
 /* -------------------------------------------------
    ADMIN UI: inject Add + Drafts buttons (bottom-right)
    These are only created after isAdmin === true
