@@ -86,17 +86,82 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => `
-    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${recipe.image}" alt="${recipe.title}">
-      <div class="card-content">
-        <div class="card-title">${recipe.title}</div>
-        <div class="card-category">${recipe.category}</div>
-        <div class="card-desc">${recipe.description}</div>
-        card.querySelector(".edit-btn").addEventListener("click", () => editRecipe(index));
-      </div>
-    </div>
-  `).join("");
+  // Clear the grid
+  recipeGrid.innerHTML = "";
+
+  filtered.forEach((recipe, index) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    // Make clicking image/content open viewer modal
+    card.addEventListener("click", () => openRecipeModal(recipe));
+
+    const img = document.createElement("img");
+    img.src = recipe.image;
+    img.alt = recipe.title;
+
+    const content = document.createElement("div");
+    content.classList.add("card-content");
+
+    const title = document.createElement("div");
+    title.classList.add("card-title");
+    title.textContent = recipe.title;
+
+    const category = document.createElement("div");
+    category.classList.add("card-category");
+    category.textContent = recipe.category;
+
+    const desc = document.createElement("div");
+    desc.classList.add("card-desc");
+    desc.textContent = recipe.description;
+
+    content.appendChild(title);
+    content.appendChild(category);
+    content.appendChild(desc);
+
+    // Only show admin buttons if logged in
+    if (isAdmin) {
+      const btnContainer = document.createElement("div");
+      btnContainer.classList.add("card-buttons");
+
+      const editBtn = document.createElement("button");
+      editBtn.classList.add("edit-btn");
+      editBtn.textContent = "Edit";
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent opening viewer modal
+        editRecipe(index);
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!confirm(`Delete recipe "${recipe.title}"?`)) return;
+        recipes.splice(index, 1);
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        renderRecipes();
+      });
+
+      const hideBtn = document.createElement("button");
+      hideBtn.classList.add("hide-btn");
+      hideBtn.textContent = "Hide";
+      hideBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        card.style.display = "none"; // temporary hide
+      });
+
+      btnContainer.appendChild(editBtn);
+      btnContainer.appendChild(deleteBtn);
+      btnContainer.appendChild(hideBtn);
+
+      content.appendChild(btnContainer);
+    }
+
+    card.appendChild(img);
+    card.appendChild(content);
+    recipeGrid.appendChild(card);
+  });
 }
 
 /* -------------------------------------------------
