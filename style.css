@@ -215,3 +215,32 @@ body {
 .edit-btn { background: #ffd1f0; }
 .delete-btn { background: #ff6b9a; color: white; }
 .hide-btn { background: #cfa7ff; color: white; }
+
+.admin-card-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-card-controls button {
+  background: #ff3ebf;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-card-controls button.secondary {
+  background: #ffd6ee;
+  color: #a00064;
+}
+
+.admin-card-controls button.danger {
+  background: #d80050;
+}
+
