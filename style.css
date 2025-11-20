@@ -226,6 +226,7 @@ body {
   border-radius: 8px;               /* rounded corners */
   cursor: pointer;
   transition: background 0.2s;      /* smooth hover effect */
+  margin-top: 15px;
 }
 
 .modal-btn:hover {
