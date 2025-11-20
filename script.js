@@ -155,6 +155,22 @@ function openRecipeModal(recipe) {
     li.textContent = step;
     stepList.appendChild(li);
   });
+
+  // --- Edit Button Logic ---
+  const modalEditBtn = document.getElementById("modalEditBtn");
+
+  if (isAdmin) {
+    modalEditBtn.style.display = "inline-block"; // show button
+    editingRecipeIndex = recipes.indexOf(recipe); // store index
+
+    modalEditBtn.onclick = () => {
+      populateAddModalFromDraft(recipe); // pre-fill modal
+      addRecipeModal.classList.remove("hidden"); // show Add Recipe modal
+      viewer.style.display = "none"; // hide viewer modal
+    };
+  } else {
+    modalEditBtn.style.display = "none"; // hide for non-admin
+  }
 }
 
 document.getElementById("closeViewerBtn").addEventListener("click", () => {
@@ -395,7 +411,14 @@ saveRecipeBtn.addEventListener("click", () => {
     instructions
   };
 
+  if (editingRecipeIndex !== null) {
+  // update the existing recipe
+  recipes[editingRecipeIndex] = newRecipe;
+} else {
+  // add a new recipe
   recipes.push(newRecipe);
+}
+  editingRecipeIndex = null; 
   localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
 
   // if we were editing a draft, remove it (user converted draft to recipe)
