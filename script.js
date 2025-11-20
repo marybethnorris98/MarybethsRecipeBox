@@ -79,21 +79,18 @@ function renderRecipes() {
     const matchesSearch =
       (recipe.title || "").toLowerCase().includes(searchTerm) ||
       (recipe.description || "").toLowerCase().includes(searchTerm);
-
     const matchesCategory =
       selectedCategory === "all" || recipe.category === selectedCategory;
-
     return matchesSearch && matchesCategory;
   });
 
-  // Clear the grid
-  recipeGrid.innerHTML = "";
+  recipeGrid.innerHTML = ""; // clear grid
 
   filtered.forEach((recipe, index) => {
     const card = document.createElement("div");
     card.classList.add("card");
 
-    // Make clicking image/content open viewer modal
+    // Clicking the card opens the viewer modal
     card.addEventListener("click", () => openRecipeModal(recipe));
 
     const img = document.createElement("img");
@@ -119,7 +116,7 @@ function renderRecipes() {
     content.appendChild(category);
     content.appendChild(desc);
 
-    // Only show admin buttons if logged in
+    // Add admin buttons if logged in
     if (isAdmin) {
       const btnContainer = document.createElement("div");
       btnContainer.classList.add("card-buttons");
@@ -128,7 +125,7 @@ function renderRecipes() {
       editBtn.classList.add("edit-btn");
       editBtn.textContent = "Edit";
       editBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // prevent opening viewer modal
+        e.stopPropagation(); // prevent modal opening
         editRecipe(index);
       });
 
@@ -154,7 +151,6 @@ function renderRecipes() {
       btnContainer.appendChild(editBtn);
       btnContainer.appendChild(deleteBtn);
       btnContainer.appendChild(hideBtn);
-
       content.appendChild(btnContainer);
     }
 
