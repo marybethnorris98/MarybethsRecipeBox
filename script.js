@@ -39,6 +39,7 @@ const RECIPES_KEY = "recipes";
 const DRAFTS_KEY = "drafts_recipes";
 
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
+recipes = recipes.map(r => ({ hidden: false, ...r }));
 let drafts = []; // now loaded from GitHub on init
 
 async function loadDraftsFromGitHub() {
@@ -166,6 +167,7 @@ function renderRecipes() {
   const selectedCategory = categoryFilter ? categoryFilter.value : "all";
 
   const filtered = recipes.filter(recipe => {
+     if (!isAdmin && recipe.hidden) return false;
     const matchesSearch =
       (recipe.title || "").toLowerCase().includes(searchTerm) ||
       (recipe.description || "").toLowerCase().includes(searchTerm);
@@ -176,25 +178,29 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
- recipeGrid.innerHTML = filtered.map(recipe => {
-  let imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : placeholderImage;
+ recipeGrid.innerHTML = filtered.map((recipe, index) => `
+  <div class="card">
 
-// Fix broken placeholder without domain
-if (imgSrc.startsWith("800x") || imgSrc.startsWith("300x") || imgSrc === "800x500?text=Recipe+Image") {
-  imgSrc = placeholderImage;
-}
-  return `
-    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${imgSrc}" alt="${recipe.title}">
-      <div class="card-content">
-        <div class="card-title">${recipe.title}</div>
-        <div class="card-category">${recipe.category}</div>
-        <div class="card-desc">${recipe.description}</div>
-      </div>
+    <img src="${recipe.image}" alt="${recipe.title}">
+
+    <div class="card-content" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
+      <div class="card-title">${recipe.title}</div>
+      <div class="card-category">${recipe.category}</div>
+      <div class="card-desc">${recipe.description}</div>
     </div>
-  `;
-}).join("");
-}
+
+    ${isAdmin ? `
+      <div class="admin-card-controls">
+        <button onclick="editRecipe(${index}); event.stopPropagation();">Edit</button>
+        <button onclick="deleteRecipe(${index}); event.stopPropagation();" class="danger">Delete</button>
+        <button onclick="toggleHide(${index}); event.stopPropagation();" class="secondary">
+          ${recipe.hidden ? "Unhide" : "Hide"}
+        </button>
+      </div>
+    ` : ""}
+
+  </div>
+`).join("");
 /* -------------------------------------------------
    VIEWER
 ------------------------------------------------- */
