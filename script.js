@@ -228,12 +228,54 @@ function openRecipeModal(recipe) {
     li.textContent = step;
     stepList.appendChild(li);
   });
+
+  /* -------------------------------------------------
+     ADMIN CONTROLS (Edit, Delete, Hide)
+  ------------------------------------------------- */
+  const adminControls = document.getElementById("adminViewControls");
+  const editBtn = document.getElementById("adminEditBtn");
+  const deleteBtn = document.getElementById("adminDeleteBtn");
+  const hideBtn = document.getElementById("adminHideBtn");
+
+  // find recipe index
+  const index = recipes.findIndex(r =>
+    r.title === recipe.title &&
+    r.description === recipe.description
+  );
+
+  if (isAdmin && index >= 0) {
+    adminControls.classList.remove("hidden");
+
+    // EDIT --------------------------------------------------
+    editBtn.onclick = () => {
+      editingRecipeIndex = index;
+      populateAddModalFromDraft(recipe);
+      addRecipeModal.classList.remove("hidden");
+      document.getElementById("recipeModal").style.display = "none";
+    };
+
+    // DELETE ------------------------------------------------
+    deleteBtn.onclick = () => {
+      if (!confirm("Delete this recipe permanently?")) return;
+      recipes.splice(index, 1);
+      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+      document.getElementById("recipeModal").style.display = "none";
+      renderRecipes();
+    };
+
+    // HIDE / UNHIDE -----------------------------------------
+    hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
+    hideBtn.onclick = () => {
+      recipes[index].hidden = !recipes[index].hidden;
+      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+      hideBtn.textContent = recipes[index].hidden ? "Unhide" : "Hide";
+      renderRecipes();
+    };
+
+  } else {
+    adminControls.classList.add("hidden");
+  }
 }
-
-document.getElementById("closeViewerBtn").addEventListener("click", () => {
-  document.getElementById("recipeModal").style.display = "none";
-});
-
 /* -------------------------------------------------
    SEARCH + FILTER
 ------------------------------------------------- */
