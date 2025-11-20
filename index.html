@@ -43,52 +43,6 @@
 
   <!-- Grid -->
   <section id="recipeGrid" class="grid"></section>
-  const recipeGrid = document.getElementById("recipeGrid");
-
-// Example recipe array
-let recipes = [
-  {
-    title: "Blueberry Pancakes",
-    category: "breakfast",
-    image: "images/pancakes.jpg",
-    description: "Fluffy homemade pancakes",
-    ingredients: ["1 cup flour", "1 egg", "1 cup milk"],
-    instructions: ["Mix ingredients", "Cook on skillet"]
-  }
-];
-
-// Function to render recipes
-function renderRecipes() {
-  recipeGrid.innerHTML = ""; // clear grid
-
-  recipes.forEach((recipe, index) => {
-    const card = document.createElement("div");
-    card.classList.add("recipe-card");
-
-    card.innerHTML = `
-      <img src="${recipe.image}" alt="${recipe.title}">
-      <h3>${recipe.title}</h3>
-      <p>${recipe.description}</p>
-
-      <div class="card-buttons">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-        <button class="hide-btn">Hide</button>
-      </div>
-    `;
-
-    recipeGrid.appendChild(card);
-
-    // Add button functionality (we’ll expand later)
-    card.querySelector(".edit-btn").addEventListener("click", () => editRecipe(index));
-    card.querySelector(".delete-btn").addEventListener("click", () => deleteRecipe(index));
-    card.querySelector(".hide-btn").addEventListener("click", () => hideRecipe(index));
-  });
-}
-
-// Initial render
-renderRecipes();
-
 
   <!-- RECIPE VIEWER MODAL -->
   <div id="recipeModal" class="modal-overlay" style="display:none" aria-hidden="true">
