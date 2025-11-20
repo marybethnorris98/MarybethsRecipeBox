@@ -147,7 +147,27 @@ if (isAdmin) {
 } else {
   modalEditBtn.style.display = "none"; // hide for non-admins
 }
+const modalDeleteBtn = document.getElementById("modalDeleteBtn");
 
+if (isAdmin) {
+  modalDeleteBtn.style.display = "inline-block"; // show for admins
+
+  modalDeleteBtn.onclick = () => {
+    if (!confirm(`Are you sure you want to delete "${recipe.title}" permanently?`)) return;
+
+    // remove the recipe from the array
+    recipes = recipes.filter(r => r !== recipe);
+    localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+
+    // hide the viewer modal
+    document.getElementById("recipeModal").style.display = "none";
+
+    // re-render recipe grid
+    renderRecipes();
+  };
+} else {
+  modalDeleteBtn.style.display = "none"; // hide for non-admins
+}
   // Show recipe info
   document.getElementById("modalTitle").textContent = recipe.title || "";
   document.getElementById("modalImage").src = recipe.image || "";
