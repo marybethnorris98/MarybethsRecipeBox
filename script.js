@@ -643,6 +643,63 @@ function openDraftsModal() {
       if (e.target === draftsModal) draftsModal.classList.add("hidden");
     });
   }
+
+  // populate list
+  const listContainer = draftsModal.querySelector("#draftsList");
+  listContainer.innerHTML = "";
+
+  drafts.sort((a,b) => (a.title || "").localeCompare(b.title || ""));
+
+  if (drafts.length === 0) {
+    const p = document.createElement("div");
+    p.textContent = "No drafts yet.";
+    p.style = "color:#666;padding:12px;";
+    listContainer.appendChild(p);
+  } else {
+    drafts.forEach(d => {
+      const row = document.createElement("div");
+      row.style = "display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;border:1px solid #ffe7f5;background:#fff9fc;";
+
+      const title = document.createElement("div");
+      title.textContent = d.title || "Untitled Draft";
+      title.style = "font-weight:600;color:#a00064;";
+
+      const actions = document.createElement("div");
+      actions.style = "display:flex;gap:8px;";
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.style = "background:#ff3ebf;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;";
+      editBtn.addEventListener("click", () => {
+        editingDraftId = d.id;
+        populateAddModalFromDraft(d);
+        addRecipeModal.classList.remove("hidden");
+        draftsModal.classList.add("hidden");
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
+      deleteBtn.addEventListener("click", async () => {
+        if (!confirm(`Delete draft "${d.title}"?`)) return;
+        drafts = drafts.filter(x => x.id !== d.id);
+        await triggerGitHubDraftSave(drafts);
+        openDraftsModal();
+      });
+
+      actions.appendChild(editBtn);
+      actions.appendChild(deleteBtn);
+
+      row.appendChild(title);
+      row.appendChild(actions);
+
+      listContainer.appendChild(row);
+    });
+  }
+
+  draftsModal.classList.remove("hidden");
+}
+
 /* -------------------------------------------------
    EDIT EXISTING RECIPE (admin only)
 ------------------------------------------------- */
