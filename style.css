@@ -244,3 +244,37 @@ body {
   background: #d80050;
 }
 
+/* Admin buttons inside recipe viewer */
+.admin-btn {
+  background: #ff3ebf;       /* Barbie pink primary */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.admin-btn.secondary {
+  background: #ffd6ee;       /* light pink */
+  color: #a00064;
+}
+
+.admin-btn.danger {
+  background: #d80050;       /* deep ruby */
+}
+
+/* Make sure admin controls row aligns nicely */
+#adminViewControls {
+  padding-top: 10px;
+  display: flex;
+  gap: 10px;
+}
