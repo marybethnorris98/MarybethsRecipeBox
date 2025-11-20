@@ -215,3 +215,21 @@ body {
 .edit-btn { background: #ffd1f0; }
 .delete-btn { background: #ff6b9a; color: white; }
 .hide-btn { background: #cfa7ff; color: white; }
+
+.modal-btn {
+  background: #ff3ebf;        /* pink background */
+  color: white;               /* white text */
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif; /* site font */
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.modal-btn:hover {
+  background: #ff5ec1;        /* slightly lighter on hover */
+}
+
