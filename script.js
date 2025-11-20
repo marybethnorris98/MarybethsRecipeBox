@@ -246,6 +246,36 @@ function openRecipeModal(recipe) {
   if (isAdmin && index >= 0) {
     adminControls.classList.remove("hidden");
 
+    // EDIT
+    editBtn.onclick = () => {
+      editingRecipeIndex = index;
+      populateAddModalFromDraft(recipe);
+      addRecipeModal.classList.remove("hidden");
+      document.getElementById("recipeModal").style.display = "none";
+    };
+
+    // DELETE
+    deleteBtn.onclick = () => {
+      if (!confirm("Delete this recipe permanently?")) return;
+      recipes.splice(index, 1);
+      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+      document.getElementById("recipeModal").style.display = "none";
+      renderRecipes();
+    };
+
+    // HIDE / UNHIDE
+    hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
+    hideBtn.onclick = () => {
+      recipes[index].hidden = !recipes[index].hidden;
+      localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+      hideBtn.textContent = recipes[index].hidden ? "Unhide" : "Hide";
+      renderRecipes();
+    };
+
+  } else {
+    adminControls.classList.add("hidden");
+  }
+}
     // EDIT --------------------------------------------------
     editBtn.onclick = () => {
       editingRecipeIndex = index;
