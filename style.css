@@ -231,5 +231,16 @@ body {
 .modal-btn:hover {
   background-color: #ffb6dd;       /* slightly darker pink on hover */
 }
-
+.scrollable-list {
+  max-height: 200px;    /* maximum visible height */
+  overflow-y: auto;     /* vertical scroll appears if content exceeds height */
+  margin-bottom: 16px;  /* spacing below */
+  padding-right: 6px;   /* prevent text from touching scrollbar */
+}
+.modal-content {
+  max-height: 80vh;   /* 80% of viewport height */
+  overflow-y: auto;   /* allow scrolling inside modal if content exceeds height */
+  position: relative;
+  padding: 20px;
+}
 
