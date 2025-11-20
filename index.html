@@ -40,13 +40,11 @@
 
   <!-- RECIPE VIEWER MODAL -->
   <div id="recipeModal" class="modal-overlay" style="display:none" aria-hidden="true">
-    <div class="modal-content">
+    <div class="modal-content" style="position: relative;">>
       <button class="close-btn" id="closeViewerBtn">✖</button>
 
       <img id="modalImage" class="modal-image" src="" alt="">
       <h1 id="modalTitle" class="modal-title"></h1>
-      <button id="modalEditBtn" style="display:none;">Edit</button>
-      <button id="modalDeleteBtn" style="display:none;background:#ff3ebf;color:white;padding:6px 12px;border:none;border-radius:8px;cursor:pointer;margin-left:10px;">Delete</button>
       <div id="modalCategory" class="modal-category"></div>
 
       <h2>Ingredients</h2>
@@ -54,7 +52,11 @@
 
       <h2>Instructions</h2>
       <ol id="modalInstructions" class="modal-instructions"></ol>
-    
+
+      <div id="modalButtons" style="display:flex;gap:10px;position:absolute;bottom:16px;left:16px;">
+  <button id="modalEditBtn" style="display:none;background:#6a0dad;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;">Edit</button>
+  <button id="modalDeleteBtn" style="display:none;background:#ff3ebf;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+</div>    
     </div>
   </div>
 
