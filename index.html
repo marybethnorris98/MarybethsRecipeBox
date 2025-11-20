@@ -32,13 +32,7 @@
   <!-- Controls -->
   <section class="controls">
     <input id="searchInput" type="text" placeholder="Search recipes..." />
-    <select id="categoryFilter">
-      <option value="all">All Categories</option>
-      <option value="breakfast">Breakfast</option>
-      <option value="lunch">Lunch</option>
-      <option value="dinner">Dinner</option>
-      <option value="dessert">Dessert</option>
-    </select>
+    <select id="categoryFilter"></select>
   </section>
 
   <!-- Grid -->
@@ -78,27 +72,22 @@
       <input type="hidden" id="editingIndex" value="">
 
       <input id="newTitle" placeholder="Title" style="width:100%;padding:10px;margin:8px 0;">
-      <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;">
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="dessert">Dessert</option>
-      </select>
+      <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;"></select>
       <input id="newImage" placeholder="Image URL" style="width:100%;padding:10px;margin:8px 0;">
       <textarea id="newDesc" placeholder="Short description" style="width:100%;padding:10px;margin:8px 0;"></textarea>
 
-    <h3>Ingredients</h3>
-    <div id="ingredientsList"></div>
-    <button id="addIngredientBtn" class="small-add-btn">+ Add Ingredient</button>
+      <h3>Ingredients</h3>
+      <div id="ingredientsList"></div>
+      <button id="addIngredientBtn" class="small-add-btn">+ Add Ingredient</button>
 
-    <h3>Instructions</h3>
-    <div id="instructionsList"></div>
-    <button id="addInstructionBtn" class="small-add-btn">+ Add Step</button>
+      <h3>Instructions</h3>
+      <div id="instructionsList"></div>
+      <button id="addInstructionBtn" class="small-add-btn">+ Add Step</button>
 
-    <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
+      <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
+    </div>
   </div>
-</div>
   
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
