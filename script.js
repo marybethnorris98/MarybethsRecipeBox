@@ -79,85 +79,23 @@ function renderRecipes() {
     const matchesSearch =
       (recipe.title || "").toLowerCase().includes(searchTerm) ||
       (recipe.description || "").toLowerCase().includes(searchTerm);
+
     const matchesCategory =
       selectedCategory === "all" || recipe.category === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = ""; // clear grid
-
-  filtered.forEach((recipe, index) => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-
-    // Clicking the card opens the viewer modal
-    card.addEventListener("click", () => openRecipeModal(recipe));
-
-    const img = document.createElement("img");
-    img.src = recipe.image;
-    img.alt = recipe.title;
-
-    const content = document.createElement("div");
-    content.classList.add("card-content");
-
-    const title = document.createElement("div");
-    title.classList.add("card-title");
-    title.textContent = recipe.title;
-
-    const category = document.createElement("div");
-    category.classList.add("card-category");
-    category.textContent = recipe.category;
-
-    const desc = document.createElement("div");
-    desc.classList.add("card-desc");
-    desc.textContent = recipe.description;
-
-    content.appendChild(title);
-    content.appendChild(category);
-    content.appendChild(desc);
-
-    // Add admin buttons if logged in
-    if (isAdmin) {
-      const btnContainer = document.createElement("div");
-      btnContainer.classList.add("card-buttons");
-
-      const editBtn = document.createElement("button");
-      editBtn.classList.add("edit-btn");
-      editBtn.textContent = "Edit";
-      editBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // prevent modal opening
-        editRecipe(index);
-      });
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.classList.add("delete-btn");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (!confirm(`Delete recipe "${recipe.title}"?`)) return;
-        recipes.splice(index, 1);
-        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-        renderRecipes();
-      });
-
-      const hideBtn = document.createElement("button");
-      hideBtn.classList.add("hide-btn");
-      hideBtn.textContent = "Hide";
-      hideBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        card.style.display = "none"; // temporary hide
-      });
-
-      btnContainer.appendChild(editBtn);
-      btnContainer.appendChild(deleteBtn);
-      btnContainer.appendChild(hideBtn);
-      content.appendChild(btnContainer);
-    }
-
-    card.appendChild(img);
-    card.appendChild(content);
-    recipeGrid.appendChild(card);
-  });
+  recipeGrid.innerHTML = filtered.map(recipe => `
+    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
+      <img src="${recipe.image}" alt="${recipe.title}">
+      <div class="card-content">
+        <div class="card-title">${recipe.title}</div>
+        <div class="card-category">${recipe.category}</div>
+        <div class="card-desc">${recipe.description}</div>
+      </div>
+    </div>
+  `).join("");
 }
 
 /* -------------------------------------------------
@@ -418,31 +356,14 @@ saveRecipeBtn.addEventListener("click", () => {
   const instructions = [...instructionsList.querySelectorAll("input")]
     .map(i => i.value.trim()).filter(Boolean);
 
-  const newRecipe = { title, category, image, description, ingredients, instructions };
-
-  if (editingRecipeIndex != null) {
-    // Update existing recipe
-    recipes[editingRecipeIndex] = newRecipe;
-    editingRecipeIndex = null;
-  } else {
-    // Add new recipe
-    recipes.push(newRecipe);
-  }
-
-  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-
-  // If editing a draft, remove it
-  if (editingDraftId) {
-    drafts = drafts.filter(d => d.id !== editingDraftId);
-    localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
-    editingDraftId = null;
-  }
-
-  alert("Recipe saved!");
-  clearAddModal();
-  addRecipeModal.classList.add("hidden");
-  renderRecipes();
-});
+  const newRecipe = {
+    title,
+    category,
+    image,
+    description,
+    ingredients,
+    instructions
+  };
 
   recipes.push(newRecipe);
   localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
@@ -619,55 +540,6 @@ addRecipeModal.addEventListener("click", (e) => {
    INITIAL RENDER
 ------------------------------------------------- */
 renderRecipes();
-
-// Example: after your recipes array and renderRecipes function
-
-function editRecipe(index) {
-  editingRecipeIndex = index; // track which recipe is being edited
-
-  const recipe = recipes[index];
-  if (!recipe) return;
-
-  // Fill modal fields
-  newTitle.value = recipe.title || "";
-  newCategory.value = recipe.category || "breakfast";
-  newImage.value = recipe.image || "";
-  newDesc.value = recipe.description || "";
-
-  // Clear previous rows
-  ingredientsList.innerHTML = "";
-  instructionsList.innerHTML = "";
-
-  // Fill ingredients with input rows
-  (recipe.ingredients || []).forEach(ing => {
-    const row = makeRowInput("Ingredient", "ingredient");
-    row.querySelector("input").value = ing;
-    ingredientsList.appendChild(row);
-  });
-
-  // Fill instructions with input rows
-  (recipe.instructions || []).forEach(step => {
-    const row = makeRowInput("Step", "step");
-    row.querySelector("input").value = step;
-    instructionsList.appendChild(row);
-  });
-
-  // Show the modal
-  addRecipeModal.classList.remove("hidden");
-}
-  // Fill instructions
-  const instructionsList = document.getElementById("instructionsList");
-  instructionsList.innerHTML = "";
-  recipe.instructions.forEach(step => {
-    const div = document.createElement("div");
-    div.textContent = step;
-    instructionsList.appendChild(div);
-  });
-
-  // Show the modal
-  document.getElementById("addRecipeModal").classList.remove("hidden");
-}
-
 
 /* Make sure to inject admin UI if already authenticated (unlikely) */
 if (isAdmin) injectAdminUI();
