@@ -418,14 +418,31 @@ saveRecipeBtn.addEventListener("click", () => {
   const instructions = [...instructionsList.querySelectorAll("input")]
     .map(i => i.value.trim()).filter(Boolean);
 
-  const newRecipe = {
-    title,
-    category,
-    image,
-    description,
-    ingredients,
-    instructions
-  };
+  const newRecipe = { title, category, image, description, ingredients, instructions };
+
+  if (editingRecipeIndex != null) {
+    // Update existing recipe
+    recipes[editingRecipeIndex] = newRecipe;
+    editingRecipeIndex = null;
+  } else {
+    // Add new recipe
+    recipes.push(newRecipe);
+  }
+
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+
+  // If editing a draft, remove it
+  if (editingDraftId) {
+    drafts = drafts.filter(d => d.id !== editingDraftId);
+    localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+    editingDraftId = null;
+  }
+
+  alert("Recipe saved!");
+  clearAddModal();
+  addRecipeModal.classList.add("hidden");
+  renderRecipes();
+});
 
   recipes.push(newRecipe);
   localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
@@ -606,27 +623,38 @@ renderRecipes();
 // Example: after your recipes array and renderRecipes function
 
 function editRecipe(index) {
+  editingRecipeIndex = index; // track which recipe is being edited
+
   const recipe = recipes[index];
   if (!recipe) return;
 
-  // Set hidden input so Save knows which recipe to update
-  document.getElementById("editingIndex").value = index;
-
   // Fill modal fields
-  document.getElementById("newTitle").value = recipe.title;
-  document.getElementById("newCategory").value = recipe.category;
-  document.getElementById("newImage").value = recipe.image || "";
-  document.getElementById("newDesc").value = recipe.description || "";
+  newTitle.value = recipe.title || "";
+  newCategory.value = recipe.category || "breakfast";
+  newImage.value = recipe.image || "";
+  newDesc.value = recipe.description || "";
 
-  // Fill ingredients
-  const ingredientsList = document.getElementById("ingredientsList");
+  // Clear previous rows
   ingredientsList.innerHTML = "";
-  recipe.ingredients.forEach(ing => {
-    const div = document.createElement("div");
-    div.textContent = ing;
-    ingredientsList.appendChild(div);
+  instructionsList.innerHTML = "";
+
+  // Fill ingredients with input rows
+  (recipe.ingredients || []).forEach(ing => {
+    const row = makeRowInput("Ingredient", "ingredient");
+    row.querySelector("input").value = ing;
+    ingredientsList.appendChild(row);
   });
 
+  // Fill instructions with input rows
+  (recipe.instructions || []).forEach(step => {
+    const row = makeRowInput("Step", "step");
+    row.querySelector("input").value = step;
+    instructionsList.appendChild(row);
+  });
+
+  // Show the modal
+  addRecipeModal.classList.remove("hidden");
+}
   // Fill instructions
   const instructionsList = document.getElementById("instructionsList");
   instructionsList.innerHTML = "";
