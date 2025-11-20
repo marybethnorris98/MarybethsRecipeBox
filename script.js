@@ -93,6 +93,7 @@ function renderRecipes() {
         <div class="card-title">${recipe.title}</div>
         <div class="card-category">${recipe.category}</div>
         <div class="card-desc">${recipe.description}</div>
+        card.querySelector(".edit-btn").addEventListener("click", () => editRecipe(index));
       </div>
     </div>
   `).join("");
@@ -540,6 +541,44 @@ addRecipeModal.addEventListener("click", (e) => {
    INITIAL RENDER
 ------------------------------------------------- */
 renderRecipes();
+
+// Example: after your recipes array and renderRecipes function
+
+function editRecipe(index) {
+  const recipe = recipes[index];
+  if (!recipe) return;
+
+  // Set hidden input so Save knows which recipe to update
+  document.getElementById("editingIndex").value = index;
+
+  // Fill modal fields
+  document.getElementById("newTitle").value = recipe.title;
+  document.getElementById("newCategory").value = recipe.category;
+  document.getElementById("newImage").value = recipe.image || "";
+  document.getElementById("newDesc").value = recipe.description || "";
+
+  // Fill ingredients
+  const ingredientsList = document.getElementById("ingredientsList");
+  ingredientsList.innerHTML = "";
+  recipe.ingredients.forEach(ing => {
+    const div = document.createElement("div");
+    div.textContent = ing;
+    ingredientsList.appendChild(div);
+  });
+
+  // Fill instructions
+  const instructionsList = document.getElementById("instructionsList");
+  instructionsList.innerHTML = "";
+  recipe.instructions.forEach(step => {
+    const div = document.createElement("div");
+    div.textContent = step;
+    instructionsList.appendChild(div);
+  });
+
+  // Show the modal
+  document.getElementById("addRecipeModal").classList.remove("hidden");
+}
+
 
 /* Make sure to inject admin UI if already authenticated (unlikely) */
 if (isAdmin) injectAdminUI();
