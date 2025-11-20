@@ -39,20 +39,13 @@
       <option value="dinner">Dinner</option>
       <option value="dessert">Dessert</option>
     </select>
-
-    <!-- Admin Buttons -->
-    <button id="draftsBtn" class="admin-control-btn hidden">Drafts</button>
-    <button id="logoutBtn" class="admin-control-btn hidden">Logout</button>
   </section>
-
-  <!-- ADMIN BANNER -->
-  <div id="adminBanner" class="admin-banner" style="display:none;">Admin Mode Enabled</div>
 
   <!-- Grid -->
   <section id="recipeGrid" class="grid"></section>
 
   <!-- RECIPE VIEWER MODAL -->
-  <div id="recipeModal" class="modal-overlay hidden" aria-hidden="true">
+  <div id="recipeModal" class="modal-overlay" style="display:none" aria-hidden="true">
     <div class="modal-content">
       <button class="close-btn" id="closeViewerBtn">✖</button>
 
@@ -65,68 +58,47 @@
 
       <h2>Instructions</h2>
       <ol id="modalInstructions" class="modal-instructions"></ol>
-
-      <!-- ADMIN CONTROLS -->
-      <div id="adminViewControls" class="hidden admin-controls-inline">
-        <button id="adminEditBtn" class="admin-btn">Edit</button>
-        <button id="adminDeleteBtn" class="admin-btn danger">Delete</button>
-        <button id="adminHideBtn" class="admin-btn secondary">Hide</button>
-      </div>
     </div>
   </div>
 
-  <!-- LOGIN MODAL -->
+  <!-- 🔐 LOGIN MODAL (HIDDEN) -->
   <div id="loginModal" class="modal hidden">
     <div class="modal-content">
-      <h2>Admin Login</h2>
-      <input id="adminPassword" type="password" placeholder="Enter password" class="modal-input">
-      <button id="loginBtn" class="modal-btn">Unlock</button>
-      <p id="loginError" class="error-text hidden">Incorrect password.</p>
+      <h2 style="margin-top:0;">Admin Login</h2>
+      <input id="adminPassword" type="password" placeholder="Enter password" style="width:100%;padding:12px;margin:12px 0;">
+      <button id="loginBtn" style="padding:12px 18px;border:none;background:#ff3ebf;color:white;border-radius:12px;font-size:16px;width:100%;">Unlock</button>
+      <p id="loginError" style="color:red;display:none;margin-top:10px;">Incorrect password.</p>
     </div>
   </div>
 
-  <!-- ADD RECIPE MODAL -->
+  <!-- 🔐 ADD RECIPE MODAL (HIDDEN UNTIL AUTH) -->
   <div id="addRecipeModal" class="modal hidden">
     <div class="modal-content">
       <h2>Add Recipe</h2>
+      <input type="hidden" id="editingIndex" value="">
 
-      <input id="newTitle" placeholder="Title" class="modal-input">
-
-      <select id="newCategory" class="modal-input">
+      <input id="newTitle" placeholder="Title" style="width:100%;padding:10px;margin:8px 0;">
+      <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;">
         <option value="breakfast">Breakfast</option>
         <option value="lunch">Lunch</option>
         <option value="dinner">Dinner</option>
         <option value="dessert">Dessert</option>
       </select>
+      <input id="newImage" placeholder="Image URL" style="width:100%;padding:10px;margin:8px 0;">
+      <textarea id="newDesc" placeholder="Short description" style="width:100%;padding:10px;margin:8px 0;"></textarea>
 
-      <textarea id="newDesc" placeholder="Short description" class="modal-input"></textarea>
+    <h3>Ingredients</h3>
+    <div id="ingredientsList"></div>
+    <button id="addIngredientBtn" class="small-add-btn">+ Add Ingredient</button>
 
-      <!-- Image Upload -->
-      <label>Upload Image</label>
-      <input type="file" id="imageUploadInput" accept="image/*" class="modal-input">
+    <h3>Instructions</h3>
+    <div id="instructionsList"></div>
+    <button id="addInstructionBtn" class="small-add-btn">+ Add Step</button>
 
-      <!-- Ingredients -->
-      <h3>Ingredients</h3>
-      <textarea id="newIngredients" placeholder="One per line" class="modal-input"></textarea>
-
-      <!-- Instructions -->
-      <h3>Instructions</h3>
-      <textarea id="newSteps" placeholder="One step per line" class="modal-input"></textarea>
-
-      <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
-      <button id="closeAddModalBtn" class="close-secondary">Cancel</button>
-    </div>
+    <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
   </div>
-
-  <!-- DRAFTS MODAL -->
-  <div id="draftsModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Drafts</h2>
-      <div id="draftsList"></div>
-      <button id="closeDraftsBtn" class="close-secondary">Close</button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+</div>
+  
+<script src="script.js"></script>
 </body>
 </html>
