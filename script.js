@@ -571,7 +571,21 @@ function openDraftsModal() {
       if (e.target === draftsModal) draftsModal.classList.add("hidden");
     });
   }
+/* -------------------------------------------------
+   EDIT EXISTING RECIPE (admin only)
+------------------------------------------------- */
+function editRecipe(index) {
+  editingRecipeIndex = index;
 
+  const recipe = recipes[index];
+  if (!recipe) return;
+
+  // Load recipe into modal (same function used for drafts)
+  populateAddModalFromDraft(recipe);
+
+  // Show modal
+  addRecipeModal.classList.remove("hidden");
+}
   // populate list
   const listContainer = draftsModal.querySelector("#draftsList");
   listContainer.innerHTML = "";
