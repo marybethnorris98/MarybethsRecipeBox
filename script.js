@@ -40,6 +40,35 @@ const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
 let drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY)) || [];
 
+function populateCategorySelects() {
+  const addSelect = document.getElementById("newCategory");
+  const filterSelect = document.getElementById("categoryFilter");
+
+  [addSelect, filterSelect].forEach(select => {
+    if (!select) return;
+    select.innerHTML = ""; // clear any existing options
+
+    // Add "All" only for filter dropdown
+    if (select === filterSelect) {
+      const allOption = document.createElement("option");
+      allOption.value = "all";
+      allOption.textContent = "All";
+      select.appendChild(allOption);
+    }
+
+    // Add each category
+    CATEGORIES.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  });
+}
+
+// Call it once after defining CATEGORIES
+populateCategorySelects();
+
 /* -------------------------------------------------
    DOM ELEMENTS
 ------------------------------------------------- */
@@ -342,7 +371,7 @@ addInstructionBtn.addEventListener("click", () => {
 ------------------------------------------------- */
 saveRecipeBtn.addEventListener("click", () => {
   const title = (newTitle.value || "").trim();
-  const category = newCategory.value || "breakfast";
+  const category = newCategory.value || CATEGORIES[0];
   const image = (newImage.value || "").trim();
   const description = (newDesc.value || "").trim();
 
@@ -388,7 +417,7 @@ saveRecipeBtn.addEventListener("click", () => {
 // helper to build a draft object from modal (allows empty title)
 function buildDraftFromModal() {
   const title = (newTitle.value || "").trim();
-  const category = newCategory.value || "breakfast";
+  const category = newCategory.value || CATEGORIES[0];
   const image = (newImage.value || "").trim();
   const description = (newDesc.value || "").trim();
   const ingredients = [...ingredientsList.querySelectorAll("input")]
