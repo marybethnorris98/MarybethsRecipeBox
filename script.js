@@ -135,6 +135,19 @@ function openRecipeModal(recipe) {
   const viewer = document.getElementById("recipeModal");
   const modalEditBtn = document.getElementById("modalEditBtn");
 
+if (isAdmin) {
+  modalEditBtn.style.display = "inline-block"; // show button
+  editingRecipeIndex = recipes.indexOf(recipe); // track which recipe is being edited
+
+  modalEditBtn.onclick = () => {
+    populateAddModalFromDraft(recipe); // fill Add Recipe modal with this recipe
+    addRecipeModal.classList.remove("hidden"); // show Add Recipe modal
+    document.getElementById("recipeModal").style.display = "none"; // hide viewer
+  };
+} else {
+  modalEditBtn.style.display = "none"; // hide for non-admins
+}
+
   // Show recipe info
   document.getElementById("modalTitle").textContent = recipe.title || "";
   document.getElementById("modalImage").src = recipe.image || "";
