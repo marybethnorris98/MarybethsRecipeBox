@@ -90,7 +90,7 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45);
-  display: flex;            /* â† Allow modal to show */
+  display: flex;            /* ← Allow modal to show */
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -98,7 +98,7 @@ body {
 
 /* Hidden state */
 .hidden {
-  display: none !important;  /* â† NOW hidden works */
+  display: none !important;  /* ← NOW hidden works */
 }
 .modal .modal-content { background: #FFF9FD; padding: 28px; border-radius: 22px; width: 90%; max-width: 440px; border: 2px solid #FFD7E8; box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28); }
 
@@ -215,66 +215,3 @@ body {
 .edit-btn { background: #ffd1f0; }
 .delete-btn { background: #ff6b9a; color: white; }
 .hide-btn { background: #cfa7ff; color: white; }
-
-.admin-card-controls {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.admin-card-controls button {
-  background: #ff3ebf;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 6px 10px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.admin-card-controls button.secondary {
-  background: #ffd6ee;
-  color: #a00064;
-}
-
-.admin-card-controls button.danger {
-  background: #d80050;
-}
-
-/* Admin buttons inside recipe viewer */
-.admin-btn {
-  background: #ff3ebf;       /* Barbie pink primary */
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.admin-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-}
-
-.admin-btn.secondary {
-  background: #ffd6ee;       /* light pink */
-  color: #a00064;
-}
-
-.admin-btn.danger {
-  background: #d80050;       /* deep ruby */
-}
-
-/* Make sure admin controls row aligns nicely */
-#adminViewControls {
-  padding-top: 10px;
-  display: flex;
-  gap: 10px;
-}
