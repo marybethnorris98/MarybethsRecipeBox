@@ -133,9 +133,9 @@ function renderRecipes() {
 ------------------------------------------------- */
 function openRecipeModal(recipe) {
   const viewer = document.getElementById("recipeModal");
-  viewer.style.display = "flex";
-  viewer.setAttribute("aria-hidden","false");
+  const modalEditBtn = document.getElementById("modalEditBtn");
 
+  // Show recipe info
   document.getElementById("modalTitle").textContent = recipe.title || "";
   document.getElementById("modalImage").src = recipe.image || "";
   document.getElementById("modalCategory").textContent = recipe.category || "";
@@ -157,26 +157,28 @@ function openRecipeModal(recipe) {
   });
 
   // --- Edit Button Logic ---
-  const modalEditBtn = document.getElementById("modalEditBtn");
-
   if (isAdmin) {
-    modalEditBtn.style.display = "inline-block"; // show button
-    editingRecipeIndex = recipes.indexOf(recipe); // store index
+    modalEditBtn.style.display = "inline-block"; // show button for admin
+    editingRecipeIndex = recipes.indexOf(recipe); // track which recipe to edit
 
     modalEditBtn.onclick = () => {
-      populateAddModalFromDraft(recipe); // pre-fill modal
+      populateAddModalFromDraft(recipe); // fill Add Recipe modal
       addRecipeModal.classList.remove("hidden"); // show Add Recipe modal
-      viewer.style.display = "none"; // hide viewer modal
+      viewer.style.display = "none"; // hide viewer
     };
   } else {
-    modalEditBtn.style.display = "none"; // hide for non-admin
+    modalEditBtn.style.display = "none"; // hide button for non-admin
+    modalEditBtn.onclick = null; // disable clicks
   }
+
+  viewer.style.display = "flex";
+  viewer.setAttribute("aria-hidden", "false");
 }
 
+// Close button for viewer
 document.getElementById("closeViewerBtn").addEventListener("click", () => {
   document.getElementById("recipeModal").style.display = "none";
 });
-
 /* -------------------------------------------------
    SEARCH + FILTER
 ------------------------------------------------- */
