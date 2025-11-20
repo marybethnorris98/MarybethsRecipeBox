@@ -6,7 +6,7 @@ console.log("FULL admin + viewer script loaded");
 const defaultRecipes = [
   {
     title: "Blueberry Pancakes",
-    category: "breakfast",
+    category: "Breakfast",
     image: "images/pancakes.jpg",
     description: "Fluffy homemade pancakes loaded with fresh blueberries.",
     ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
@@ -14,7 +14,7 @@ const defaultRecipes = [
   },
   {
     title: "Chicken Caesar Salad",
-    category: "lunch",
+    category: "Meals",
     image: "images/salad.jpg",
     description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
     ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
@@ -22,7 +22,7 @@ const defaultRecipes = [
   },
   {
     title: "Sample Pasta",
-    category: "dinner",
+    category: "Snacks",
     image: "https://via.placeholder.com/800x500?text=Recipe+Image",
     description: "A quick sample pasta for testing the modal.",
     ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
@@ -35,6 +35,7 @@ const defaultRecipes = [
 ------------------------------------------------- */
 const RECIPES_KEY = "recipes";
 const DRAFTS_KEY = "drafts_recipes";
+const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"];
 
 let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || defaultRecipes;
 let drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY)) || [];
