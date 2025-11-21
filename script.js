@@ -164,93 +164,123 @@ function renderRecipes() {
    VIEWER
 ------------------------------------------------- */
 function openRecipeModal(recipe) {
+  if (!recipe) return;
+
+  // modal + common controls (safe lookups)
   const viewer = document.getElementById("recipeModal");
   const modalEditBtn = document.getElementById("modalEditBtn");
+  const modalDeleteBtn = document.getElementById("modalDeleteBtn");
+  const hideBtn = document.getElementById("modalHideBtn");
 
-if (isAdmin) {
-  modalEditBtn.style.display = "inline-block"; // show button
-  editingRecipeIndex = recipes.indexOf(recipe); // track which recipe is being edited
+  // Optional content elements (only update if they exist)
+  const modalImg = document.getElementById("modalImage");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalCategory = document.getElementById("modalCategory");
+  const modalDesc = document.getElementById("modalDescription");
+  const modalIngredients = document.getElementById("modalIngredients");
+  const modalInstructions = document.getElementById("modalInstructions");
 
-  modalEditBtn.onclick = () => {
-    populateAddModalFromDraft(recipe); // fill Add Recipe modal with this recipe
-    addRecipeModal.classList.remove("hidden"); // show Add Recipe modal
-    document.getElementById("recipeModal").style.display = "none"; // hide viewer
-  };
-} else {
-  modalEditBtn.style.display = "none"; // hide for non-admins
-}
-const modalDeleteBtn = document.getElementById("modalDeleteBtn");
+  // Set which recipe we're editing (use indexOf to match the instance in recipes)
+  editingRecipeIndex = recipes.indexOf(recipe);
+  if (editingRecipeIndex < 0) editingRecipeIndex = null; // not found fallback
 
-if (isAdmin) {
-  modalDeleteBtn.style.display = "inline-block"; // show for admins
+  // --- Populate modal content if elements exist ---
+  if (modalImg) {
+    modalImg.src = recipe.image || "";
+    modalImg.alt = recipe.title || "Recipe image";
+  }
+  if (modalTitle) modalTitle.textContent = recipe.title || "";
+  if (modalCategory) modalCategory.textContent = recipe.category || "";
+  if (modalDesc) modalDesc.textContent = recipe.description || "";
 
-  modalDeleteBtn.onclick = () => {
-    if (!confirm(`Are you sure you want to delete "${recipe.title}" permanently?`)) return;
-
-    // remove the recipe from the array
-    recipes = recipes.filter(r => r !== recipe);
-    localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-
-    // hide the viewer modal
-    document.getElementById("recipeModal").style.display = "none";
-
-    // re-render recipe grid
-    renderRecipes();
-  };
-} else {
-  modalDeleteBtn.style.display = "none"; // hide for non-admins
-}
-   // --- Hide / Unhide Button Logic ---
-const hideBtn = document.getElementById("modalHideBtn");
-hideBtn.addEventListener("click", () => {
-  if (editingRecipeIndex === null) return;
-
-  const recipe = recipes[editingRecipeIndex];
-  recipe.hidden = !recipe.hidden;             // toggle hidden
-  hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
-
-  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-
-  // close modal & refresh grid
-  document.getElementById("recipeModal").style.display = "none";
-  renderRecipes();
-});
-
-   const filtered = recipes.filter(recipe => {
-  if (!isAdmin && recipe.hidden) return false; // hide from public
-  const matchesSearch =
-      (recipe.title || "").toLowerCase().includes(searchTerm) ||
-      (recipe.description || "").toLowerCase().includes(searchTerm);
-
-  const matchesCategory =
-      selectedCategory === "all" || recipe.category === selectedCategory;
-
-  return matchesSearch && matchesCategory;
-});
-
-  // --- Edit Button Logic ---
-  if (isAdmin) {
-    modalEditBtn.style.display = "inline-block"; // show button for admin
-    editingRecipeIndex = recipes.indexOf(recipe); // track which recipe to edit
-
-    modalEditBtn.onclick = () => {
-      populateAddModalFromDraft(recipe); // fill Add Recipe modal
-      addRecipeModal.classList.remove("hidden"); // show Add Recipe modal
-      viewer.style.display = "none"; // hide viewer
-    };
-  } else {
-    modalEditBtn.style.display = "none"; // hide button for non-admin
-    modalEditBtn.onclick = null; // disable clicks
+  if (modalIngredients) {
+    modalIngredients.innerHTML = "";
+    (recipe.ingredients || []).forEach(ing => {
+      const li = document.createElement("li");
+      li.textContent = ing;
+      modalIngredients.appendChild(li);
+    });
   }
 
-  viewer.style.display = "flex";
-  viewer.setAttribute("aria-hidden", "false");
-}
+  if (modalInstructions) {
+    modalInstructions.innerHTML = "";
+    (recipe.instructions || []).forEach((step, i) => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      modalInstructions.appendChild(li);
+    });
+  }
 
-// Close button for viewer
-document.getElementById("closeViewerBtn").addEventListener("click", () => {
-  document.getElementById("recipeModal").style.display = "none";
-});
+  // ----- Edit button logic (admin only, defensive) -----
+  if (modalEditBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      modalEditBtn.style.display = "inline-block";
+      // ensure we don't stack handlers — assign a single onclick
+      modalEditBtn.onclick = () => {
+        const r = recipes[editingRecipeIndex];
+        if (!r) return;
+        populateAddModalFromDraft(r);
+        addRecipeModal.classList.remove("hidden");
+        if (viewer) viewer.style.display = "none";
+      };
+    } else {
+      modalEditBtn.style.display = "none";
+      modalEditBtn.onclick = null;
+    }
+  }
+
+  // ----- Delete button logic (admin only, defensive) -----
+  if (modalDeleteBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      modalDeleteBtn.style.display = "inline-block";
+      modalDeleteBtn.onclick = () => {
+        const r = recipes[editingRecipeIndex];
+        if (!r) return;
+        if (!confirm(`Are you sure you want to delete "${r.title}" permanently?`)) return;
+        // remove by index for safety
+        recipes.splice(editingRecipeIndex, 1);
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        editingRecipeIndex = null;
+        if (viewer) viewer.style.display = "none";
+        renderRecipes();
+      };
+    } else {
+      modalDeleteBtn.style.display = "none";
+      modalDeleteBtn.onclick = null;
+    }
+  }
+
+  // ----- Hide / Unhide logic (admin only, defensive) -----
+  if (hideBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      hideBtn.style.display = "inline-block";
+
+      // set initial text based on recipe.hidden (default false)
+      hideBtn.textContent = (recipes[editingRecipeIndex] && recipes[editingRecipeIndex].hidden) ? "Unhide" : "Hide";
+
+      hideBtn.onclick = () => {
+        const idx = editingRecipeIndex;
+        if (idx === null || idx < 0 || !recipes[idx]) return;
+        recipes[idx].hidden = !recipes[idx].hidden;
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        hideBtn.textContent = recipes[idx].hidden ? "Unhide" : "Hide";
+
+        // close viewer and refresh grid
+        if (viewer) viewer.style.display = "none";
+        renderRecipes();
+      };
+    } else {
+      hideBtn.style.display = "none";
+      hideBtn.onclick = null;
+    }
+  }
+
+  // Show the viewer safely
+  if (viewer) {
+    viewer.style.display = "flex";
+    viewer.setAttribute("aria-hidden", "false");
+  }
+}
 /* -------------------------------------------------
    SEARCH + FILTER
 ------------------------------------------------- */
