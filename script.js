@@ -1,4 +1,5 @@
 console.log("FULL admin + viewer script loaded");
+let isAdmin = localStorage.getItem("admin") === "true";
 
 /* -------------------------------------------------
    DEFAULT RECIPES
