@@ -245,3 +245,9 @@ body {
   padding: 20px;
 }
 
+// Change font for category dropdown
+const categoryDropdown = document.getElementById("categoryFilter");
+if (categoryDropdown) {
+  categoryDropdown.style.fontFamily = "Poppins, sans-serif"; // change to your preferred font
+  categoryDropdown.style.fontSize = "12px"; // optional: adjust size
+}
