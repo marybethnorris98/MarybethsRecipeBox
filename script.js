@@ -5,8 +5,6 @@ console.log("FULL admin + viewer script loaded");
 // -----------------------------
 let isAdmin = localStorage.getItem("admin") === "true";
 
-let isAdmin = localStorage.getItem("admin") === "true";
-
 // Login button logic
 loginBtn.addEventListener("click", () => {
   const entered = document.getElementById("adminPassword").value || "";
@@ -22,9 +20,6 @@ loginBtn.addEventListener("click", () => {
 // -----------------------------
 // ADMIN LOGIN PERSISTENCE
 // -----------------------------
-
-// Check localStorage on page load
-let isAdmin = localStorage.getItem("admin") === "true";
 
 // If already logged in, inject admin UI
 if (isAdmin) {
