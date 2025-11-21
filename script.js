@@ -546,69 +546,41 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // DRAFTS
   // -----------------------------
-  function buildDraftFromModal() {
-    const title = (newTitle.value || "").trim();
-    const category = newCategory.value || CATEGORIES[0];
-    const image = (newImage.value || "").trim();
-    const description = (newDesc.value || "").trim();
-    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+async function openDraftsModal() {
+  let draftsModal = document.getElementById("draftsModal");
+  if (!draftsModal) {
+    draftsModal = document.createElement("div");
+    draftsModal.id = "draftsModal";
+    draftsModal.className = "modal";
+    draftsModal.style.zIndex = 1300;
+    draftsModal.innerHTML = `
+      <div class="modal-content" style="max-width:520px;position:relative;">
+        <button id="closeDraftsBtn" style="position:absolute;right:18px;top:12px;border:none;background:none;font-size:22px;cursor:pointer;">✖</button>
+        <h2 style="margin-top:0;">My Drafts</h2>
+        <div id="draftsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
+      </div>
+    `;
+    document.body.appendChild(draftsModal);
 
-    return {
-      id: editingDraftId || "draft_" + Date.now(),
-      title: title || "Untitled Draft",
-      category,
-      image,
-      description,
-      ingredients,
-      instructions
-    };
+    document.getElementById("closeDraftsBtn").addEventListener("click", () => draftsModal.classList.add("hidden"));
+    draftsModal.addEventListener("click", e => { if (e.target === draftsModal) draftsModal.classList.add("hidden"); });
   }
 
-  function saveDraftFromModal() {
-    const draft = buildDraftFromModal();
-    const existsIndex = drafts.findIndex(d => d.id === draft.id);
-    if (existsIndex >= 0) drafts[existsIndex] = draft;
-    else drafts.push(draft);
+  const listContainer = draftsModal.querySelector("#draftsList");
+  listContainer.innerHTML = "";
 
-    drafts.sort((a,b) => (a.title||"").localeCompare(b.title||""));
-    localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
-    editingDraftId = draft.id;
-    alert("Draft saved.");
-  }
+  try {
+    const res = await fetch("/drafts");
+    const serverDrafts = await res.json();
 
-  function openDraftsModal() {
-    let draftsModal = document.getElementById("draftsModal");
-    if (!draftsModal) {
-      draftsModal = document.createElement("div");
-      draftsModal.id = "draftsModal";
-      draftsModal.className = "modal";
-      draftsModal.style.zIndex = 1300;
-      draftsModal.innerHTML = `
-        <div class="modal-content" style="max-width:520px;position:relative;">
-          <button id="closeDraftsBtn" style="position:absolute;right:18px;top:12px;border:none;background:none;font-size:22px;cursor:pointer;">✖</button>
-          <h2 style="margin-top:0;">My Drafts</h2>
-          <div id="draftsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
-        </div>
-      `;
-      document.body.appendChild(draftsModal);
-
-      document.getElementById("closeDraftsBtn").addEventListener("click", () => draftsModal.classList.add("hidden"));
-      draftsModal.addEventListener("click", e => { if (e.target === draftsModal) draftsModal.classList.add("hidden"); });
-    }
-
-    const listContainer = draftsModal.querySelector("#draftsList");
-    listContainer.innerHTML = "";
-
-    drafts.sort((a,b) => (a.title||"").localeCompare(b.title||""));
-
-    if (!drafts.length) {
+    if (!serverDrafts.length) {
       const p = document.createElement("div");
       p.textContent = "No drafts yet.";
       p.style = "color:#666;padding:12px;";
       listContainer.appendChild(p);
     } else {
-      drafts.forEach(d => {
+      serverDrafts.sort((a,b) => (a.title||"").localeCompare(b.title||""));
+      serverDrafts.forEach(d => {
         const row = document.createElement("div");
         row.style = "display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;border:1px solid #ffe7f5;background:#fff9fc;";
 
@@ -632,10 +604,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
-        deleteBtn.addEventListener("click", () => {
+        deleteBtn.addEventListener("click", async () => {
           if (!confirm(`Delete draft "${d.title}"?`)) return;
-          drafts = drafts.filter(x => x.id !== d.id);
-          localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+          await fetch(`/drafts/${d.id}`, { method: "DELETE" });
           openDraftsModal();
         });
 
@@ -646,9 +617,14 @@ document.addEventListener("DOMContentLoaded", () => {
         listContainer.appendChild(row);
       });
     }
-
-    draftsModal.classList.remove("hidden");
+  } catch (err) {
+    console.error("Error loading drafts:", err);
+    alert("Failed to load drafts from server.");
   }
+
+  draftsModal.classList.remove("hidden");
+}
+
 
   ensureAddModalControls();
 
