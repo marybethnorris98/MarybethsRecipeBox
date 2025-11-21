@@ -109,6 +109,7 @@ function renderRecipes() {
   const selectedCategory = categoryFilter ? categoryFilter.value : "all";
 
   const filtered = recipes.filter(recipe => {
+    if (!isAdmin && recipe.hidden) return false; // hide from non-admins
     const matchesSearch =
       (recipe.title || "").toLowerCase().includes(searchTerm) ||
       (recipe.description || "").toLowerCase().includes(searchTerm);
@@ -119,17 +120,45 @@ function renderRecipes() {
     return matchesSearch && matchesCategory;
   });
 
-  recipeGrid.innerHTML = filtered.map(recipe => `
-    <div class="card" onclick='openRecipeModal(${JSON.stringify(recipe)})'>
-      <img src="${recipe.image}" alt="${recipe.title}">
-      <div class="card-content">
-        <div class="card-title">${recipe.title}</div>
-        <div class="card-category">${recipe.category}</div>
-        <div class="card-desc">${recipe.description}</div>
-      </div>
-    </div>
-  `).join("");
+  recipeGrid.innerHTML = ""; // clear grid
+
+  filtered.forEach((recipe) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = recipe.image;
+    img.alt = recipe.title;
+
+    const content = document.createElement("div");
+    content.className = "card-content";
+
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "card-title";
+    titleDiv.textContent = recipe.title;
+
+    const catDiv = document.createElement("div");
+    catDiv.className = "card-category";
+    catDiv.textContent = recipe.category;
+
+    const descDiv = document.createElement("div");
+    descDiv.className = "card-desc";
+    descDiv.textContent = recipe.description;
+
+    content.appendChild(titleDiv);
+    content.appendChild(catDiv);
+    content.appendChild(descDiv);
+
+    card.appendChild(img);
+    card.appendChild(content);
+
+    // Proper click listener
+    card.addEventListener("click", () => openRecipeModal(recipe));
+
+    recipeGrid.appendChild(card);
+  });
 }
+
 
 /* -------------------------------------------------
    VIEWER
