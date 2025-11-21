@@ -93,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchInput) {
   searchInput.style.fontFamily = "Poppins, sans-serif";
   searchInput.style.fontSize = "16px";
-  searchInput.style.fontWeight = "bold";
   searchInput.style.color = "#f039b1";  // pink/purple text
   searchInput.style.padding = "6px 10px";
   searchInput.style.borderRadius = "8px";
