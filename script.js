@@ -171,26 +171,33 @@ if (isAdmin) {
 } else {
   modalDeleteBtn.style.display = "none"; // hide for non-admins
 }
-  // Show recipe info
-  document.getElementById("modalTitle").textContent = recipe.title || "";
-  document.getElementById("modalImage").src = recipe.image || "";
-  document.getElementById("modalCategory").textContent = recipe.category || "";
+   // --- Hide / Unhide Button Logic ---
+const hideBtn = document.getElementById("modalHideBtn");
+hideBtn.addEventListener("click", () => {
+  if (editingRecipeIndex === null) return;
 
-  const ingList = document.getElementById("modalIngredients");
-  ingList.innerHTML = "";
-  (recipe.ingredients || []).forEach(i => {
-    const li = document.createElement("li");
-    li.textContent = i;
-    ingList.appendChild(li);
-  });
+  const recipe = recipes[editingRecipeIndex];
+  recipe.hidden = !recipe.hidden;             // toggle hidden
+  hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
 
-  const stepList = document.getElementById("modalInstructions");
-  stepList.innerHTML = "";
-  (recipe.instructions || []).forEach(step => {
-    const li = document.createElement("li");
-    li.textContent = step;
-    stepList.appendChild(li);
-  });
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+
+  // close modal & refresh grid
+  document.getElementById("recipeModal").style.display = "none";
+  renderRecipes();
+});
+
+   const filtered = recipes.filter(recipe => {
+  if (!isAdmin && recipe.hidden) return false; // hide from public
+  const matchesSearch =
+      (recipe.title || "").toLowerCase().includes(searchTerm) ||
+      (recipe.description || "").toLowerCase().includes(searchTerm);
+
+  const matchesCategory =
+      selectedCategory === "all" || recipe.category === selectedCategory;
+
+  return matchesSearch && matchesCategory;
+});
 
   // --- Edit Button Logic ---
   if (isAdmin) {
