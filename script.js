@@ -174,7 +174,7 @@ function openRecipeModal(recipe) {
   const modalIngredients = document.getElementById("modalIngredients");
   const modalInstructions = document.getElementById("modalInstructions");
 
-  // ----- FIXED: robust index lookup (not using indexOf)
+  // find index robustly
   editingRecipeIndex = recipes.findIndex(r =>
     r.title === recipe.title &&
     r.description === recipe.description &&
@@ -182,11 +182,8 @@ function openRecipeModal(recipe) {
   );
   if (editingRecipeIndex < 0) editingRecipeIndex = null;
 
-  // ---- populate UI ----
-  if (modalImg) {
-    modalImg.src = recipe.image || "";
-    modalImg.alt = recipe.title || "Recipe image";
-  }
+  // populate modal
+  if (modalImg) { modalImg.src = recipe.image || ""; modalImg.alt = recipe.title || "Recipe image"; }
   if (modalTitle) modalTitle.textContent = recipe.title || "";
   if (modalCategory) modalCategory.textContent = recipe.category || "";
   if (modalDesc) modalDesc.textContent = recipe.description || "";
@@ -209,44 +206,79 @@ function openRecipeModal(recipe) {
     });
   }
 
-  // ---- Hide / Unhide ----
-  if (hideBtn) {
+  // ----- ADMIN BUTTONS -----
+  if (modalEditBtn) {
     if (isAdmin && editingRecipeIndex !== null) {
-      hideBtn.style.display = "inline-block";
-      hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+      modalEditBtn.style.display = "inline-block";
+      modalEditBtn.onclick = () => {
+        populateAddModalFromDraft(recipes[editingRecipeIndex]);
+        addRecipeModal.classList.remove("hidden");
+        viewer.style.display = "none";
+      };
+    } else {
+      modalEditBtn.style.display = "none";
+      modalEditBtn.onclick = null;
+    }
+  }
 
-      hideBtn.onclick = () => {
-        const idx = editingRecipeIndex;
-        recipes[idx].hidden = !recipes[idx].hidden;
-        hideBtn.textContent = recipes[idx].hidden ? "Unhide" : "Hide";
+  if (modalDeleteBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      modalDeleteBtn.style.display = "inline-block";
+      modalDeleteBtn.onclick = () => {
+        if (!confirm(`Delete "${recipes[editingRecipeIndex].title}"?`)) return;
+        recipes.splice(editingRecipeIndex, 1);
         localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
         viewer.style.display = "none";
         renderRecipes();
       };
     } else {
-      hideBtn.style.display = "none";
+      modalDeleteBtn.style.display = "none";
+      modalDeleteBtn.onclick = null;
     }
   }
 
-  // ---- show viewer ----
+  if (hideBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      hideBtn.style.display = "inline-block";
+      hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+      hideBtn.onclick = () => {
+        recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+        viewer.style.display = "none";
+        renderRecipes();
+      };
+    } else {
+      hideBtn.style.display = "none";
+      hideBtn.onclick = null;
+    }
+  }
+
+  // show modal
   if (viewer) {
     viewer.style.display = "flex";
     viewer.setAttribute("aria-hidden", "false");
   }
 }
 
-if (viewer) {
+// ----- CLOSE MODAL -----
+const viewer = document.getElementById("recipeModal");
+const closeBtn = document.getElementById("closeViewerBtn");
+
+if (closeBtn && viewer) {
+  closeBtn.addEventListener("click", () => {
+    viewer.style.display = "none";
+    viewer.setAttribute("aria-hidden", "true");
+  });
+
+  // also close if clicking outside modal content
   viewer.addEventListener("click", (e) => {
-    // Only close if the user clicks on the overlay itself, not the modal content
     if (e.target === viewer) {
       viewer.style.display = "none";
       viewer.setAttribute("aria-hidden", "true");
     }
   });
 }
-/* -------------------------------------------------
-   VIEWER
-------------------------------------------------- */
 
 
 /* -------------------------------------------------
