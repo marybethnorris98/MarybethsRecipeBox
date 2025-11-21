@@ -659,3 +659,16 @@ renderRecipes();
 
 /* Make sure to inject admin UI if already authenticated (unlikely) */
 if (isAdmin) injectAdminUI();
+
+const viewer = document.getElementById("recipeModal");
+const closeBtn = document.getElementById("closeViewerBtn");
+
+if (closeBtn) {
+  closeBtn.addEventListener("click", () => {
+    if (viewer) {
+      viewer.style.display = "none";
+      viewer.setAttribute("aria-hidden", "true");
+    }
+  });
+}
+
