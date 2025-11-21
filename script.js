@@ -5,6 +5,77 @@ console.log("FULL admin + viewer script loaded");
 // -----------------------------
 let isAdmin = localStorage.getItem("admin") === "true";
 
+let isAdmin = localStorage.getItem("admin") === "true";
+
+// Login button logic
+loginBtn.addEventListener("click", () => {
+  const entered = document.getElementById("adminPassword").value || "";
+  if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
+    isAdmin = true;
+    closeLoginModal();
+    injectAdminUI(); // create Add + Drafts buttons
+  } else {
+    loginError.style.display = "block";
+  }
+});
+
+// -----------------------------
+// ADMIN LOGIN PERSISTENCE
+// -----------------------------
+
+// Check localStorage on page load
+let isAdmin = localStorage.getItem("admin") === "true";
+
+// If already logged in, inject admin UI
+if (isAdmin) {
+  injectAdminUI();
+  renderRecipes(); // show hidden recipes for admin
+}
+
+// Login button logic
+loginBtn.addEventListener("click", () => {
+  const entered = document.getElementById("adminPassword").value || "";
+
+  // check reversed password
+  if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
+    isAdmin = true;
+    localStorage.setItem("admin", "true"); // persist login
+    closeLoginModal();
+    injectAdminUI(); // show Add/Drafts buttons
+    renderRecipes();
+  } else {
+    loginError.style.display = "block";
+  }
+});
+
+// OPTIONAL: Logout button
+function logoutAdmin() {
+  isAdmin = false;
+  localStorage.removeItem("admin");
+  location.reload(); // reset UI
+}
+
+// Add logout button dynamically to admin UI
+function addLogoutButton() {
+  if (!document.getElementById("adminControlsContainer")) return;
+  if (document.getElementById("logoutBtn")) return; // already exists
+
+  const logoutBtn = document.createElement("button");
+  logoutBtn.id = "logoutBtn";
+  logoutBtn.textContent = "Logout";
+  logoutBtn.style = "background:#fff;color:#a00064;padding:10px;border-radius:12px;border:2px solid #ffb1db;cursor:pointer;";
+  logoutBtn.addEventListener("click", logoutAdmin);
+
+  document.getElementById("adminControlsContainer").appendChild(logoutBtn);
+}
+
+// Ensure logout button appears when admin UI is injected
+const originalInjectAdminUI = injectAdminUI;
+injectAdminUI = function() {
+  originalInjectAdminUI();
+  addLogoutButton();
+};
+
 // -----------------------------
 // DEFAULT RECIPES
 // -----------------------------
