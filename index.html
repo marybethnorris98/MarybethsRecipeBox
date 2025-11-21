@@ -46,6 +46,7 @@
     <img id="modalImage" class="modal-image" src="" alt="">
     <h1 id="modalTitle" class="modal-title"></h1>
     <div id="modalCategory" class="modal-category"></div>
+    <div id="modalDescription" class="modal-desc"></div>
 
     <h2>Ingredients</h2>
     <div class="scrollable-list" style="max-height:200px; overflow-y:auto; margin-bottom:24px;">
@@ -100,21 +101,6 @@
 
   <!-- YOUR SCRIPT -->
   <script src="script.js"></script>
-
-  <!-- ⭐ FIXED CLOSE BUTTON SCRIPT -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const viewer = document.getElementById("recipeModal");
-      const closeBtn = document.getElementById("closeViewerBtn");
-
-      if (viewer && closeBtn) {
-        closeBtn.onclick = () => {
-          viewer.style.display = "none";
-          viewer.setAttribute("aria-hidden", "true");
-        };
-      }
-    });
-  </script>
 
 </body>
 </html>
