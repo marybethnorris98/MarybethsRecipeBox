@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   [categoryFilter, newCategory].forEach(select => {
   if (!select) return;
-  select.style.fontFamily = "Arial, sans-serif"; // clean font
+  select.style.fontFamily = "Poppins, sans-serif"; // clean font
   select.style.fontSize = "16px";                // bigger font
   select.style.fontWeight = "bold";              // bold text
   select.style.color = "#a00064";                // pink/purple text
