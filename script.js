@@ -11,7 +11,8 @@ const defaultRecipes = [
     image: "images/pancakes.jpg",
     description: "Fluffy homemade pancakes loaded with fresh blueberries.",
     ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
-    instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."]
+    instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."],
+   hidden: false
   },
   {
     title: "Chicken Caesar Salad",
@@ -19,7 +20,8 @@ const defaultRecipes = [
     image: "images/salad.jpg",
     description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
     ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
-    instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."]
+    instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."],
+   hidden: false
   },
   {
     title: "Sample Pasta",
@@ -27,7 +29,8 @@ const defaultRecipes = [
     image: "https://via.placeholder.com/800x500?text=Recipe+Image",
     description: "A quick sample pasta for testing the modal.",
     ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
-    instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."]
+    instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."],
+     hidden: false
   }
 ];
 
@@ -95,7 +98,6 @@ const loginModal = document.getElementById("loginModal");
 const loginBtn = document.getElementById("loginBtn");
 const loginError = document.getElementById("loginError");
 
-let isAdmin = false;           // becomes true after successful login
 let editingDraftId = null;     // id of draft being edited (null if creating new)
 let editingRecipeIndex = null; // optional feature if you later choose to edit saved recipes
 
