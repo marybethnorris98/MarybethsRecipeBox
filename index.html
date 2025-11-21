@@ -65,7 +65,6 @@
   </div>
 </div>
 
-
   <!-- 🔐 LOGIN MODAL (HIDDEN) -->
   <div id="loginModal" class="modal hidden">
     <div class="modal-content">
@@ -98,7 +97,24 @@
       <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
     </div>
   </div>
-  
+
+  <!-- YOUR SCRIPT -->
   <script src="script.js"></script>
+
+  <!-- ⭐ FIXED CLOSE BUTTON SCRIPT -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const viewer = document.getElementById("recipeModal");
+      const closeBtn = document.getElementById("closeViewerBtn");
+
+      if (viewer && closeBtn) {
+        closeBtn.onclick = () => {
+          viewer.style.display = "none";
+          viewer.setAttribute("aria-hidden", "true");
+        };
+      }
+    });
+  </script>
+
 </body>
 </html>
