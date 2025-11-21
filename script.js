@@ -159,20 +159,14 @@ function renderRecipes() {
   });
 }
 
-
-/* -------------------------------------------------
-   VIEWER
-------------------------------------------------- */
 function openRecipeModal(recipe) {
   if (!recipe) return;
 
-  // modal + common controls (safe lookups)
   const viewer = document.getElementById("recipeModal");
   const modalEditBtn = document.getElementById("modalEditBtn");
   const modalDeleteBtn = document.getElementById("modalDeleteBtn");
   const hideBtn = document.getElementById("modalHideBtn");
 
-  // Optional content elements (only update if they exist)
   const modalImg = document.getElementById("modalImage");
   const modalTitle = document.getElementById("modalTitle");
   const modalCategory = document.getElementById("modalCategory");
@@ -180,11 +174,15 @@ function openRecipeModal(recipe) {
   const modalIngredients = document.getElementById("modalIngredients");
   const modalInstructions = document.getElementById("modalInstructions");
 
-  // Set which recipe we're editing (use indexOf to match the instance in recipes)
-  editingRecipeIndex = recipes.indexOf(recipe);
-  if (editingRecipeIndex < 0) editingRecipeIndex = null; // not found fallback
+  // ----- FIXED: robust index lookup (not using indexOf)
+  editingRecipeIndex = recipes.findIndex(r =>
+    r.title === recipe.title &&
+    r.description === recipe.description &&
+    r.image === recipe.image
+  );
+  if (editingRecipeIndex < 0) editingRecipeIndex = null;
 
-  // --- Populate modal content if elements exist ---
+  // ---- populate UI ----
   if (modalImg) {
     modalImg.src = recipe.image || "";
     modalImg.alt = recipe.title || "Recipe image";
@@ -204,83 +202,44 @@ function openRecipeModal(recipe) {
 
   if (modalInstructions) {
     modalInstructions.innerHTML = "";
-    (recipe.instructions || []).forEach((step, i) => {
+    (recipe.instructions || []).forEach(step => {
       const li = document.createElement("li");
       li.textContent = step;
       modalInstructions.appendChild(li);
     });
   }
 
-  // ----- Edit button logic (admin only, defensive) -----
-  if (modalEditBtn) {
-    if (isAdmin && editingRecipeIndex !== null) {
-      modalEditBtn.style.display = "inline-block";
-      // ensure we don't stack handlers — assign a single onclick
-      modalEditBtn.onclick = () => {
-        const r = recipes[editingRecipeIndex];
-        if (!r) return;
-        populateAddModalFromDraft(r);
-        addRecipeModal.classList.remove("hidden");
-        if (viewer) viewer.style.display = "none";
-      };
-    } else {
-      modalEditBtn.style.display = "none";
-      modalEditBtn.onclick = null;
-    }
-  }
-
-  // ----- Delete button logic (admin only, defensive) -----
-  if (modalDeleteBtn) {
-    if (isAdmin && editingRecipeIndex !== null) {
-      modalDeleteBtn.style.display = "inline-block";
-      modalDeleteBtn.onclick = () => {
-        const r = recipes[editingRecipeIndex];
-        if (!r) return;
-        if (!confirm(`Are you sure you want to delete "${r.title}" permanently?`)) return;
-        // remove by index for safety
-        recipes.splice(editingRecipeIndex, 1);
-        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-        editingRecipeIndex = null;
-        if (viewer) viewer.style.display = "none";
-        renderRecipes();
-      };
-    } else {
-      modalDeleteBtn.style.display = "none";
-      modalDeleteBtn.onclick = null;
-    }
-  }
-
-  // ----- Hide / Unhide logic (admin only, defensive) -----
+  // ---- Hide / Unhide ----
   if (hideBtn) {
     if (isAdmin && editingRecipeIndex !== null) {
       hideBtn.style.display = "inline-block";
-
-      // set initial text based on recipe.hidden (default false)
-      hideBtn.textContent = (recipes[editingRecipeIndex] && recipes[editingRecipeIndex].hidden) ? "Unhide" : "Hide";
+      hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
 
       hideBtn.onclick = () => {
         const idx = editingRecipeIndex;
-        if (idx === null || idx < 0 || !recipes[idx]) return;
         recipes[idx].hidden = !recipes[idx].hidden;
-        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
         hideBtn.textContent = recipes[idx].hidden ? "Unhide" : "Hide";
-
-        // close viewer and refresh grid
-        if (viewer) viewer.style.display = "none";
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        viewer.style.display = "none";
         renderRecipes();
       };
     } else {
       hideBtn.style.display = "none";
-      hideBtn.onclick = null;
     }
   }
 
-  // Show the viewer safely
+  // ---- show viewer ----
   if (viewer) {
     viewer.style.display = "flex";
     viewer.setAttribute("aria-hidden", "false");
   }
 }
+
+/* -------------------------------------------------
+   VIEWER
+------------------------------------------------- */
+
+
 /* -------------------------------------------------
    SEARCH + FILTER
 ------------------------------------------------- */
