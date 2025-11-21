@@ -5,72 +5,6 @@ console.log("FULL admin + viewer script loaded");
 // -----------------------------
 let isAdmin = localStorage.getItem("admin") === "true";
 
-// Login button logic
-loginBtn.addEventListener("click", () => {
-  const entered = document.getElementById("adminPassword").value || "";
-  if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
-    isAdmin = true;
-    closeLoginModal();
-    injectAdminUI(); // create Add + Drafts buttons
-  } else {
-    loginError.style.display = "block";
-  }
-});
-
-// -----------------------------
-// ADMIN LOGIN PERSISTENCE
-// -----------------------------
-
-// If already logged in, inject admin UI
-if (isAdmin) {
-  injectAdminUI();
-  renderRecipes(); // show hidden recipes for admin
-}
-
-// Login button logic
-loginBtn.addEventListener("click", () => {
-  const entered = document.getElementById("adminPassword").value || "";
-
-  // check reversed password
-  if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
-    isAdmin = true;
-    localStorage.setItem("admin", "true"); // persist login
-    closeLoginModal();
-    injectAdminUI(); // show Add/Drafts buttons
-    renderRecipes();
-  } else {
-    loginError.style.display = "block";
-  }
-});
-
-// OPTIONAL: Logout button
-function logoutAdmin() {
-  isAdmin = false;
-  localStorage.removeItem("admin");
-  location.reload(); // reset UI
-}
-
-// Add logout button dynamically to admin UI
-function addLogoutButton() {
-  if (!document.getElementById("adminControlsContainer")) return;
-  if (document.getElementById("logoutBtn")) return; // already exists
-
-  const logoutBtn = document.createElement("button");
-  logoutBtn.id = "logoutBtn";
-  logoutBtn.textContent = "Logout";
-  logoutBtn.style = "background:#fff;color:#a00064;padding:10px;border-radius:12px;border:2px solid #ffb1db;cursor:pointer;";
-  logoutBtn.addEventListener("click", logoutAdmin);
-
-  document.getElementById("adminControlsContainer").appendChild(logoutBtn);
-}
-
-// Ensure logout button appears when admin UI is injected
-const originalInjectAdminUI = injectAdminUI;
-injectAdminUI = function() {
-  originalInjectAdminUI();
-  addLogoutButton();
-};
-
 // -----------------------------
 // DEFAULT RECIPES
 // -----------------------------
@@ -357,22 +291,27 @@ document.addEventListener("DOMContentLoaded", () => {
   if (categoryFilter) categoryFilter.addEventListener("change", renderRecipes);
 
   // -----------------------------
-  // ADMIN LOGIN
+  // ADMIN LOGIN FIXED
   // -----------------------------
   const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join("");
 
   function openLoginModal() {
+    if (!loginModal || !loginError) return;
     loginError.style.display = "none";
     loginModal.classList.remove("hidden");
   }
 
-  loginBtn.addEventListener("click", () => {
-    const entered = document.getElementById("adminPassword").value || "";
+  loginBtn?.addEventListener("click", () => {
+    const entered = document.getElementById("adminPassword")?.value || "";
     if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
       isAdmin = true;
+      localStorage.setItem("admin", "true"); // persist login
       loginModal.classList.add("hidden");
       injectAdminUI();
-    } else loginError.style.display = "block";
+      renderRecipes();
+    } else {
+      if (loginError) loginError.style.display = "block";
+    }
   });
 
   document.addEventListener("keydown", (e) => {
@@ -383,6 +322,12 @@ document.addEventListener("DOMContentLoaded", () => {
       (!mac && e.ctrlKey && e.shiftKey && key === "m");
     if (shouldOpen) openLoginModal();
   });
+
+  // If already logged in, inject admin UI
+  if (isAdmin) {
+    injectAdminUI();
+    renderRecipes();
+  }
 
   // -----------------------------
   // INJECT ADMIN UI
@@ -411,6 +356,30 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(addBtn);
     container.appendChild(draftsBtn);
     document.body.appendChild(container);
+
+    addLogoutButton();
+  }
+
+  // -----------------------------
+  // LOGOUT BUTTON
+  // -----------------------------
+  function logoutAdmin() {
+    isAdmin = false;
+    localStorage.removeItem("admin");
+    location.reload(); // reset UI
+  }
+
+  function addLogoutButton() {
+    if (!document.getElementById("adminControlsContainer")) return;
+    if (document.getElementById("logoutBtn")) return;
+
+    const logoutBtn = document.createElement("button");
+    logoutBtn.id = "logoutBtn";
+    logoutBtn.textContent = "Logout";
+    logoutBtn.style = "background:#fff;color:#a00064;padding:10px;border-radius:12px;border:2px solid #ffb1db;cursor:pointer;";
+    logoutBtn.addEventListener("click", logoutAdmin);
+
+    document.getElementById("adminControlsContainer").appendChild(logoutBtn);
   }
 
   // -----------------------------
@@ -523,8 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
     const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-
-    const newRecipe = { title, category, image, description, ingredients, instructions };
+    const newRecipe = { title, category, image, description, ingredients, instructions, hidden: false };
 
     if (editingRecipeIndex !== null) recipes[editingRecipeIndex] = newRecipe;
     else recipes.push(newRecipe);
