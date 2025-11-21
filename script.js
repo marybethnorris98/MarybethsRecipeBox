@@ -235,6 +235,15 @@ function openRecipeModal(recipe) {
   }
 }
 
+if (viewer) {
+  viewer.addEventListener("click", (e) => {
+    // Only close if the user clicks on the overlay itself, not the modal content
+    if (e.target === viewer) {
+      viewer.style.display = "none";
+      viewer.setAttribute("aria-hidden", "true");
+    }
+  });
+}
 /* -------------------------------------------------
    VIEWER
 ------------------------------------------------- */
