@@ -244,7 +244,19 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (editingRecipeIndex < 0) editingRecipeIndex = null;
 
-    if (modalImg) { modalImg.src = recipe.image || ""; modalImg.alt = recipe.title || ""; }
+    if (modalImg) { modalImg.src = recipe.image || ""; 
+                    modalImg.alt = recipe.title || ""; 
+                    modalImg.style.maxWidth = "100%";      // image won't be wider than modal
+                    modalImg.style.maxHeight = "400px";    // limit height
+                    modalImg.style.height = "auto";        // keep aspect ratio
+                    modalImg.style.objectFit = "contain";
+                    modalImg.style.display = "block";      // make it a block element
+                    modalImg.style.margin = "0 auto 20px"; // center
+                  }
+    if (window.innerWidth <= 480) {          // screens 480px wide or smaller
+    modalImg.style.maxHeight = "250px";   // smaller max height
+    modalImg.style.margin = "0 auto 15px"; // slightly smaller bottom margin
+}
     if (modalTitle) modalTitle.textContent = recipe.title || "";
     if (modalCategory) modalCategory.textContent = recipe.category || "";
     if (modalDesc) modalDesc.textContent = recipe.description || "";
