@@ -1,5 +1,35 @@
 console.log("FULL admin + viewer script loaded");
 
+const firebaseConfig = {
+  apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
+  authDomain: "recipeapp-248a1.firebaseapp.com",
+  projectId: "recipeapp-248a1",
+  storageBucket: "recipeapp-248a1.firebasestorage.app",
+  messagingSenderId: "629558122940",
+  appId: "1:629558122940:web:65dcca8ea0c572ccdf33b9",
+  measurementId: "G-7W26GEB9WX"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+async function testFirebase() {
+  try {
+    // Try to write a test document
+    const docRef = await db.collection("test").add({ message: "Hello Firestore!" });
+    console.log("Test document written with ID:", docRef.id);
+
+    // Try to read it back
+    const snapshot = await db.collection("test").get();
+    snapshot.forEach(doc => console.log("Document data:", doc.data()));
+  } catch (err) {
+    console.error("Firebase test failed:", err);
+  }
+}
+
+// Call the test
+testFirebase();
+
+
 // -----------------------------
 // ADMIN STATE
 // -----------------------------
@@ -8,35 +38,7 @@ let isAdmin = localStorage.getItem("admin") === "true";
 // -----------------------------
 // DEFAULT RECIPES
 // -----------------------------
-const defaultRecipes = [
-  {
-    title: "Blueberry Pancakes",
-    category: "Breakfast",
-    image: "images/pancakes.jpg",
-    description: "Fluffy homemade pancakes loaded with fresh blueberries.",
-    ingredients: ["1 cup flour","1 cup blueberries","1 egg","1 tbsp sugar","1 cup milk"],
-    instructions: ["Mix dry ingredients.","Add egg & milk.","Fold in blueberries.","Cook on skillet until golden."],
-    hidden: false
-  },
-  {
-    title: "Chicken Caesar Salad",
-    category: "Meals",
-    image: "images/salad.jpg",
-    description: "Crisp romaine, grilled chicken, parmesan, and creamy dressing.",
-    ingredients: ["Romaine lettuce","Grilled chicken","Parmesan","Croutons","Caesar dressing"],
-    instructions: ["Chop lettuce.","Slice chicken.","Toss with dressing.","Top with cheese & croutons."],
-    hidden: false
-  },
-  {
-    title: "Sample Pasta",
-    category: "Snacks",
-    image: "https://via.placeholder.com/800x500?text=Recipe+Image",
-    description: "A quick sample pasta for testing the modal.",
-    ingredients: ["2 cups pasta","1 tbsp olive oil","Salt","Parmesan cheese"],
-    instructions: ["Boil pasta until tender.","Drain and toss with olive oil.","Season with salt.","Top with parmesan and serve."],
-    hidden: false
-  }
-];
+let recipes = [];
 
 // -----------------------------
 // STORAGE KEYS + CATEGORIES
