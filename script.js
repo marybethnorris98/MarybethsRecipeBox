@@ -154,6 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("div");
       card.className = "card";
 
+      if (isAdmin && recipe.hidden) {
+  card.classList.add("hidden-recipe");
+}
+      
       const img = document.createElement("img");
       img.src = recipe.image || "";
       img.alt = recipe.title || "";
