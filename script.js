@@ -154,10 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("div");
       card.className = "card";
 
-      if (isAdmin && recipe.hidden) {
-        card.classList.add("hidden-recipe");
-      }
-      
+      if (recipe.hidden) {
+  if (isAdmin) {
+    card.classList.add("hidden-recipe-admin"); // special class for admin
+  } else {
+    return; // normal users don't see hidden recipes
+  }
+} 
       const img = document.createElement("img");
       img.src = recipe.image || "";
       img.alt = recipe.title || "";
