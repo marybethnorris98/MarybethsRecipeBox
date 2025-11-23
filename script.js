@@ -301,7 +301,10 @@ card.appendChild(tooltip);
           recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
           localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
           hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-          viewer.style.display = "none";
+          hideBtn.onclick = () => {
+  recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+  hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
           renderRecipes();
         };
       } else hideBtn.style.display = "none";
