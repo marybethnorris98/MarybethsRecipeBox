@@ -384,3 +384,20 @@ if (categoryDropdown) {
   padding: 2px 6px;
   border-radius: 6px;
 }
+.hidden-recipe {
+  opacity: 0.4;          /* grays out the card */
+  border: 2px dashed #ff3ebf;  /* optional visual border for admin */
+  position: relative;
+}
+
+.hidden-recipe::after {
+  content: "HIDDEN";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ff3ebf;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
