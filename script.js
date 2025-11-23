@@ -178,6 +178,26 @@ document.addEventListener("DOMContentLoaded", () => {
       content.appendChild(descDiv);
       card.appendChild(img);
       card.appendChild(content);
+// --- INFO ICON + TOOLTIP ---
+const infoIcon = document.createElement("div");
+infoIcon.className = "card-info-icon";
+infoIcon.textContent = "i";
+
+const tooltip = document.createElement("div");
+tooltip.className = "card-info-tooltip";
+tooltip.textContent = recipe.credit || "No credits added.";
+
+infoIcon.addEventListener("click", (e) => {
+  e.stopPropagation(); // prevent opening the modal
+  tooltip.classList.toggle("visible");
+});
+
+// Hide tooltip when clicking anywhere else
+document.addEventListener("click", () => tooltip.classList.remove("visible"));
+
+// Add to card
+card.appendChild(infoIcon);
+card.appendChild(tooltip);
 
       card.addEventListener("click", () => openRecipeModal(recipe));
 
