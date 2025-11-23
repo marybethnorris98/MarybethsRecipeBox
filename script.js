@@ -80,24 +80,24 @@ document.addEventListener("DOMContentLoaded", () => {
   let editingRecipeIndex = null;
 
   [categoryFilter, newCategory].forEach(select => {
-  if (!select) return;
-  select.style.fontFamily = "Poppins, sans-serif"; // clean font
-  select.style.fontSize = "16px";                // bigger font
-  select.style.fontWeight = "bold";              // bold text
-  select.style.color = "#f039b1";                // pink/purple text
-  select.style.padding = "6px 10px";             // nicer spacing
-  select.style.borderRadius = "8px";             // rounded corners
-  select.style.border = "2px solid #ffb1db";     // matching border color
-});
+    if (!select) return;
+    select.style.fontFamily = "Poppins, sans-serif"; // clean font
+    select.style.fontSize = "16px";                // bigger font
+    select.style.fontWeight = "bold";              // bold text
+    select.style.color = "#f039b1";                // pink/purple text
+    select.style.padding = "6px 10px";             // nicer spacing
+    select.style.borderRadius = "8px";             // rounded corners
+    select.style.border = "2px solid #ffb1db";     // matching border color
+  });
 
   if (searchInput) {
-  searchInput.style.fontFamily = "Poppins, sans-serif";
-  searchInput.style.fontSize = "16px";
-  searchInput.style.color = "#f039b1";  // pink/purple text
-  searchInput.style.padding = "6px 10px";
-  searchInput.style.borderRadius = "8px";
-  searchInput.style.border = "2px solid #ffb1db";
-}
+    searchInput.style.fontFamily = "Poppins, sans-serif";
+    searchInput.style.fontSize = "16px";
+    searchInput.style.color = "#f039b1";  // pink/purple text
+    searchInput.style.padding = "6px 10px";
+    searchInput.style.borderRadius = "8px";
+    searchInput.style.border = "2px solid #ffb1db";
+  }
 
   // -----------------------------
   // POPULATE CATEGORY DROPDOWNS
@@ -155,8 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "card";
 
       if (isAdmin && recipe.hidden) {
-  card.classList.add("hidden-recipe");
-}
+        card.classList.add("hidden-recipe");
+      }
       
       const img = document.createElement("img");
       img.src = recipe.image || "";
@@ -182,26 +182,27 @@ document.addEventListener("DOMContentLoaded", () => {
       content.appendChild(descDiv);
       card.appendChild(img);
       card.appendChild(content);
-// --- INFO ICON + TOOLTIP ---
-const infoIcon = document.createElement("div");
-infoIcon.className = "card-info-icon";
-infoIcon.textContent = "i";
 
-const tooltip = document.createElement("div");
-tooltip.className = "card-info-tooltip";
-tooltip.textContent = recipe.credit || "No credits added.";
+      // --- INFO ICON + TOOLTIP ---
+      const infoIcon = document.createElement("div");
+      infoIcon.className = "card-info-icon";
+      infoIcon.textContent = "i";
 
-infoIcon.addEventListener("click", (e) => {
-  e.stopPropagation(); // prevent opening the modal
-  tooltip.classList.toggle("visible");
-});
+      const tooltip = document.createElement("div");
+      tooltip.className = "card-info-tooltip";
+      tooltip.textContent = recipe.credit || "No credits added.";
 
-// Hide tooltip when clicking anywhere else
-document.addEventListener("click", () => tooltip.classList.remove("visible"));
+      infoIcon.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent opening the modal
+        tooltip.classList.toggle("visible");
+      });
 
-// Add to card
-card.appendChild(infoIcon);
-card.appendChild(tooltip);
+      // Hide tooltip when clicking anywhere else
+      document.addEventListener("click", () => tooltip.classList.remove("visible"));
+
+      // Add to card
+      card.appendChild(infoIcon);
+      card.appendChild(tooltip);
 
       card.addEventListener("click", () => openRecipeModal(recipe));
 
@@ -293,21 +294,31 @@ card.appendChild(tooltip);
       } else modalDeleteBtn.style.display = "none";
     }
 
+    // -----------------------------
+    // FIXED HIDE/UNHIDE BUTTON
+    // -----------------------------
     if (hideBtn) {
       if (isAdmin && editingRecipeIndex !== null) {
         hideBtn.style.display = "inline-block";
         hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-        hideBtn.onclick = () => {
+
+        hideBtn.onclick = (e) => {
+          e.stopPropagation(); // prevent modal from closing if clicked
+          if (editingRecipeIndex === null) return;
+
+          // toggle hidden state
           recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
           localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+
+          // update button text
           hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-          hideBtn.onclick = () => {
-  recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
-  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-  hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+
+          // re-render recipe grid
           renderRecipes();
         };
-      } else hideBtn.style.display = "none";
+      } else {
+        hideBtn.style.display = "none";
+      }
     }
 
     viewer.style.display = "flex";
@@ -573,85 +584,84 @@ card.appendChild(tooltip);
   // -----------------------------
   // DRAFTS
   // -----------------------------
-async function openDraftsModal() {
-  let draftsModal = document.getElementById("draftsModal");
-  if (!draftsModal) {
-    draftsModal = document.createElement("div");
-    draftsModal.id = "draftsModal";
-    draftsModal.className = "modal";
-    draftsModal.style.zIndex = 1300;
-    draftsModal.innerHTML = `
-      <div class="modal-content" style="max-width:520px;position:relative;">
-        <button id="closeDraftsBtn" style="position:absolute;right:18px;top:12px;border:none;background:none;font-size:22px;cursor:pointer;">✖</button>
-        <h2 style="margin-top:0;">My Drafts</h2>
-        <div id="draftsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
-      </div>
-    `;
-    document.body.appendChild(draftsModal);
+  async function openDraftsModal() {
+    let draftsModal = document.getElementById("draftsModal");
+    if (!draftsModal) {
+      draftsModal = document.createElement("div");
+      draftsModal.id = "draftsModal";
+      draftsModal.className = "modal";
+      draftsModal.style.zIndex = 1300;
+      draftsModal.innerHTML = `
+        <div class="modal-content" style="max-width:520px;position:relative;">
+          <button id="closeDraftsBtn" style="position:absolute;right:18px;top:12px;border:none;background:none;font-size:22px;cursor:pointer;">✖</button>
+          <h2 style="margin-top:0;">My Drafts</h2>
+          <div id="draftsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
+        </div>
+      `;
+      document.body.appendChild(draftsModal);
 
-    document.getElementById("closeDraftsBtn").addEventListener("click", () => draftsModal.classList.add("hidden"));
-    draftsModal.addEventListener("click", e => { if (e.target === draftsModal) draftsModal.classList.add("hidden"); });
-  }
-
-  const listContainer = draftsModal.querySelector("#draftsList");
-  listContainer.innerHTML = "";
-
-  try {
-    const res = await fetch("/drafts");
-    const serverDrafts = await res.json();
-
-    if (!serverDrafts.length) {
-      const p = document.createElement("div");
-      p.textContent = "No drafts yet.";
-      p.style = "color:#666;padding:12px;";
-      listContainer.appendChild(p);
-    } else {
-      serverDrafts.sort((a,b) => (a.title||"").localeCompare(b.title||""));
-      serverDrafts.forEach(d => {
-        const row = document.createElement("div");
-        row.style = "display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;border:1px solid #ffe7f5;background:#fff9fc;";
-
-        const titleDiv = document.createElement("div");
-        titleDiv.textContent = d.title || "Untitled Draft";
-        titleDiv.style = "font-weight:600;color:#a00064;";
-
-        const actions = document.createElement("div");
-        actions.style = "display:flex;gap:8px;";
-
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.style = "background:#ff3ebf;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;";
-        editBtn.addEventListener("click", () => {
-          editingDraftId = d.id;
-          populateAddModalFromDraft(d);
-          addRecipeModal.classList.remove("hidden");
-          draftsModal.classList.add("hidden");
-        });
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
-        deleteBtn.addEventListener("click", async () => {
-          if (!confirm(`Delete draft "${d.title}"?`)) return;
-          await fetch(`/drafts/${d.id}`, { method: "DELETE" });
-          openDraftsModal();
-        });
-
-        actions.appendChild(editBtn);
-        actions.appendChild(deleteBtn);
-        row.appendChild(titleDiv);
-        row.appendChild(actions);
-        listContainer.appendChild(row);
-      });
+      document.getElementById("closeDraftsBtn").addEventListener("click", () => draftsModal.classList.add("hidden"));
+      draftsModal.addEventListener("click", e => { if (e.target === draftsModal) draftsModal.classList.add("hidden"); });
     }
-  } catch (err) {
-    console.error("Error loading drafts:", err);
-    alert("Failed to load drafts from server.");
+
+    const listContainer = draftsModal.querySelector("#draftsList");
+    listContainer.innerHTML = "";
+
+    try {
+      const res = await fetch("/drafts");
+      const serverDrafts = await res.json();
+
+      if (!serverDrafts.length) {
+        const p = document.createElement("div");
+        p.textContent = "No drafts yet.";
+        p.style = "color:#666;padding:12px;";
+        listContainer.appendChild(p);
+      } else {
+        serverDrafts.sort((a,b) => (a.title||"").localeCompare(b.title||""));
+        serverDrafts.forEach(d => {
+          const row = document.createElement("div");
+          row.style = "display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;border:1px solid #ffe7f5;background:#fff9fc;";
+
+          const titleDiv = document.createElement("div");
+          titleDiv.textContent = d.title || "Untitled Draft";
+          titleDiv.style = "font-weight:600;color:#a00064;";
+
+          const actions = document.createElement("div");
+          actions.style = "display:flex;gap:8px;";
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.style = "background:#ff3ebf;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;";
+          editBtn.addEventListener("click", () => {
+            editingDraftId = d.id;
+            populateAddModalFromDraft(d);
+            addRecipeModal.classList.remove("hidden");
+            draftsModal.classList.add("hidden");
+          });
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
+          deleteBtn.addEventListener("click", async () => {
+            if (!confirm(`Delete draft "${d.title}"?`)) return;
+            await fetch(`/drafts/${d.id}`, { method: "DELETE" });
+            openDraftsModal();
+          });
+
+          actions.appendChild(editBtn);
+          actions.appendChild(deleteBtn);
+          row.appendChild(titleDiv);
+          row.appendChild(actions);
+          listContainer.appendChild(row);
+        });
+      }
+    } catch (err) {
+      console.error("Error loading drafts:", err);
+      alert("Failed to load drafts from server.");
+    }
+
+    draftsModal.classList.remove("hidden");
   }
-
-  draftsModal.classList.remove("hidden");
-}
-
 
   ensureAddModalControls();
 
