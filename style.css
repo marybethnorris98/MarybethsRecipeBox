@@ -281,3 +281,48 @@ if (categoryDropdown) {
   opacity: 0.7;
   filter: grayscale(20%) brightness(80%);
 }
+/* ————————————————
+   CARD INFO ICON + TOOLTIP
+——————————————— */
+.card-info-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff3ebf;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  z-index: 10;
+  transition: transform .15s;
+}
+
+.card-info-icon:hover {
+  transform: scale(1.12);
+}
+
+/* Tooltip container */
+.card-info-tooltip {
+  position: absolute;
+  right: 0;
+  top: 34px;
+  background: #fff1fa;
+  border: 1px solid #ffb6de;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  width: 180px;
+  color: #3b3b3b;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: none;
+}
+
+.card-info-tooltip.visible {
+  display: block;
+}
