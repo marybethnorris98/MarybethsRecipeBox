@@ -4,13 +4,13 @@ console.log("FULL admin + viewer script loaded");
 // FIREBASE CONFIG
 // -----------------------------
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
+  authDomain: "recipeapp-248a1.firebaseapp.com",
+  projectId: "recipeapp-248a1",
+  storageBucket: "recipeapp-248a1.firebasestorage.app",
+  messagingSenderId: "629558122940",
+  appId: "1:629558122940:web:65dcca8ea0c572ccdf33b9",
+  measurementId: "G-7W26GEB9WX"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
