@@ -215,127 +215,113 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // OPEN RECIPE MODAL
   // -----------------------------
-  function openRecipeModal(recipe) {
-    if (!recipe || !viewer) return;
+ function openRecipeModal(recipe) {
+  if (!recipe || !viewer) return;
 
-    const modalEditBtn = document.getElementById("modalEditBtn");
-    const modalDeleteBtn = document.getElementById("modalDeleteBtn");
-    const hideBtn = document.getElementById("modalHideBtn");
+  const modalEditBtn = document.getElementById("modalEditBtn");
+  const modalDeleteBtn = document.getElementById("modalDeleteBtn");
+  const hideBtn = document.getElementById("modalHideBtn");
 
-    const modalImg = document.getElementById("modalImage");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalCategory = document.getElementById("modalCategory");
+  const modalImg = document.getElementById("modalImage");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalCategory = document.getElementById("modalCategory");
+  let modalDesc = document.getElementById("modalDescription");
 
-    // Add missing modalDescription div if needed
-    let modalDesc = document.getElementById("modalDescription");
-    if (!modalDesc) {
-      modalDesc = document.createElement("div");
-      modalDesc.id = "modalDescription";
-      modalCategory?.after(modalDesc);
-    }
-
-    const modalIngredients = document.getElementById("modalIngredients");
-    const modalInstructions = document.getElementById("modalInstructions");
-
-    editingRecipeIndex = recipes.findIndex(r =>
-      r.title === recipe.title &&
-      r.description === recipe.description &&
-      r.image === recipe.image
-    );
-    if (editingRecipeIndex < 0) editingRecipeIndex = null;
-
-    if (modalImg) { modalImg.src = recipe.image || ""; 
-                    modalImg.alt = recipe.title || ""; 
-                    modalImg.style.maxWidth = "100%";      // image won't be wider than modal
-                    modalImg.style.maxHeight = "300px";    // limit height
-                    modalImg.style.height = "auto";        // keep aspect ratio
-                    modalImg.style.objectFit = "contain";
-                    modalImg.style.display = "block";      // make it a block element
-                    modalImg.style.margin = "0 auto 30px"; // center
-                  }
-    if (window.innerWidth <= 480) {          // screens 480px wide or smaller
-    modalImg.style.maxHeight = "200px";   // smaller max height
-    modalImg.style.margin = "0 auto 15px"; // slightly smaller bottom margin
-}
-    if (modalTitle) modalTitle.textContent = recipe.title || "";
-    if (modalCategory) modalCategory.textContent = recipe.category || "";
-    if (modalDesc) modalDesc.textContent = recipe.description || "";
-
-    if (modalIngredients) {
-      modalIngredients.innerHTML = "";
-      (recipe.ingredients || []).forEach(ing => {
-        const li = document.createElement("li");
-        li.textContent = ing;
-        modalIngredients.appendChild(li);
-      });
-    }
-
-    if (modalInstructions) {
-      modalInstructions.innerHTML = "";
-      (recipe.instructions || []).forEach(step => {
-        const li = document.createElement("li");
-        li.textContent = step;
-        modalInstructions.appendChild(li);
-      });
-    }
-
-    // Admin buttons
-    if (modalEditBtn) {
-      if (isAdmin && editingRecipeIndex !== null) {
-        modalEditBtn.style.display = "inline-block";
-        modalEditBtn.onclick = () => {
-          populateAddModalFromDraft(recipes[editingRecipeIndex]);
-          addRecipeModal.classList.remove("hidden");
-          viewer.style.display = "none";
-        };
-      } else {
-        modalEditBtn.style.display = "none";
-      }
-    }
-
-    if (modalDeleteBtn) {
-      if (isAdmin && editingRecipeIndex !== null) {
-        modalDeleteBtn.style.display = "inline-block";
-        modalDeleteBtn.onclick = () => {
-          if (!confirm(`Delete "${recipes[editingRecipeIndex].title}"?`)) return;
-          recipes.splice(editingRecipeIndex, 1);
-          localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-          viewer.style.display = "none";
-          renderRecipes();
-        };
-      } else modalDeleteBtn.style.display = "none";
-    }
-
-    // -----------------------------
-    // FIXED HIDE/UNHIDE BUTTON
-    // -----------------------------
-    if (hideBtn) {
-      if (isAdmin && editingRecipeIndex !== null) {
-        hideBtn.style.display = "inline-block";
-        hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-
-        hideBtn.onclick = (e) => {
-          e.stopPropagation(); // prevent modal from closing if clicked
-          if (editingRecipeIndex === null) return;
-
-          // toggle hidden state
-          recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
-          localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-
-          // update button text
-          hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-
-          // re-render recipe grid
-          renderRecipes();
-        };
-      } else {
-        hideBtn.style.display = "none";
-      }
-    }
-
-    viewer.style.display = "flex";
-    viewer.setAttribute("aria-hidden", "false");
+  if (!modalDesc) {
+    modalDesc = document.createElement("div");
+    modalDesc.id = "modalDescription";
+    modalCategory?.after(modalDesc);
   }
+
+  const modalIngredients = document.getElementById("modalIngredients");
+  const modalInstructions = document.getElementById("modalInstructions");
+
+  editingRecipeIndex = recipes.findIndex(r =>
+    r.title === recipe.title &&
+    r.description === recipe.description &&
+    r.image === recipe.image
+  );
+  if (editingRecipeIndex < 0) editingRecipeIndex = null;
+
+  // ✅ FIXED Image size
+  if (modalImg) {
+    modalImg.src = recipe.image || "";
+    modalImg.alt = recipe.title || "";
+    modalImg.style.maxWidth = "100%";
+    modalImg.style.maxHeight = window.innerWidth <= 480 ? "200px" : "300px";
+    modalImg.style.height = "auto";
+    modalImg.style.objectFit = "contain";
+    modalImg.style.display = "block";
+    modalImg.style.margin = window.innerWidth <= 480 ? "0 auto 15px" : "0 auto 30px";
+  }
+
+  if (modalTitle) modalTitle.textContent = recipe.title || "";
+  if (modalCategory) modalCategory.textContent = recipe.category || "";
+  if (modalDesc) modalDesc.textContent = recipe.description || "";
+
+  if (modalIngredients) {
+    modalIngredients.innerHTML = "";
+    (recipe.ingredients || []).forEach(ing => {
+      const li = document.createElement("li");
+      li.textContent = ing;
+      modalIngredients.appendChild(li);
+    });
+  }
+
+  if (modalInstructions) {
+    modalInstructions.innerHTML = "";
+    (recipe.instructions || []).forEach(step => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      modalInstructions.appendChild(li);
+    });
+  }
+
+  // Admin buttons
+  if (modalEditBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      modalEditBtn.style.display = "inline-block";
+      modalEditBtn.onclick = () => {
+        populateAddModalFromDraft(recipes[editingRecipeIndex]);
+        addRecipeModal.classList.remove("hidden");
+        viewer.style.display = "none";
+      };
+    } else modalEditBtn.style.display = "none";
+  }
+
+  if (modalDeleteBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      modalDeleteBtn.style.display = "inline-block";
+      modalDeleteBtn.onclick = () => {
+        if (!confirm(`Delete "${recipes[editingRecipeIndex].title}"?`)) return;
+        recipes.splice(editingRecipeIndex, 1);
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        viewer.style.display = "none";
+        renderRecipes();
+      };
+    } else modalDeleteBtn.style.display = "none";
+  }
+
+  // ✅ FIXED HIDE/UNHIDE
+  if (hideBtn) {
+    if (isAdmin && editingRecipeIndex !== null) {
+      hideBtn.style.display = "inline-block";
+      hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+
+      hideBtn.onclick = (e) => {
+        e.stopPropagation();
+        recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+        renderRecipes();
+      };
+    } else hideBtn.style.display = "none";
+  }
+
+  viewer.style.display = "flex";
+  viewer.setAttribute("aria-hidden", "false");
+}
+
 
   // -----------------------------
   // CLOSE MODAL
@@ -402,33 +388,37 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // INJECT ADMIN UI
   // -----------------------------
-  function injectAdminUI() {
-    if (document.getElementById("adminControlsContainer")) return;
+ function injectAdminUI() {
+  if (document.getElementById("adminControlsContainer")) return;
 
-    const container = document.createElement("div");
-    container.id = "adminControlsContainer";
-    container.style = "position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:1200;";
+  const container = document.createElement("div");
+  container.id = "adminControlsContainer";
+  container.style = "position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:1200;";
 
-    const addBtn = document.createElement("button");
-    addBtn.textContent = "+ Add Recipe";
-    addBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
-    addBtn.addEventListener("click", () => {
-      editingDraftId = null;
-      openAddRecipeModal();
-      populateAddModalFromDraft(null);
-    });
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "+ Add Recipe";
+  addBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
 
-    const draftsBtn = document.createElement("button");
-    draftsBtn.textContent = "Drafts";
-    draftsBtn.style = "background:#ffd6ee;color:#a00064;padding:10px 16px;border-radius:12px;border:2px solid #ffb1db;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);";
-    draftsBtn.addEventListener("click", openDraftsModal);
+  // ✅ FIXED Add Recipe click
+  addBtn.addEventListener("click", () => {
+    editingDraftId = null;
+    ensureAddModalControls();  // make sure modal buttons exist
+    clearAddModal();           // start with fresh inputs
+    addRecipeModal?.classList.remove("hidden"); // show modal
+  });
 
-    container.appendChild(addBtn);
-    container.appendChild(draftsBtn);
-    document.body.appendChild(container);
+  const draftsBtn = document.createElement("button");
+  draftsBtn.textContent = "Drafts";
+  draftsBtn.style = "background:#ffd6ee;color:#a00064;padding:10px 16px;border-radius:12px;border:2px solid #ffb1db;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);";
+  draftsBtn.addEventListener("click", openDraftsModal);
 
-    addLogoutButton();
-  }
+  container.appendChild(addBtn);
+  container.appendChild(draftsBtn);
+  document.body.appendChild(container);
+
+  addLogoutButton();
+}
+
 
   // -----------------------------
   // LOGOUT BUTTON
@@ -513,6 +503,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalContent = addRecipeModal.querySelector(".modal-content");
     if (!modalContent) return;
 
+    if (!modalContent.querySelector("#saveDraftBtn")) {
+  const saveDraftBtn = document.createElement("button");
+  saveDraftBtn.id = "saveDraftBtn";
+  saveDraftBtn.type = "button";
+  saveDraftBtn.innerText = "Save Draft";
+  saveDraftBtn.style = "background:#ffb6dd;color:#6a003a;padding:10px;border-radius:12px;border:none;margin-top:12px;cursor:pointer;width:100%;";
+
+  // Attach the function (we’ll add this function next)
+  saveDraftBtn.addEventListener("click", saveDraftFromModal);
+
+  const saveBtn = modalContent.querySelector("#saveRecipeBtn");
+  if (saveBtn) saveBtn.parentNode.insertBefore(saveDraftBtn, saveBtn);
+  else modalContent.appendChild(saveDraftBtn);
+}
+
     // Big X close button
     if (!modalContent.querySelector(".add-modal-close-x")) {
       const x = document.createElement("button");
@@ -552,34 +557,111 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // SAVE RECIPE
   // -----------------------------
-  saveRecipeBtn?.addEventListener("click", () => {
-    const title = (newTitle.value || "").trim();
-    const category = newCategory.value || CATEGORIES[0];
-    const image = (newImage.value || "").trim();
-    const description = (newDesc.value || "").trim();
+saveRecipeBtn?.addEventListener("click", () => {
+  const title = (newTitle.value || "").trim();
+  const category = newCategory.value || CATEGORIES[0];
+  const image = (newImage.value || "").trim();
+  const description = (newDesc.value || "").trim();
 
-    if (!title || !image || !description) return alert("Please fill in title, image, and description.");
+  // Validate required fields
+  if (!title || !image || !description) {
+    return alert("Please fill in title, image, and description.");
+  }
 
-    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-    const newRecipe = { title, category, image, description, ingredients, instructions, hidden: false };
+  // Gather ingredients and instructions
+  const ingredients = [...ingredientsList.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
 
-    if (editingRecipeIndex !== null) recipes[editingRecipeIndex] = newRecipe;
-    else recipes.push(newRecipe);
+  const instructions = [...instructionsList.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
 
+  // Create new recipe object
+  const newRecipe = {
+    title,
+    category,
+    image,
+    description,
+    ingredients,
+    instructions,
+    hidden: false // default to visible
+  };
+
+  // -----------------------------
+  // Determine whether editing a recipe or adding new
+  // -----------------------------
+  if (editingRecipeIndex !== null) {
+    // Updating an existing recipe
+    recipes[editingRecipeIndex] = newRecipe;
     editingRecipeIndex = null;
+  } else {
+    // Adding a completely new recipe
+    recipes.push(newRecipe);
+  }
 
-    if (editingDraftId) {
-      drafts = drafts.filter(d => d.id !== editingDraftId);
-      editingDraftId = null;
-    }
+  // -----------------------------
+  // Remove draft if one was being edited
+  // -----------------------------
+  if (editingDraftId) {
+    drafts = drafts.filter(d => d.id !== editingDraftId);
+    editingDraftId = null;
+  }
 
-    localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-    alert("Recipe saved!");
-    clearAddModal();
-    addRecipeModal.classList.add("hidden");
-    renderRecipes();
-  });
+  // -----------------------------
+  // Persist and refresh UI
+  // -----------------------------
+  localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+  localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+
+  alert("Recipe saved!");
+  clearAddModal();
+  addRecipeModal.classList.add("hidden");
+  renderRecipes();
+});
+
+  function saveDraftFromModal() {
+  const title = (newTitle.value || "").trim();
+  const category = newCategory.value || CATEGORIES[0];
+  const image = (newImage.value || "").trim();
+  const description = (newDesc.value || "").trim();
+
+  if (!title && !image && !description) {
+    return alert("Please fill at least a title, image, or description to save a draft.");
+  }
+
+  const ingredients = [...ingredientsList.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  const instructions = [...instructionsList.querySelectorAll("input")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  const draft = {
+    id: editingDraftId || `draft_${Date.now()}`,
+    title,
+    category,
+    image,
+    description,
+    ingredients,
+    instructions
+  };
+
+  if (editingDraftId) {
+    drafts = drafts.map(d => (d.id === editingDraftId ? draft : d));
+  } else {
+    drafts.push(draft);
+    editingDraftId = draft.id;
+  }
+
+  localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+
+  alert("Draft saved!");
+  addRecipeModal.classList.add("hidden");
+  clearAddModal();
+}
+
 
   // -----------------------------
   // OPEN ADD RECIPE MODAL
