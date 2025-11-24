@@ -79,26 +79,36 @@
 
   <!-- 🔐 ADD RECIPE MODAL (HIDDEN UNTIL AUTH) -->
   <div id="addRecipeModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Add Recipe</h2>
-      <input type="hidden" id="editingIndex" value="">
-
-      <input id="newTitle" placeholder="Title" style="width:100%;padding:10px;margin:8px 0;">
-      <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;"></select>
-      <input id="newImage" placeholder="Image URL" style="width:100%;padding:10px;margin:8px 0;">
-      <textarea id="newDesc" placeholder="Short description" style="width:100%;padding:10px;margin:8px 0;"></textarea>
-
-      <h3>Ingredients</h3>
-      <div id="ingredientsList"></div>
-      <button id="addIngredientBtn" class="small-add-btn">+ Add Ingredient</button>
-
-      <h3>Instructions</h3>
-      <div id="instructionsList"></div>
-      <button id="addInstructionBtn" class="small-add-btn">+ Add Step</button>
-
-      <button id="saveRecipeBtn" class="save-btn">Save Recipe</button>
-    </div>
+  <div class="modal-content">
+    <h2>Add Recipe</h2>
+    <label>Title:</label>
+    <input type="text" id="newTitle" placeholder="Recipe title">
+    
+    <label>Category:</label>
+    <select id="newCategory"></select>
+    
+    <label>Image URL:</label>
+    <input type="text" id="newImage" placeholder="https://...">
+    
+    <label>Description:</label>
+    <textarea id="newDesc" placeholder="Brief description"></textarea>
+    
+    <!-- ADD THIS NEW SECTION RIGHT HERE: -->
+    <label>Credit/Source (optional):</label>
+    <input type="text" id="newCredit" placeholder="e.g., Grandma's cookbook, AllRecipes.com">
+    <!-- END OF NEW SECTION -->
+    
+    <label>Ingredients:</label>
+    <div id="ingredientsList"></div>
+    <button id="addIngredientBtn">+ Add Ingredient</button>
+    
+    <label>Instructions:</label>
+    <div id="instructionsList"></div>
+    <button id="addInstructionBtn">+ Add Step</button>
+    
+    <button id="saveRecipeBtn">Save Recipe</button>
   </div>
+</div>
 
   <!-- YOUR SCRIPT -->
 <!-- Firebase scripts first -->
