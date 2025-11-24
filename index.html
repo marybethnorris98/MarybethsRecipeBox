@@ -113,12 +113,34 @@
 
   <!-- YOUR SCRIPT -->
 <!-- Firebase scripts first -->
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+<!-- Remove the compat scripts if using modular imports -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.27.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.27.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.27.0/firebase-firestore.js";
 
-<!-- Your main JS last -->
+  const firebaseConfig = {
+    apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
+    authDomain: "recipeapp-248a1.firebaseapp.com",
+    projectId: "recipeapp-248a1",
+    storageBucket: "recipeapp-248a1.firebasestorage.app",
+    messagingSenderId: "629558122940",
+    appId: "1:629558122940:web:65dcca8ea0c572ccdf33b9",
+    measurementId: "G-7W26GEB9WX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Example: auth state listener
+  onAuthStateChanged(auth, user => {
+    console.log("Auth state changed:", user);
+    // Set your isAdmin flag here
+  });
+
+  // Optional: you can import your existing script functions here or keep them in script.js
+</script>
 <script src="script.js"></script>
-
-
 </body>
 </html>
