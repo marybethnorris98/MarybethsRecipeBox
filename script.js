@@ -400,16 +400,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addBtn = document.createElement("button");
   addBtn.textContent = "+ Add Recipe";
-  addBtn.style = { background:#ff3ebf;
-    color:white;
-    fontFamily: Poppins, sans-serif;
-    padding:12px 16px;
-    border-radius:14px;
-    border:none;
-    font-size:16px;
-    cursor:pointer;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);}
-  ;
+  addBtn.style.background = "#ff3ebf";
+  addBtn.style.fontFamily = "Poppins, sans-serif";
+  addBtn.style.color = "white";
+  addBtn.style.padding="12px 16px";
+  addBtn.style.borderRadius="14px";
+  addBtn.style.border="none";
+  addBtn.style.fontSize= "16px";
+  addBtn.style.cursor="pointer";
+  addBtn.style.boxShadow="0 8px 20px rgba(0,0,0,0.15)"
 
   // ✅ FIXED Add Recipe click
   addBtn.addEventListener("click", () => {
@@ -421,15 +420,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const draftsBtn = document.createElement("button");
   draftsBtn.textContent = "Drafts";
-  draftsBtn.style = "background:#ff3ebf;
-    fontFamily: Poppins, sans-serif;
-    color:white;
-    padding:12px 16px;
-    border-radius:14px;
-    border:none;
-    font-size:16px;
-    cursor:pointer;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+  draftsBtn.style.background = "#ff3ebf";
+  draftsBtn.style.fontFamily = "Poppins, sans-serif";
+  draftsBtn.style.color = "white";
+  draftsBtn.style.padding="12px 16px";
+  draftsBtn.style.borderRadius="14px";
+  draftsBtn.style.border="none";
+  draftsBtn.style.fontSize= "16px";
+  draftsBtn.style.cursor="pointer";
+  draftsBtn.style.boxShadow="0 8px 20px rgba(0,0,0,0.15)"
   draftsBtn.addEventListener("click", openDraftsModal);
 
   container.appendChild(addBtn);
@@ -456,15 +455,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.createElement("button");
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
-    logoutBtn.style = "background:#ff3ebf;
-      color:white;
-      fontFamily: Poppins, sans-serif;
-      padding:12px 16px;
-      border-radius:14px;
-      border:none;
-      font-size:16px;
-      cursor:pointer;
-      box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+    logoutBtn.style.background = "#ff3ebf";
+    logoutBtn.style.fontFamily = "Poppins, sans-serif";
+    logoutBtn.style.color = "white";
+    logoutBtn.style.padding="12px 16px";
+    logoutBtn.style.borderRadius="14px";
+    logoutBtn.style.border="none";
+    logoutBtn.style.fontSize= "16px";
+    logoutBtn.style.cursor="pointer";
+    logoutBtn.style.boxShadow="0 8px 20px rgba(0,0,0,0.15)"
     logoutBtn.addEventListener("click", logoutAdmin);
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
