@@ -380,8 +380,6 @@ loginBtn?.addEventListener("click", async () => {
     addBtn.textContent = "+ Add Recipe";
     addBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
     addBtn.addEventListener("click", () => {
-      editingDraftId = null;
-      ensureAddModalControls();
       clearAddModal();
       addRecipeModal?.classList.remove("hidden");
     });
@@ -524,10 +522,6 @@ loginBtn?.addEventListener("click", async () => {
     newCredit.value = "";
     ingredientsList.innerHTML = "";
     instructionsList.innerHTML = "";
-    editingDraftId = null;
-
-    const modalTitle = addRecipeModal.querySelector("h2");
-  if (modalTitle) modalTitle.textContent = "Add Recipe";
   }
 
   function populateAddModalFromDraft(draft) {
