@@ -400,7 +400,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addBtn = document.createElement("button");
   addBtn.textContent = "+ Add Recipe";
-  addBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+  addBtn.style = "background:#ff3ebf;
+    color:white;
+    fontFamily: Poppins, sans-serif;
+    padding:12px 16px;
+    border-radius:14px;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);";
 
   // ✅ FIXED Add Recipe click
   addBtn.addEventListener("click", () => {
@@ -412,7 +420,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const draftsBtn = document.createElement("button");
   draftsBtn.textContent = "Drafts";
-  draftsBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+  draftsBtn.style = "background:#ff3ebf;
+    fontFamily: Poppins, sans-serif;
+    color:white;
+    padding:12px 16px;
+    border-radius:14px;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);";
   draftsBtn.addEventListener("click", openDraftsModal);
 
   container.appendChild(addBtn);
@@ -439,7 +455,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.createElement("button");
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
-    logoutBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+    logoutBtn.style = "background:#ff3ebf;
+      color:white;
+      fontFamily: Poppins, sans-serif;
+      padding:12px 16px;
+      border-radius:14px;
+      border:none;
+      font-size:16px;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(0,0,0,0.15);";
     logoutBtn.addEventListener("click", logoutAdmin);
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
