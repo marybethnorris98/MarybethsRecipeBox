@@ -72,21 +72,31 @@
   </div>
 
   <!-- Add Recipe Modal -->
- <div id="addRecipeModal" class="modal hidden">
+<!-- ADD RECIPE MODAL -->
+<div id="addRecipeModal" class="modal hidden">
   <div class="modal-content">
     <button class="close-btn">✖</button>
     <h2>Add Recipe</h2>
+    <label>Title:</label>
     <input type="text" id="newTitle" placeholder="Recipe title">
-    <select id="newCategory"></select>
-    <input type="text" id="newImage" placeholder="Image URL">
-    <textarea id="newDesc" placeholder="Description"></textarea>
-    <input type="text" id="newCredit" placeholder="Credit/source">
-    <div id="ingredientsList"></div>
-    <div id="instructionsList"></div>
-    <button id="addIngredientBtn">+ Ingredient</button>
-    <button id="addInstructionBtn">+ Step</button>
+
+    <label>Category:</label>
+    <select id="newCategory">
+      <option value="Breakfast">Breakfast</option>
+      <option value="Meals">Meals</option>
+      <option value="Snacks">Snacks</option>
+      <option value="Sides">Sides</option>
+      <option value="Dessert">Dessert</option>
+      <option value="Drinks">Drinks</option>
+    </select>
+
+    <label>Image URL:</label>
+    <input type="text" id="newImage" placeholder="https://...">
+
+    <label>Description:</label>
+    <textarea id="newDesc" placeholder="Brief description"></textarea>
+
     <button id="saveRecipeBtn">Save Recipe</button>
-    <button id="saveDraftBtn">Save Draft</button>
   </div>
 </div>
 
