@@ -76,6 +76,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   const saveDraftBtn = document.getElementById("saveDraftBtn");
   const newCredit = document.getElementById("newCredit");
 
+  const closeAddModalBtn = document.getElementById("closeAddModalBtn");
+
+// Close modal when ✖ is clicked
+if (closeAddModalBtn && addRecipeModal) {
+  closeAddModalBtn.addEventListener("click", () => {
+    addRecipeModal.classList.add("hidden");
+  });
+}
+
+// Close modal when clicking outside the modal content
+addRecipeModal?.addEventListener("click", e => {
+  if (e.target === addRecipeModal) {
+    addRecipeModal.classList.add("hidden");
+  }
+});
   const loginModal = document.getElementById("loginModal");
   const loginBtn = document.getElementById("loginBtn");
   const loginError = document.getElementById("loginError");
@@ -85,9 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let editingDraftId = null;
   let editingRecipeIndex = null;
-
   
-
   // -----------------------------
   // Populate category selects
   // -----------------------------
@@ -386,6 +399,11 @@ loginBtn?.addEventListener("click", async () => {
       addRecipeModal?.classList.remove("hidden");
     });
 
+    container.appendChild(addBtn);
+
+    // (other buttons like Drafts, Logout can go here)
+    document.body.appendChild(container);
+}
     const draftsBtn = document.createElement("button");
     draftsBtn.textContent = "Drafts";
     draftsBtn.style = "background:#ffd6ee;color:#a00064;padding:10px 16px;border-radius:12px;border:2px solid #ffb1db;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);";
