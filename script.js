@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addIngredientBtn = document.getElementById("addIngredientBtn");
   const addInstructionBtn = document.getElementById("addInstructionBtn");
   const saveRecipeBtn = document.getElementById("saveRecipeBtn");
+  const saveDraftBtn = document.getElementById("saveDraftBtn");
   const newCredit = document.getElementById("newCredit");
 
   const loginModal = document.getElementById("loginModal");
@@ -512,6 +513,9 @@ loginBtn?.addEventListener("click", async () => {
     ingredientsList.innerHTML = "";
     instructionsList.innerHTML = "";
     editingDraftId = null;
+
+    const modalTitle = addRecipeModal.querySelector("h2");
+  if (modalTitle) modalTitle.textContent = "Add Recipe";
   }
 
   function populateAddModalFromDraft(draft) {
@@ -534,7 +538,11 @@ loginBtn?.addEventListener("click", async () => {
       r.querySelector("input").value = step;
       instructionsList.appendChild(r);
     });
+    const modalTitle = addRecipeModal.querySelector("h2");
+  if (modalTitle) {
+    modalTitle.textContent = editingDraftId ? "Edit Draft" : (editingRecipeIndex !== null ? "Edit Recipe" : "Add Recipe");
   }
+}
 
 saveRecipeBtn?.addEventListener("click", async () => {
   try {
@@ -575,5 +583,42 @@ saveRecipeBtn?.addEventListener("click", async () => {
 
   addIngredientBtn?.addEventListener("click", () => ingredientsList.appendChild(makeRowInput("Ingredient")));
   addInstructionBtn?.addEventListener("click", () => instructionsList.appendChild(makeRowInput("Step")));
+// Save as Draft button handler
+saveDraftBtn?.addEventListener("click", async () => {
+  try {
+    // Collect the form data
+    const draftData = {
+      title: newTitle.value.trim() || "Untitled Draft",
+      category: newCategory.value,
+      image: newImage.value.trim(),
+      description: newDesc.value.trim(),
+      credit: newCredit.value.trim(),
+      ingredients: [...ingredientsList.querySelectorAll("input")]
+        .map(i => i.value.trim())
+        .filter(Boolean),
+      instructions: [...instructionsList.querySelectorAll("input")]
+        .map(i => i.value.trim())
+        .filter(Boolean)
+    };
 
+    if (editingDraftId) {
+      // Update existing draft
+      await db.collection("drafts").doc(editingDraftId).set(draftData);
+      alert("Draft updated successfully!");
+    } else {
+      // Create new draft
+      await db.collection("drafts").add(draftData);
+      alert("Draft saved successfully!");
+    }
+
+    // Close modal and refresh
+    addRecipeModal.classList.add("hidden");
+    clearAddModal();
+    await loadDrafts();
+    
+  } catch (error) {
+    console.error("Error saving draft:", error);
+    alert("Failed to save draft. Please try again.");
+  }
+});
 });
