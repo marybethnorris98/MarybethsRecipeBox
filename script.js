@@ -369,11 +369,10 @@ loginBtn?.addEventListener("click", async () => {
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
     logoutBtn.style = "background:#fff;color:#a00064;padding:10px;border-radius:12px;border:2px solid #ffb1db;cursor:pointer;";
-    logoutBtn.addEventListener("click", () => {
-      isAdmin = false;
-      localStorage.removeItem("admin");
-      location.reload();
-    });
+    logoutBtn.addEventListener("click", async () => {
+  await auth.signOut();
+  location.reload();
+});
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
   }
