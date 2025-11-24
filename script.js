@@ -412,7 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const draftsBtn = document.createElement("button");
   draftsBtn.textContent = "Drafts";
-  draftsBtn.style = "background:#ffd6ee;color:#a00064;padding:10px 16px;border-radius:12px;border:2px solid #ffb1db;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);";
+  draftsBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
   draftsBtn.addEventListener("click", openDraftsModal);
 
   container.appendChild(addBtn);
@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.createElement("button");
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
-    logoutBtn.style = "background:#fff;color:#a00064;padding:10px;border-radius:12px;border:2px solid #ffb1db;cursor:pointer;";
+    logoutBtn.style = "background:#ff3ebf;color:white;padding:12px 16px;border-radius:14px;border:none;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.15);";
     logoutBtn.addEventListener("click", logoutAdmin);
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
