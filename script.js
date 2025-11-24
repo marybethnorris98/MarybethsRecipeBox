@@ -540,6 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
   saveDraftBtn.style.border= "none";
   saveDraftBtn.style.padding= "14px 18px";
   saveDraftBtn.style.fontSize= "18px";
+  saveDraftBtn.style.fontFamily= "Poppins, San-Serif";
   saveDraftBtn.style.borderRadius= "12px";
   saveDraftBtn.style.width= "100%";
   saveDraftBtn.style.cursor= "pointer";
