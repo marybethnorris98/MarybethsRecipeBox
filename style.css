@@ -171,17 +171,6 @@ body {
   width: 100%;
 }
 
-.save-btn {
-  background: #ff3ebf;
-  color: white;
-  border: none;
-  padding: 14px 18px;
-  font-size: 18px;
-  border-radius: 12px;
-  width: 100%;
-  cursor: pointer;
-}
-
 .admin-row {
   display: flex;
   gap: 10px;
