@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", async () => {
 console.log("FULL admin + viewer script loaded");
 
 // -----------------------------
@@ -30,7 +31,17 @@ auth.onAuthStateChanged(user => {
 // -----------------------------
 // ADMIN STATE
 // -----------------------------
-let isAdmin = localStorage.getItem("admin") === "true";
+let isAdmin = false;
+let currentUser = null;
+
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  isAdmin = !!user;
+  if (isAdmin) {
+    injectAdminUI();
+    renderRecipes();
+  }
+});
 
 // -----------------------------
 // RECIPE & DRAFT ARRAYS
