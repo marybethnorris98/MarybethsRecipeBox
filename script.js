@@ -13,7 +13,18 @@ const firebaseConfig = {
   measurementId: "G-7W26GEB9WX"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const auth = firebase.auth(); // Add this line
+
+// Add auth state listener
+let currentUser = null;
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  isAdmin = !!user; // User is admin if logged in
+  if (isAdmin) {
+    injectAdminUI();
+    renderRecipes();
+  }
+});
 
 // -----------------------------
 // ADMIN STATE
@@ -299,18 +310,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   // -----------------------------
   // Admin login
   // -----------------------------
-  const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join("");
-
-  loginBtn?.addEventListener("click", () => {
-    const entered = document.getElementById("adminPassword")?.value || "";
-    if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
-      isAdmin = true;
-      localStorage.setItem("admin", "true");
-      loginModal.classList.add("hidden");
-      injectAdminUI();
-      renderRecipes();
-    } else loginError.style.display = "block";
-  });
+  // NEW CODE:
+loginBtn?.addEventListener("click", async () => {
+  const email = document.getElementById("adminEmail")?.value || "";
+  const password = document.getElementById("adminPassword")?.value || "";
+  
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    loginModal.classList.add("hidden");
+    loginError.style.display = "none";
+    // The onAuthStateChanged listener will handle the rest
+  } catch (error) {
+    console.error("Login error:", error);
+    loginError.textContent = "Invalid email or password";
+    loginError.style.display = "block";
+  }
+});
 
   if (isAdmin) injectAdminUI();
 
