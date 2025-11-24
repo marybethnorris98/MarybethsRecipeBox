@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addIngredientBtn = document.getElementById("addIngredientBtn");
   const addInstructionBtn = document.getElementById("addInstructionBtn");
   const saveRecipeBtn = document.getElementById("saveRecipeBtn");
+  const newCredit = document.getElementById("newCredit");
 
   const loginModal = document.getElementById("loginModal");
   const loginBtn = document.getElementById("loginBtn");
@@ -507,6 +508,7 @@ loginBtn?.addEventListener("click", async () => {
     newCategory.value = CATEGORIES[0];
     newImage.value = "";
     newDesc.value = "";
+    newCredit.value = "";
     ingredientsList.innerHTML = "";
     instructionsList.innerHTML = "";
     editingDraftId = null;
@@ -519,6 +521,7 @@ loginBtn?.addEventListener("click", async () => {
     newCategory.value = draft.category || CATEGORIES[0];
     newImage.value = draft.image || "";
     newDesc.value = draft.description || "";
+    newCredit.value = draft.credit || "";
 
     (draft.ingredients || []).forEach(ing => {
       const r = makeRowInput("Ingredient");
@@ -540,6 +543,7 @@ saveRecipeBtn?.addEventListener("click", async () => {
       category: newCategory.value,
       image: newImage.value.trim(),
       description: newDesc.value.trim(),
+      credit: newCredit.value.trim(),
       ingredients: [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean),
       instructions: [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean),
       hidden: false
