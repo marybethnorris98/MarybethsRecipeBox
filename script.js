@@ -621,6 +621,7 @@ saveRecipeBtn?.addEventListener("click", () => {
     description,
     ingredients,
     instructions,
+    credits,
     hidden: false // default to visible
   };
 
