@@ -67,14 +67,15 @@
 </div>
 
   <!-- 🔐 LOGIN MODAL (HIDDEN) -->
-  <div id="loginModal" class="modal hidden">
-    <div class="modal-content">
-      <h2 style="margin-top:0;">Admin Login</h2>
-      <input id="adminPassword" type="password" placeholder="Enter password" style="width:100%;padding:12px;margin:12px 0;">
-      <button id="loginBtn" style="padding:12px 18px;border:none;background:#ff3ebf;color:white;border-radius:12px;font-size:16px;width:100%;">Unlock</button>
-      <p id="loginError" style="color:red;display:none;margin-top:10px;">Incorrect password.</p>
-    </div>
+<div id="loginModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 400px;">
+    <h2>Admin Login</h2>
+    <input type="email" id="adminEmail" placeholder="Email" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="password" id="adminPassword" placeholder="Password" style="width: 100%; padding: 10px;">
+    <div id="loginError" style="color: red; display: none; margin-top: 10px;">Invalid credentials</div>
+    <button id="loginBtn" style="margin-top: 15px;">Login</button>
   </div>
+</div>
 
   <!-- 🔐 ADD RECIPE MODAL (HIDDEN UNTIL AUTH) -->
   <div id="addRecipeModal" class="modal hidden">
