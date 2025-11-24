@@ -72,29 +72,23 @@
   </div>
 
   <!-- Add Recipe Modal -->
-  <div id="addRecipeModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Add Recipe</h2>
-      <label>Title:</label>
-      <input type="text" id="newTitle" placeholder="Recipe title">
-      <label>Category:</label>
-      <select id="newCategory"></select>
-      <label>Image URL:</label>
-      <input type="text" id="newImage" placeholder="https://...">
-      <label>Description:</label>
-      <textarea id="newDesc" placeholder="Brief description"></textarea>
-      <label>Credit/Source (optional):</label>
-      <input type="text" id="newCredit" placeholder="e.g., Grandma's cookbook">
-      <label>Ingredients:</label>
-      <div id="ingredientsList"></div>
-      <button id="addIngredientBtn">+ Add Ingredient</button>
-      <label>Instructions:</label>
-      <div id="instructionsList"></div>
-      <button id="addInstructionBtn">+ Add Step</button>
-      <button id="saveRecipeBtn">Save Recipe</button>
-      <button id="saveDraftBtn" style="background: #ffd6ee; color: #a00064; margin-top: 10px;">Save as Draft</button>
-    </div>
+ <div id="addRecipeModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close-btn">✖</button>
+    <h2>Add Recipe</h2>
+    <input type="text" id="newTitle" placeholder="Recipe title">
+    <select id="newCategory"></select>
+    <input type="text" id="newImage" placeholder="Image URL">
+    <textarea id="newDesc" placeholder="Description"></textarea>
+    <input type="text" id="newCredit" placeholder="Credit/source">
+    <div id="ingredientsList"></div>
+    <div id="instructionsList"></div>
+    <button id="addIngredientBtn">+ Ingredient</button>
+    <button id="addInstructionBtn">+ Step</button>
+    <button id="saveRecipeBtn">Save Recipe</button>
+    <button id="saveDraftBtn">Save Draft</button>
   </div>
+</div>
 
   <!-- Firebase compat scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
