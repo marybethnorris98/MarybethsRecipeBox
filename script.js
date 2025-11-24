@@ -191,8 +191,9 @@ document.addEventListener("DOMContentLoaded", () => {
       infoIcon.className = "card-info-icon";
       infoIcon.textContent = "i";
 
-      const tooltip = card.querySelector(".card-info-tooltip");
-tooltip.innerHTML = recipe.credits ? `<p>${recipe.credits}</p>` : `<p>No credits provided</p>`;
+      const tooltip = document.createElement("div");
+      tooltip.className = "card-info-tooltip";
+      tooltip.textContent = recipe.credit || "No credits added.";
 
       infoIcon.addEventListener("click", (e) => {
         e.stopPropagation(); // prevent opening the modal
@@ -579,8 +580,6 @@ saveRecipeBtn?.addEventListener("click", () => {
     .map(i => i.value.trim())
     .filter(Boolean);
 
-  const credits = document.getElementById("recipeCredits").value.trim();
-
   // Create new recipe object
   const newRecipe = {
     title,
@@ -589,7 +588,6 @@ saveRecipeBtn?.addEventListener("click", () => {
     description,
     ingredients,
     instructions,
-    credits,
     hidden: false // default to visible
   };
 
