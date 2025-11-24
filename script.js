@@ -400,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addBtn = document.createElement("button");
   addBtn.textContent = "+ Add Recipe";
-  addBtn.style = "background:#ff3ebf;
+  addBtn.style = { background:#ff3ebf;
     color:white;
     fontFamily: Poppins, sans-serif;
     padding:12px 16px;
@@ -408,7 +408,8 @@ document.addEventListener("DOMContentLoaded", () => {
     border:none;
     font-size:16px;
     cursor:pointer;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);";
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+  ;
 
   // ✅ FIXED Add Recipe click
   addBtn.addEventListener("click", () => {
