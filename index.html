@@ -78,26 +78,17 @@
   <div class="modal-content">
     <button class="close-btn">✖</button>
     <h2>Add Recipe</h2>
-    <label>Title:</label>
-    <input type="text" id="newTitle" placeholder="Recipe title">
-
-    <label>Category:</label>
-    <select id="newCategory">
-      <option value="Breakfast">Breakfast</option>
-      <option value="Meals">Meals</option>
-      <option value="Snacks">Snacks</option>
-      <option value="Sides">Sides</option>
-      <option value="Dessert">Dessert</option>
-      <option value="Drinks">Drinks</option>
-    </select>
-
-    <label>Image URL:</label>
-    <input type="text" id="newImage" placeholder="https://...">
-
-    <label>Description:</label>
-    <textarea id="newDesc" placeholder="Brief description"></textarea>
-
+    <input id="newTitle" placeholder="Title" />
+    <select id="newCategory"></select>
+    <input id="newImage" placeholder="Image URL" />
+    <textarea id="newDesc" placeholder="Description"></textarea>
+    <input id="newCredit" placeholder="Credits" />
+    <div id="ingredientsList"></div>
+    <button id="addIngredientBtn">+ Add Ingredient</button>
+    <div id="instructionsList"></div>
+    <button id="addInstructionBtn">+ Add Step</button>
     <button id="saveRecipeBtn">Save Recipe</button>
+    <button id="saveDraftBtn">Save Draft</button>
   </div>
 </div>
 
