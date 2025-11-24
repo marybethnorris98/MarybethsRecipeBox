@@ -86,69 +86,77 @@ body {
 .card-desc { font-size: 15px; color: #3b3b3b; line-height: 1.55; opacity: 0.9; }
 
 /* ADD-RECIPE MODAL (admin) */
-.modal { 
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;            /* ← Allow modal to show */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.modal { 
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;            /* ← Allow modal to show */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-/* ... (omitted existing modal styles) ... */
+/* Hidden state */
+.hidden {
+  display: none !important;  /* ← NOW hidden works */
+}
+.modal .modal-content { background: #FFF9FD; padding: 28px; border-radius: 22px; width: 90%; max-width: 440px; border: 2px solid #FFD7E8; box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28); }
+
+/* RECIPE VIEWER OVERLAY (style A) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 230, 245, 0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 999;
+}
+.modal-overlay .modal-content {
+  background: white;
+  width: 95%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+.close-btn { border: none; background: none; font-size: 24px; cursor: pointer; position: absolute; right: 32px; top: 24px; }
+.modal-image { width: 100%; border-radius: 18px; margin-bottom: 20px; }
+.modal-title { font-family: "Parisienne", cursive; font-size: 42px; margin: 0; text-align: center; }
+.modal-category { display: inline-block; background: #ffd8f2; padding: 6px 16px; border-radius: 20px; margin: 10px auto 20px auto; color: #a50065; font-weight: 600; text-align: center; }
+.modal-ingredients li, .modal-instructions li { margin-bottom: 8px; line-height: 1.5; }
 
 #addRecipeModal .modal-content {
-  max-height: 80vh;
-  overflow-y: auto;
-  padding-right: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 12px;
 }
 
 /* optional cute scrollbar */
 #addRecipeModal .modal-content::-webkit-scrollbar {
-  width: 8px;
+  width: 8px;
 }
 
 #addRecipeModal .modal-content::-webkit-scrollbar-thumb {
-  background: #ff3ebf;
-  border-radius: 6px;
+  background: #ff3ebf;
+  border-radius: 6px;
 }
 
 
 /* UTIL */
 .hidden { display: none; }
 
-/* 🌟 NEW: Styling for the dynamically created Credits input/other inputs */
-#addRecipeModal label {
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 5px;
-  font-weight: 600; /* Slightly bolder */
-  color: #ff3ebf; /* Barbie Pink text */
-  font-size: 15px;
-}
-
-/* 🌟 NEW: Ensure the new input field style matches the rest of your admin inputs */
-#newCredits {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 8px; /* Added spacing */
-  border: 2px solid #FFD7E8; /* Light pink border */
-  border-radius: 12px; /* Rounded corners */
-  font-size: 16px;
-  color: #555;
-  background-color: #fff;
-  box-sizing: border-box; /* Crucial for width: 100% with padding */
-}
-
-
 .admin-input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 2px solid #FFD7E8;
-  border-radius: 12px;
-  font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 2px solid #FFD7E8;
+  border-radius: 12px;
+  font-size: 16px;
 }
 
 .small-add-btn {
