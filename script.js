@@ -543,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
   saveDraftBtn.style.borderRadius= "12px";
   saveDraftBtn.style.width= "100%";
   saveDraftBtn.style.cursor= "pointer";
-  saveDraftBtn.style.marginBottom = "40px";
+  saveDraftBtn.style.marginBottom = "20px";
   
 
   // Attach the function (we’ll add this function next)
