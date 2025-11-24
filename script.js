@@ -100,16 +100,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   // -----------------------------
   // Load recipes and drafts from Firestore
   // -----------------------------
-  async function loadRecipes() {
+ async function loadRecipes() {
+  try {
     const snapshot = await db.collection("recipes").get();
     recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     renderRecipes();
+  } catch (error) {
+    console.error("Error loading recipes:", error);
+    alert("Failed to load recipes. Please refresh the page.");
   }
+}
 
-  async function loadDrafts() {
+async function loadDrafts() {
+  try {
     const snapshot = await db.collection("drafts").get();
     drafts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error loading drafts:", error);
+    // Don't alert here, drafts failing is less critical
   }
+}
 
   await loadRecipes();
   await loadDrafts();
@@ -256,28 +266,41 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (modalDeleteBtn) {
       modalDeleteBtn.style.display = isAdmin && editingRecipeIndex !== null ? "inline-block" : "none";
-      modalDeleteBtn.onclick = async () => {
-        if (!confirm(`Delete "${recipes[editingRecipeIndex].title}"?`)) return;
-        const id = recipes[editingRecipeIndex].id;
-        await db.collection("recipes").doc(id).delete();
-        recipes.splice(editingRecipeIndex, 1);
-        viewer.style.display = "none";
-        renderRecipes();
-      };
+   modalDeleteBtn.onclick = async () => {
+  if (!confirm(`Delete "${recipes[editingRecipeIndex].title}"?`)) return;
+  try {
+    const id = recipes[editingRecipeIndex].id;
+    await db.collection("recipes").doc(id).delete();
+    recipes.splice(editingRecipeIndex, 1);
+    viewer.style.display = "none";
+    renderRecipes();
+    alert("Recipe deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting recipe:", error);
+    alert("Failed to delete recipe. Please try again.");
+  }
+};
     }
 
     if (hideBtn) {
       if (isAdmin && editingRecipeIndex !== null) {
         hideBtn.style.display = "inline-block";
         hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-        hideBtn.onclick = async e => {
-          e.stopPropagation();
-          recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
-          const id = recipes[editingRecipeIndex].id;
-          await db.collection("recipes").doc(id).update({ hidden: recipes[editingRecipeIndex].hidden });
-          hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
-          renderRecipes();
-        };
+hideBtn.onclick = async e => {
+  e.stopPropagation();
+  try {
+    recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
+    const id = recipes[editingRecipeIndex].id;
+    await db.collection("recipes").doc(id).update({ hidden: recipes[editingRecipeIndex].hidden });
+    hideBtn.textContent = recipes[editingRecipeIndex].hidden ? "Unhide" : "Hide";
+    renderRecipes();
+  } catch (error) {
+    console.error("Error updating recipe:", error);
+    alert("Failed to hide/unhide recipe. Please try again.");
+    // Revert the change if it failed
+    recipes[editingRecipeIndex].hidden = !recipes[editingRecipeIndex].hidden;
+  }
+};
       } else hideBtn.style.display = "none";
     }
 
@@ -436,10 +459,16 @@ loginBtn?.addEventListener("click", async () => {
         deleteBtn.textContent = "Delete";
         deleteBtn.style = "background:transparent;color:#b20050;border:2px solid #ffd1e8;padding:6px 10px;border-radius:8px;cursor:pointer;";
         deleteBtn.addEventListener("click", async () => {
-          if (!confirm(`Delete draft "${d.title}"?`)) return;
-          await db.collection("drafts").doc(d.id).delete();
-          openDraftsModal();
-        });
+  if (!confirm(`Delete draft "${d.title}"?`)) return;
+  try {
+    await db.collection("drafts").doc(d.id).delete();
+    openDraftsModal();
+    alert("Draft deleted!");
+  } catch (error) {
+    console.error("Error deleting draft:", error);
+    alert("Failed to delete draft. Please try again.");
+  }
+});
 
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
@@ -504,7 +533,8 @@ loginBtn?.addEventListener("click", async () => {
     });
   }
 
-  saveRecipeBtn?.addEventListener("click", async () => {
+saveRecipeBtn?.addEventListener("click", async () => {
+  try {
     const recipeData = {
       title: newTitle.value.trim(),
       category: newCategory.value,
@@ -532,7 +562,12 @@ loginBtn?.addEventListener("click", async () => {
     addRecipeModal.classList.add("hidden");
     clearAddModal();
     await loadRecipes();
-  });
+    alert("Recipe saved successfully!");
+  } catch (error) {
+    console.error("Error saving recipe:", error);
+    alert("Failed to save recipe. Please try again.");
+  }
+});
 
   addIngredientBtn?.addEventListener("click", () => ingredientsList.appendChild(makeRowInput("Ingredient")));
   addInstructionBtn?.addEventListener("click", () => instructionsList.appendChild(makeRowInput("Step")));
