@@ -535,7 +535,15 @@ document.addEventListener("DOMContentLoaded", () => {
   saveDraftBtn.id = "saveDraftBtn";
   saveDraftBtn.type = "button";
   saveDraftBtn.innerText = "Save Draft";
-  saveDraftBtn.style = "background:#ffb6dd;color:#6a003a;padding:10px;border-radius:12px;border:none;margin-top:12px;cursor:pointer;width:100%;";
+  saveDraftBtn.style.background= "#ff3ebf";
+  saveDraftBtn.style.color= "white";
+  saveDraftBtn.style.border= "none";
+  saveDraftBtn.style.padding= "14px 18px";
+  saveDraftBtn.style.fontSize= "18px";
+  saveDraftBtn.style.borderRadius= "12px";
+  saveDraftBtn.style.width= "100%";
+  saveDraftBtn.style.cursor= "pointer";
+  
 
   // Attach the function (we’ll add this function next)
   saveDraftBtn.addEventListener("click", saveDraftFromModal);
