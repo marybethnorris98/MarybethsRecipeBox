@@ -86,6 +86,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let editingDraftId = null;
   let editingRecipeIndex = null;
 
+  
+
   // -----------------------------
   // Populate category selects
   // -----------------------------
@@ -383,7 +385,6 @@ loginBtn?.addEventListener("click", async () => {
       clearAddModal();
       addRecipeModal?.classList.remove("hidden");
     });
-    document.body.appendChild(addBtn);
 
     const draftsBtn = document.createElement("button");
     draftsBtn.textContent = "Drafts";
