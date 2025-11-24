@@ -622,4 +622,14 @@ saveDraftBtn?.addEventListener("click", async () => {
     alert("Failed to save draft. Please try again.");
   }
 });
+  document.addEventListener("keydown", e => {
+  // Use either Ctrl (Windows/Linux) or Meta (Mac) + Shift + L
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "m") {
+    e.preventDefault();
+    const loginModal = document.getElementById("loginModal");
+    if (!loginModal) return;
+    loginModal.classList.remove("hidden");
+    document.getElementById("adminEmail")?.focus();
+  }
+});
 });
