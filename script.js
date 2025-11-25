@@ -155,6 +155,23 @@ const primaryPink = "#ff3ebf";
         padding: "8px 12px",
     });
   }
+// -----------------------------
+  // APPLY POPPINS TO ADD RECIPE MODAL INPUTS
+  // -----------------------------
+  const inputStyle = {
+    fontFamily: "Poppins, sans-serif",
+    borderRadius: "8px",
+    padding: "10px",
+    border: "1px solid #ccc",
+    width: "calc(100% - 22px)", // Adjust for padding
+    boxSizing: "border-box", 
+  };
+
+  if (newTitle) Object.assign(newTitle.style, inputStyle);
+  if (newCategory) Object.assign(newCategory.style, inputStyle, { width: "100%" }); // Category selector usually needs full width
+  if (newImage) Object.assign(newImage.style, inputStyle);
+  if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" }); // Give textarea more height
+  
   // -----------------------------
   // CATEGORY DROPDOWN
   // -----------------------------
@@ -470,7 +487,7 @@ const primaryPink = "#ff3ebf";
     const addBtn = document.createElement("button");
     addBtn.textContent = "+ Add Recipe";
     Object.assign(addBtn.style, { background:"#ff3ebf", color:"white", padding:"12px 16px", borderRadius:"14px", border:"none", fontSize:"16px", cursor:"pointer", fontFamily:"Poppins, sans-serif", boxShadow:"0 8px 20px rgba(0,0,0,0.15)" });
-    // AFTER (Ensuring the Draft Button is created/styled):
+    
   addBtn.onclick = () => { editingDraftId = null; editingRecipeId = null; ensureAddModalControls(); clearAddModal(); addRecipeModal.classList.remove("hidden"); };
 
     const draftsBtn = document.createElement("button");
@@ -505,9 +522,28 @@ const primaryPink = "#ff3ebf";
     row.className = "admin-row";
     const input = document.createElement("input");
     input.type="text"; input.placeholder=placeholder; input.value="";
+
+Object.assign(input.style, {
+        fontFamily: "Poppins, sans-serif",
+        borderRadius: "8px",
+        padding: "8px 10px", // slightly less padding than main inputs
+        border: "1px solid #ccc",
+        flexGrow: 1, // Allows the input to take up maximum space
+        margin: "5px 0",
+    });
+    
     const removeBtn = document.createElement("button");
     removeBtn.type="button"; removeBtn.textContent="✖";
-    removeBtn.style="margin-left:8px;background:transparent;border:none;color:#ff3ebf;font-weight:700;font-size:18px;cursor:pointer;";
+   bject.assign(removeBtn.style, {
+        marginLeft: "8px",
+        background: "transparent",
+        border: "none",
+        color: "#ff3ebf",
+        fontWeight: "700",
+        fontSize: "18px",
+        cursor: "pointer",
+        fontFamily: "Poppins, sans-serif"
+    });
     removeBtn.onclick = () => row.remove();
     row.appendChild(input); row.appendChild(removeBtn);
     return row;
@@ -615,21 +651,48 @@ const primaryPink = "#ff3ebf";
   async function openDraftsModal() {
     if (!draftsModal) return;
 
+    const primaryPink = "#ff3ebf";
+    const mauvePink = "#C55A8A";
+
     await loadDrafts();
-    draftsList.innerHTML = ""; // Clear existing list
+    draftsList.innerHTML = "";
 
     if (drafts.length === 0) {
-      draftsList.innerHTML = "<p>No drafts saved.</p>";
+      draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center;'>No drafts saved.</p>";
     } else {
       const ul = document.createElement("ul");
       ul.className = "drafts-list";
+
+      const buttonStyle = {
+          background: primaryPink,
+          color: "white",
+          border: "none",
+          padding: "8px 12px",
+          fontSize: "14px",
+          fontFamily: "Poppins, sans-serif",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontWeight: "bold",
+          minWidth: "70px",
+      };
+      
       drafts.forEach(draft => {
         const li = document.createElement("li");
         li.className = "draft-item";
+
+        Object.assign(li.style, {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "10px 15px",
+            borderBottom: "1px solid #eee",
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "16px",
+        });
+        
         li.innerHTML = `
           <div class="draft-title-container">
-            <span>${draft.title || 'Untitled Draft'}</span>
-            ${draft.timestamp ? `<small class="draft-timestamp">(${new Date(draft.timestamp.seconds * 1000).toLocaleString()})</small>` : ''}
+            <span style="font-weight: 600;">${draft.title || 'Untitled Draft'}</span>
           </div>
           <div class="draft-actions">
             <button class="load-draft-btn" data-id="${draft.id}">Load</button>
@@ -638,7 +701,18 @@ const primaryPink = "#ff3ebf";
         `;
         ul.appendChild(li);
 
-        li.querySelector(".load-draft-btn").addEventListener("click", () => {
+        const loadBtn = li.querySelector(".load-draft-btn");
+        if (loadBtn) Object.assign(loadBtn.style, buttonStyle);
+
+        // NEW: Apply Delete button style (using mauvePink)
+        const deleteBtn = li.querySelector(".delete-draft-btn");
+        if (deleteBtn) {
+            Object.assign(deleteBtn.style, buttonStyle, {
+                **background: mauvePink,**
+                color: "white",
+            });
+        }
+        loadBtn.addEventListener("click", () => {
           editingDraftId = draft.id;
           editingRecipeId = draft.forRecipeId || null;
           populateAddModalFromRecipeOrDraft(draft);
@@ -646,7 +720,7 @@ const primaryPink = "#ff3ebf";
           addRecipeModal.classList.remove("hidden");
         });
 
-        li.querySelector(".delete-draft-btn").addEventListener("click", async () => {
+        deleteBtn.addEventListener("click", async () => {
           if (!confirm(`Are you sure you want to delete the draft: ${draft.title}?`)) return;
           await deleteDoc(doc(db, "drafts", draft.id));
           await openDraftsModal(); // Reload drafts modal
