@@ -673,14 +673,58 @@ Object.assign(input.style, {
           background: primaryPink,
           color: "white",
           border: "none",
-          padding: "8px 12px",
+          padding: "0 5px",
+          lineHeight: "20px",
           fontSize: "14px",
           fontFamily: "Poppins, sans-serif",
-          borderRadius: "8px",
+          borderRadius: "6px",
           cursor: "pointer",
           fontWeight: "bold",
-          minWidth: "70px",
+          width: "55px",
+          height: "28px",
+          boxSizing: "border-box",
+          minWidth: "unset",
       };
+
+      async function openDraftsModal() {
+    if (!draftsModal) return;
+
+    const primaryPink = "#ff3ebf";
+    // ... (rest of the styles and draft loading) ...
+    
+    // --- START DRAFTS MODAL CLOSE BUTTON INJECTION ---
+    const modalContent = draftsModal.querySelector(".modal-content");
+    if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
+        const x = document.createElement("button");
+        x.className = "draft-modal-close-x";
+        x.type = "button";
+        x.innerText = "✖";
+        x.title = "Close Drafts";
+        
+        // Use Object.assign for styling the close 'X'
+        Object.assign(x.style, {
+            position: "absolute",
+            right: "18px",
+            top: "14px",
+            background: "transparent",
+            border: "none",
+            fontSize: "22px",
+            cursor: "pointer",
+            color: "#669", // Slightly softer gray/black color for this modal
+            zIndex: "100", 
+        });
+
+        x.addEventListener("click", () => {
+            draftsModal.classList.add("hidden");
+        });
+
+        modalContent.style.position = modalContent.style.position || "relative";
+        modalContent.appendChild(x);
+    }
+    // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
+
+    await loadDrafts();
+    // ... (rest of openDraftsModal function) ...
       
       drafts.forEach(draft => {
         const li = document.createElement("li");
@@ -696,15 +740,15 @@ Object.assign(input.style, {
             fontSize: "16px",
         });
         
-        li.innerHTML = `
-          <div class="draft-title-container">
+       li.innerHTML = `
+          <div class="draft-title-container" style="flex-grow: 1; margin-right: 15px; word-break: break-word;">
             <span style="font-weight: 600;">${draft.title || 'Untitled Draft'}</span>
           </div>
-          <div class="draft-actions" style="display: flex; gap: 10px;">
+          <div class="draft-actions" style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
             <button class="load-draft-btn" data-id="${draft.id}">Load</button>
             <button class="delete-draft-btn" data-id="${draft.id}">Delete</button>
           </div>
-        `;
+        `;  
         ul.appendChild(li);
 
         const loadBtn = li.querySelector(".load-draft-btn");
