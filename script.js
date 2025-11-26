@@ -517,8 +517,6 @@ const primaryPink = "#ff3ebf";
 
     containerElement.appendChild(logoutBtn);
   }
-
-    document.getElementById("adminControlsContainer").appendChild(logoutBtn);
  
   // -----------------------------
   // MODAL HELPERS
@@ -723,55 +721,6 @@ Object.assign(input.style, {
             fontWeight: "bold",
             fontSize: "14px",
         });
-
-      const buttonStyle = {
-          background: primaryPink,
-          color: "white",
-          border: "none",
-          padding: "0 5px",
-          lineHeight: "20px",
-          fontSize: "14px",
-          fontFamily: "Poppins, sans-serif",
-          borderRadius: "6px",
-          cursor: "pointer",
-          fontWeight: "bold",
-          width: "55px",
-          height: "28px",
-          boxSizing: "border-box",
-          minWidth: "unset",
-      };
-
-      async function openDraftsModal() {
-    if (!draftsModal) return;
-
-    const primaryPink = "#ff3ebf";
-    // ... (rest of the styles and draft loading) ...
-    
-    // --- START DRAFTS MODAL CLOSE BUTTON INJECTION ---
-    const modalContent = draftsModal.querySelector(".modal-content");
-    if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
-        const x = document.createElement("button");
-        x.className = "draft-modal-close-x";
-        x.type = "button";
-        x.innerText = "✖";
-        x.title = "Close Drafts";
-        
-        // Use Object.assign for styling the close 'X'
-        Object.assign(x.style, {
-            position: "absolute",
-            right: "18px",
-            top: "14px",
-            background: "transparent",
-            border: "none",
-            fontSize: "22px",
-            cursor: "pointer",
-            color: "#669", // Slightly softer gray/black color for this modal
-            zIndex: "100", 
-        });
-
-        x.addEventListener("click", () => {
-            draftsModal.classList.add("hidden");
-        });
 
         modalContent.style.position = modalContent.style.position || "relative";
         modalContent.appendChild(x);
