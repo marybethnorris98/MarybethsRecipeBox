@@ -501,7 +501,7 @@ const primaryPink = "#ff3ebf";
     addLogoutButton(container);
   }
 
-  function addLogoutButton(**containerElement**) {
+  function addLogoutButton(containerElement) {
     if (!containerElement) return; // Safely exit if no container
     if (containerElement.querySelector("#logoutBtn")) return; // Use querySelector on the element
 
@@ -512,7 +512,7 @@ const primaryPink = "#ff3ebf";
     logoutBtn.onclick = () => { 
         isAdmin=false; 
         localStorage.removeItem("admin"); 
-        **window.location.href = window.location.href.split('#')[0]; // Use this for a cleaner reload, removes hash if present**
+        window.location.href = window.location.href.split('#')[0]; // Use this for a cleaner reload, removes hash if present
     };
 
     containerElement.appendChild(logoutBtn);
@@ -715,7 +715,7 @@ Object.assign(input.style, {
         const deleteBtn = li.querySelector(".delete-draft-btn");
         if (deleteBtn) {
             Object.assign(deleteBtn.style, buttonStyle, {
-                **background: mauvePink,**
+                background: mauvePink,
                 color: "white",
             });
         }
