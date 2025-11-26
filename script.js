@@ -519,8 +519,7 @@ const primaryPink = "#ff3ebf";
   }
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
-  }
-
+ 
   // -----------------------------
   // MODAL HELPERS
   // -----------------------------
