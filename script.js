@@ -700,7 +700,7 @@ Object.assign(input.style, {
           <div class="draft-title-container">
             <span style="font-weight: 600;">${draft.title || 'Untitled Draft'}</span>
           </div>
-          <div class="draft-actions">
+          <div class="draft-actions" style="display: flex; gap: 10px;">
             <button class="load-draft-btn" data-id="${draft.id}">Load</button>
             <button class="delete-draft-btn" data-id="${draft.id}">Delete</button>
           </div>
