@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   draftsModal = document.getElementById("draftsModal"); // Added 'draftsModal'
   draftsList = document.getElementById("draftsList"); // Added 'draftsList'
   closeDraftsBtn = document.getElementById("closeDraftsBtn"); // Added 'closeDraftsBtn'
-  
+  
   if (saveRecipeBtn) {
     Object.assign(saveRecipeBtn.style, {
         background: "#ff3ebf",
@@ -132,8 +132,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         borderRadius: "12px",
         width: "100%",
         cursor: "pointer",
-        marginBottom: "15px", 
-        marginTop: "15px", 
+        marginBottom: "15px", 
+        marginTop: "15px", 
         fontWeight: "bold",
     });
   }
@@ -164,14 +164,14 @@ const primaryPink = "#ff3ebf";
     padding: "10px",
     border: "1px solid #ccc",
     width: "calc(100% - 22px)", // Adjust for padding
-    boxSizing: "border-box", 
+    boxSizing: "border-box", 
   };
 
   if (newTitle) Object.assign(newTitle.style, inputStyle);
   if (newCategory) Object.assign(newCategory.style, inputStyle, { width: "100%" }); // Category selector usually needs full width
   if (newImage) Object.assign(newImage.style, inputStyle);
   if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" }); // Give textarea more height
-  
+  
   // -----------------------------
   // CATEGORY DROPDOWN
   // -----------------------------
@@ -457,7 +457,7 @@ const primaryPink = "#ff3ebf";
         marginTop: "15px",
         fontWeight: "bold",
     });
-    
+    
     // 3. Big X close button (Keep this logic as it was correct)
     if (!modalContent.querySelector(".add-modal-close-x")) {
         const x = document.createElement("button");
@@ -487,7 +487,7 @@ const primaryPink = "#ff3ebf";
     const addBtn = document.createElement("button");
     addBtn.textContent = "+ Add Recipe";
     Object.assign(addBtn.style, { background:"#ff3ebf", color:"white", padding:"12px 16px", borderRadius:"14px", border:"none", fontSize:"16px", cursor:"pointer", fontFamily:"Poppins, sans-serif", boxShadow:"0 8px 20px rgba(0,0,0,0.15)" });
-    
+    
   addBtn.onclick = () => { editingDraftId = null; editingRecipeId = null; ensureAddModalControls(); clearAddModal(); addRecipeModal.classList.remove("hidden"); };
 
     const draftsBtn = document.createElement("button");
@@ -498,7 +498,7 @@ const primaryPink = "#ff3ebf";
     container.appendChild(addBtn);
     container.appendChild(draftsBtn);
     document.body.appendChild(container);
-    addLogoutButton(container);
+    addLogoutButton(container);
   }
 
   function addLogoutButton(containerElement) {
@@ -509,11 +509,11 @@ const primaryPink = "#ff3ebf";
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
     Object.assign(logoutBtn.style, { background:"#ff3ebf", color:"white", padding:"12px 16px", borderRadius:"14px", border:"none", fontSize:"16px", cursor:"pointer", fontFamily:"Poppins, sans-serif", boxShadow:"0 8px 20px rgba(0,0,0,0.15)" });
-    logoutBtn.onclick = () => { 
-        isAdmin=false; 
-        localStorage.removeItem("admin"); 
-        window.location.href = window.location.href.split('#')[0]; // Use this for a cleaner reload, removes hash if present
-    };
+    logoutBtn.onclick = () => { 
+        isAdmin=false; 
+        localStorage.removeItem("admin"); 
+        window.location.href = window.location.href.split('#')[0]; // Use this for a cleaner reload, removes hash if present
+    };
 
     containerElement.appendChild(logoutBtn);
   }
@@ -535,10 +535,10 @@ Object.assign(input.style, {
         flexGrow: 1, // Allows the input to take up maximum space
         margin: "5px 0",
     });
-    
+    
     const removeBtn = document.createElement("button");
     removeBtn.type="button"; removeBtn.textContent="✖";
-   bject.assign(removeBtn.style, {
+   Object.assign(removeBtn.style, { // <-- FIX: Added 'O' to Object.assign
         marginLeft: "8px",
         background: "transparent",
         border: "none",
@@ -652,38 +652,83 @@ Object.assign(input.style, {
   // -----------------------------
   // DRAFTS MODAL
   // -----------------------------
+  // Define common button style variables *outside* of the loop/function
+  const mauvePink = "#b20050";
+  const buttonStyle = {
+      background: primaryPink,
+      color: "white",
+      border: "none",
+      padding: "6px 10px", // Use load/delete padding
+      fontSize: "14px",
+      fontFamily: "Poppins, sans-serif",
+      borderRadius: "8px", // Use load/delete radius
+      cursor: "pointer",
+      fontWeight: "bold",
+      minWidth: "55px", // Ensure minimum width
+      boxSizing: "border-box",
+  };
+
   async function openDraftsModal() {
     if (!draftsModal) return;
 
-    const primaryPink = "#ff3ebf";
-    const lightPink = "#ffe7f5"; // From old code
-    const lighterPinkBg = "#fff9fc"; // From old code
-    const darkMauve = "#a00064";
+    const lightPink = "#ffe7f5";
+    const lighterPinkBg = "#fff9fc";
+    const darkMauve = "#a00064";
 
     await loadDrafts();
     draftsList.innerHTML = "";
+
+    // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
+    const modalContent = draftsModal.querySelector(".modal-content");
+    if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
+        const x = document.createElement("button");
+        x.className = "draft-modal-close-x";
+        x.type = "button";
+        x.innerText = "✖";
+        x.title = "Close Drafts";
+        
+        Object.assign(x.style, {
+            position: "absolute",
+            right: "18px",
+            top: "14px",
+            background: "transparent",
+            border: "none",
+            fontSize: "22px",
+            cursor: "pointer",
+            color: "#669",
+            zIndex: "100", 
+        });
+
+        x.addEventListener("click", () => {
+            draftsModal.classList.add("hidden");
+        });
+
+        modalContent.style.position = modalContent.style.position || "relative";
+        modalContent.appendChild(x);
+    }
+    // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
 
     if (drafts.length === 0) {
       draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center;'>No drafts saved.</p>";
     } else {
       const ul = document.createElement("ul");
       ul.className = "drafts-list";
-      
-      drafts.forEach(draft => {
+      
+      drafts.forEach(draft => {
         const li = document.createElement("li");
         li.className = "draft-item";
 
-        Object.assign(li.style, {
+        Object.assign(li.style, {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "8px", // Smaller padding
-            borderRadius: "10px", 
-            border: `1px solid ${lightPink}`, // Light pink border
-            background: lighterPinkBg, // Very light pink background
+            padding: "8px",
+            borderRadius: "10px", 
+            border: `1px solid ${lightPink}`,
+            background: lighterPinkBg,
             fontFamily: "Poppins, sans-serif",
             fontSize: "16px",
-            marginBottom: "10px", // Add space between rows
+            marginBottom: "10px",
         });
         
         li.innerHTML = `
@@ -697,80 +742,25 @@ Object.assign(input.style, {
         `;
         ul.appendChild(li);
 
-        // --- NEW/RESTORED BUTTON STYLING ---
-        const loadBtn = li.querySelector(".load-draft-btn");
-        Object.assign(loadBtn.style, {
-            background: primaryPink, // #ff3ebf
-            color: "white",
-            border: "none",
-            padding: "6px 10px",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "14px",
-        });
-
-        const deleteBtn = li.querySelector(".delete-draft-btn");
-        Object.assign(deleteBtn.style, {
-            background: "transparent",
-            color: "#b20050", // Dark text for delete
-            border: "2px solid #ffd1e8", // Light pink border
-            padding: "6px 10px",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "14px",
+        // Apply defined button styles (now defined outside the function/loop)
+        const loadBtn = li.querySelector(".load-draft-btn");
+        if (loadBtn) Object.assign(loadBtn.style, buttonStyle, {
+            background: primaryPink,
         });
 
-        modalContent.style.position = modalContent.style.position || "relative";
-        modalContent.appendChild(x);
-    }
-    // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
-
-    await loadDrafts();
-    // ... (rest of openDraftsModal function) ...
-      
-      drafts.forEach(draft => {
-        const li = document.createElement("li");
-        li.className = "draft-item";
-
-        Object.assign(li.style, {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px 15px",
-            borderBottom: "1px solid #eee",
-            fontFamily: "Poppins, sans-serif",
-            fontSize: "16px",
-        });
-        
-       li.innerHTML = `
-          <div class="draft-title-container" style="flex-grow: 1; margin-right: 15px; word-break: break-word;">
-            <span style="font-weight: 600;">${draft.title || 'Untitled Draft'}</span>
-          </div>
-          <div class="draft-actions" style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
-            <button class="load-draft-btn" data-id="${draft.id}">Load</button>
-            <button class="delete-draft-btn" data-id="${draft.id}">Delete</button>
-          </div>
-        `;  
-        ul.appendChild(li);
-
-        const loadBtn = li.querySelector(".load-draft-btn");
-        if (loadBtn) Object.assign(loadBtn.style, buttonStyle);
-
-        // NEW: Apply Delete button style (using mauvePink)
         const deleteBtn = li.querySelector(".delete-draft-btn");
-        if (deleteBtn) {
-            Object.assign(deleteBtn.style, buttonStyle, {
-                background: mauvePink,
-                color: "white",
-            });
-        }
-        loadBtn.addEventListener("click", () => {
+        if (deleteBtn) Object.assign(deleteBtn.style, buttonStyle, {
+            background: mauvePink,
+            color: "white", // Override dark text
+            border: "none", // Override light border
+        });
+        
+        loadBtn.addEventListener("click", () => {
           editingDraftId = draft.id;
           editingRecipeId = draft.forRecipeId || null;
           populateAddModalFromRecipeOrDraft(draft);
           draftsModal.classList.add("hidden");
+          ensureAddModalControls(); // Ensure controls are present after loading
           addRecipeModal.classList.remove("hidden");
         });
 
