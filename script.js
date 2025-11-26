@@ -789,4 +789,4 @@ Object.assign(input.style, {
   // -----------------------------
   await loadRecipes();
 
-}); // end DOMContentLoaded
+});
