@@ -31,8 +31,14 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/1
 // -----------------------------
 // FIREBASE CONFIG & INITIALIZATION (Using environment variables)
 // -----------------------------
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = {
+    apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
+  authDomain: "recipeapp-248a1.firebaseapp.com",
+  projectId: "recipeapp-248a1",
+  storageBucket: "recipeapp-248a1.firebasestorage.app",
+  messagingSenderId: "629558122940",
+  appId: "1:629558122940:web:65dcca8ea0c572ccdf33b9"
+};
 
 let app, db, auth;
 
