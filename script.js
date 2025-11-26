@@ -753,132 +753,126 @@ document.addEventListener("DOMContentLoaded", async () => {
     // DRAFTS MODAL (FIXED SYNTAX AND STYLES)
     // -----------------------------
     async function openDraftsModal() {
-        if (!draftsModal || !draftsList) return;
+    if (!draftsModal || !draftsList) return;
 
-        await loadDrafts();
-        draftsList.innerHTML = "";
-        
-        // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
-        const modalContent = draftsModal.querySelector(".modal-content");
-        if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
-            const x = document.createElement("button");
-            x.className = "draft-modal-close-x";
-            x.type = "button";
-            x.innerText = "✖";
-            x.title = "Close Drafts";
+    await loadDrafts();
+    draftsList.innerHTML = "";
+    
+    // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
+    const modalContent = draftsModal.querySelector(".modal-content");
+    if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
+        const x = document.createElement("button");
+        x.className = "draft-modal-close-x";
+        x.type = "button";
+        x.innerText = "✖";
+        x.title = "Close Drafts";
 
-            Object.assign(x.style, {
-                position: "absolute",
-                right: "18px",
-                top: "14px",
-                background: "transparent",
-                border: "none",
-                fontSize: "22px",
-                cursor: "pointer",
-                color: primaryPink, // Use a strong color for the close button
-                zIndex: "100",
-            });
+        Object.assign(x.style, {
+            position: "absolute",
+            right: "18px",
+            top: "14px",
+            background: "transparent",
+            border: "none",
+            fontSize: "22px",
+            cursor: "pointer",
+            color: primaryPink,
+            zIndex: "100",
+        });
 
-            x.addEventListener("click", () => {
-                draftsModal.classList.add("hidden");
-            });
+        x.addEventListener("click", () => {
+            draftsModal.classList.add("hidden");
+        });
 
-            modalContent.style.position = modalContent.style.position || "relative";
-            modalContent.appendChild(x);
-        }
-        // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
-
-        if (drafts.length === 0) {
-            draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center; color: #888;'>No drafts saved.</p>";
-        } else {
-            drafts.forEach(draft => {
-                const li = document.createElement("li");
-                li.className = "draft-item";
-
-                // APPLYING YOUR PREFERRED STYLING TO THE LIST ITEM
-                Object.assign(li.style, {
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "8px",
-                    borderRadius: "10px",
-                    border: `1px solid ${lightPinkBorder}`, // #ffe7f5
-                    background: lighterPinkBg, // #fff9fc
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "16px",
-                    marginBottom: "10px",
-                });
-
-                const titleContainer = document.createElement('div');
-                titleContainer.style.cssText = `
-                    font-weight: 600; 
-                    color: ${draftsTitleColor}; 
-                    flex: 1; 
-                    margin-right: 15px; 
-                    overflow: hidden; 
-                    text-overflow: ellipsis; 
-                    white-space: nowrap;
-                `;
-                titleContainer.textContent = draft.title || 'Untitled Draft';
-                
-                const actions = document.createElement('div');
-                actions.style.cssText = `
-                    display: flex; 
-                    gap: 8px; 
-                    flex-shrink: 0; 
-                    align-items: center;
-                `;
-
-                // --- LOAD/EDIT BUTTON ---
-                const loadBtn = document.createElement('button');
-                loadBtn.textContent = 'Edit';
-                Object.assign(loadBtn.style, baseDraftButtonStyle, {
-                    background: primaryPink, // #ff3ebf
-                    color: "white",
-                    border: "none",
-                });
-                loadBtn.addEventListener("click", () => {
-                    const d = drafts.find(d => d.id === draft.id);
-                    if (d) {
-                        // Set state and populate modal
-                        editingDraftId = d.id;
-                        editingRecipeId = d.forRecipeId || null;
-                        populateAddModalFromRecipeOrDraft(d);
-                        ensureAddModalControls();
-                        draftsModal.classList.add("hidden");
-                        addRecipeModal.classList.remove("hidden");
-                    }
-                });
-
-                // --- DELETE BUTTON ---
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = 'Delete';
-                Object.assign(deleteBtn.style, baseDraftButtonStyle, {
-                    background: "transparent",
-                    color: redMauvePink, // #b20050
-                    border: `2px solid ${lightPink}`, // #ffd1e8
-                });
-                deleteBtn.addEventListener("click", async () => {
-                    // NOTE: Using native confirm as a placeholder for a custom UI modal
-                    if (!confirm(`Delete draft "${draft.title}"?`)) return;
-                    if (db) {
-                        await deleteDoc(doc(db, "drafts", draft.id));
-                        openDraftsModal(); // Reload the list
-                    } else {
-                        console.error("Database not initialized.");
-                    }
-                });
-
-                actions.appendChild(loadBtn);
-                actions.appendChild(deleteBtn);
-                li.appendChild(titleContainer);
-                li.appendChild(actions);
-                draftsList.appendChild(li);
-            });
-        }
-
-        draftsModal.classList.remove("hidden");
+        modalContent.style.position = modalContent.style.position || "relative";
+        modalContent.appendChild(x);
     }
+    // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
+
+    if (drafts.length === 0) {
+        draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center; color: #888;'>No drafts saved.</p>";
+    } else {
+        drafts.forEach(draft => {
+            const li = document.createElement("li");
+            li.className = "draft-item";
+
+            // APPLYING STYLING TO THE LIST ITEM CONTAINER
+            Object.assign(li.style, {
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px 15px",
+                border: `1px solid ${lightPinkBorder}`,
+                borderRadius: "10px",
+                backgroundColor: lighterPinkBg,
+                fontFamily: "Poppins, sans-serif",
+                gap: "10px",
+            });
+
+            // Draft Title Display
+            const titleDisplay = document.createElement("span");
+            titleDisplay.textContent = draft.title || "Untitled Draft";
+            Object.assign(titleDisplay.style, {
+                flexGrow: 1,
+                fontWeight: "600",
+                color: draftsTitleColor,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+            });
+
+            // Action Buttons Container
+            const actions = document.createElement("div");
+            actions.style.display = "flex";
+            actions.style.gap = "8px";
+
+            // Load Button
+            const loadBtn = document.createElement("button");
+            loadBtn.textContent = "Load";
+            Object.assign(loadBtn.style, baseDraftButtonStyle, {
+                background: mauvePink,
+                color: "white",
+                border: "none",
+            });
+            loadBtn.addEventListener("click", () => {
+                editingDraftId = draft.id;
+                editingRecipeId = draft.forRecipeId || null;
+                populateAddModalFromRecipeOrDraft(draft);
+                ensureAddModalControls();
+                draftsModal.classList.add("hidden");
+                addRecipeModal.classList.remove("hidden");
+            });
+
+            // Delete Button
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            Object.assign(deleteBtn.style, baseDraftButtonStyle, {
+                background: "white",
+                color: redMauvePink,
+                border: `2px solid ${lightPink}`,
+            });
+            deleteBtn.addEventListener("click", async () => {
+                // NOTE: Using native confirm as a placeholder for a custom UI modal
+                if (!confirm(`Permanently delete draft "${draft.title}"?`)) return;
+
+                if (db) {
+                    await deleteDoc(doc(db, "drafts", draft.id));
+                    await openDraftsModal(); // Reload the modal to update the list
+                } else {
+                    console.error("Database not initialized.");
+                }
+            });
+
+            actions.appendChild(loadBtn);
+            actions.appendChild(deleteBtn);
+
+            li.appendChild(titleDisplay);
+            li.appendChild(actions);
+            draftsList.appendChild(li);
+        });
+    }
+
+    draftsModal.classList.remove("hidden");
+}
     
     // --- Initial Load ---
     loadRecipes();
