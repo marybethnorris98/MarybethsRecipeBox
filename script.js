@@ -55,22 +55,27 @@ if (Object.keys(firebaseConfig).length > 0) {
 // -----------------------------
 let isAdmin = localStorage.getItem("admin") === "true";
 
+// Custom Colors from your previous code
 const primaryPink = "#ff3ebf";
-const mauvePink = "#b20050"; // Darker pink / Edit button background / Strong emphasis
+const mauvePink = "#a00064"; 
+const redMauvePink = "#b20050"; // Used for delete button text
+const lightPinkBorder = "#ffe7f5"; // Used for draft item border
 const lightPink = "#ffd1e8"; // Used for delete button border in drafts modal
 const lighterPinkBg = "#fff9fc"; // Used for draft item background
+const draftsTitleColor = "#a00064";
 
-// Base styles for the buttons in the Drafts modal
+// Base styles for the buttons in the Drafts modal (REFINED)
 const baseDraftButtonStyle = {
     fontFamily: "Poppins, sans-serif",
     fontSize: "14px",
     borderRadius: "8px",
     cursor: "pointer",
-    fontWeight: "bold",
-    minWidth: "65px",
+    fontWeight: "600",
+    minWidth: "75px",
     boxSizing: "border-box",
     flexShrink: 0,
     transition: "background 0.15s ease",
+    padding: "6px 10px",
 };
 
 
@@ -137,9 +142,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     loginBtn = document.getElementById("loginBtn");
     loginError = document.getElementById("loginError");
 
+    // DRAFTS MODAL Elements must be created if they don't exist in HTML
     draftsModal = document.getElementById("draftsModal");
+    if (!draftsModal) {
+        draftsModal = document.createElement("div");
+        draftsModal.id = "draftsModal";
+        draftsModal.className = "modal hidden"; // Initialize hidden
+        draftsModal.style.zIndex = 1300;
+        draftsModal.innerHTML = `
+            <div class="modal-content" style="max-width:520px; position:relative; padding-top: 30px;">
+                <h2 style="margin-top:0; font-family: Poppins, sans-serif;">My Drafts</h2>
+                <div id="draftsList" style="display:flex; flex-direction:column; gap:10px; margin-top:12px;"></div>
+            </div>
+        `;
+        document.body.appendChild(draftsModal);
+    }
     draftsList = document.getElementById("draftsList");
-    closeDraftsBtn = document.getElementById("closeDraftsBtn");
 
     // --- Apply Styles ---
     if (saveRecipeBtn) {
@@ -374,8 +392,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // but alert/confirm are generally forbidden in the environment.
                 if (!confirm(`Delete "${recipe.title}"?`)) return;
                 if (db) {
-                     await deleteDoc(doc(db, "recipes", recipe.id));
-                     await loadRecipes();
+                       await deleteDoc(doc(db, "recipes", recipe.id));
+                       await loadRecipes();
                 } else {
                     console.error("Database not initialized.");
                 }
@@ -477,7 +495,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Listener Cleanup and Reattachment for Save Draft
-        // This ensures only one listener is active after modal population/editing
         const newDraftBtn = saveDraftBtnElement.cloneNode(true);
         saveDraftBtnElement.parentNode.replaceChild(newDraftBtn, saveDraftBtnElement);
         newDraftBtn.addEventListener("click", saveDraft);
@@ -534,6 +551,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const draftsBtn = document.createElement("button");
         draftsBtn.textContent = "Drafts";
+        // Matching style for consistency with Add button, but you can change it if preferred
         Object.assign(draftsBtn.style, { background: primaryPink, color: "white", padding: "12px 16px", borderRadius: "14px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "Poppins, sans-serif", boxShadow: "0 8px 20px rgba(0,0,0,0.15)" });
         draftsBtn.onclick = openDraftsModal;
 
@@ -554,7 +572,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         logoutBtn.onclick = () => {
             isAdmin = false;
             localStorage.removeItem("admin");
-            window.location.href = window.location.href.split('#')[0];
+            // Reloads the page to clear the admin UI
+            window.location.href = window.location.href.split('#')[0]; 
         };
 
         containerElement.appendChild(logoutBtn);
@@ -600,18 +619,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     function clearAddModal() {
         newTitle.value = ""; newCategory.value = CATEGORIES[0]; newImage.value = ""; newDesc.value = "";
         ingredientsList.innerHTML = ""; instructionsList.innerHTML = "";
+        editingDraftId = null; 
+        editingRecipeId = null;
     }
 
     function populateAddModalFromRecipeOrDraft(d) {
         clearAddModal();
-        newTitle.value = d.title || ""; newCategory.value = d.category || CATEGORIES[0]; newImage.value = d.image || ""; newDesc.value = d.description || "";
+        if (!d) return;
+
+        newTitle.value = d.title || ""; 
+        newCategory.value = d.category || CATEGORIES[0]; 
+        newImage.value = d.image || ""; 
+        newDesc.value = d.description || "";
+        
         (d.ingredients || []).forEach(i => { const r = makeRowInput("Ingredient"); r.querySelector("input").value = i; ingredientsList.appendChild(r); });
         (d.instructions || []).forEach(s => { const r = makeRowInput("Step"); r.querySelector("input").value = s; instructionsList.appendChild(r); });
         
-        if (d.id && drafts.some(draft => draft.id === d.id)) {
-            editingDraftId = d.id;
-            editingRecipeId = d.forRecipeId || null;
+        // Determine if this is a draft or a saved recipe
+        if (d.timestamp && d.id) { // Simple check for draft structure
+             // Check if this ID exists in our local drafts array (if loaded)
+             const isDraft = drafts.some(draft => draft.id === d.id);
+
+             if(isDraft) {
+                editingDraftId = d.id;
+                editingRecipeId = d.forRecipeId || null;
+             } else {
+                // Must be a saved recipe being edited
+                editingDraftId = null;
+                editingRecipeId = d.id;
+             }
         } else {
+            // Assume initial state for new creation or loading saved recipe for editing
             editingDraftId = null;
             editingRecipeId = d.id;
         }
@@ -643,7 +681,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             ingredients,
             instructions,
             timestamp: serverTimestamp(),
-            forRecipeId: editingRecipeId || null,
+            // Preserve the ID of the recipe this draft originated from
+            forRecipeId: editingRecipeId || null, 
         };
 
         let docRef;
@@ -710,11 +749,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // DRAFTS MODAL (FIXED SYNTAX AND STYLES)
     // -----------------------------
     async function openDraftsModal() {
-        if (!draftsModal) return;
+        if (!draftsModal || !draftsList) return;
 
         await loadDrafts();
         draftsList.innerHTML = "";
-
+        
         // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
         const modalContent = draftsModal.querySelector(".modal-content");
         if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
@@ -732,7 +771,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 border: "none",
                 fontSize: "22px",
                 cursor: "pointer",
-                color: "#669",
+                color: primaryPink, // Use a strong color for the close button
                 zIndex: "100",
             });
 
@@ -746,50 +785,60 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
 
         if (drafts.length === 0) {
-            draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center;'>No drafts saved.</p>";
+            draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center; color: #888;'>No drafts saved.</p>";
         } else {
-            const ul = document.createElement("ul");
-            ul.className = "drafts-list";
-
             drafts.forEach(draft => {
                 const li = document.createElement("li");
                 li.className = "draft-item";
 
+                // APPLYING YOUR PREFERRED STYLING TO THE LIST ITEM
                 Object.assign(li.style, {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "12px",
+                    padding: "8px",
                     borderRadius: "10px",
-                    border: `1px solid ${lightPink}`,
-                    background: lighterPinkBg,
+                    border: `1px solid ${lightPinkBorder}`, // #ffe7f5
+                    background: lighterPinkBg, // #fff9fc
                     fontFamily: "Poppins, sans-serif",
                     fontSize: "16px",
                     marginBottom: "10px",
                 });
 
-                li.innerHTML = `
-                    <div class="draft-title-container" style="font-weight: 600; color: ${mauvePink}; flex: 1; margin-right: 15px; overflow: hidden; text-overflow: ellipsis;">
-                        <span>${draft.title || 'Untitled Draft'}</span>
-                    </div>
-                    <div class="draft-actions" style="display: flex; gap: 10px; flex-shrink: 0; align-items: center;">
-                        <button class="load-draft-btn" data-id="${draft.id}">Load</button>
-                        <button class="delete-draft-btn" data-id="${draft.id}">Delete</button>
-                    </div>
+                const titleContainer = document.createElement('div');
+                titleContainer.style.cssText = `
+                    font-weight: 600; 
+                    color: ${draftsTitleColor}; 
+                    flex: 1; 
+                    margin-right: 15px; 
+                    overflow: hidden; 
+                    text-overflow: ellipsis; 
+                    white-space: nowrap;
                 `;
-                ul.appendChild(li);
+                titleContainer.textContent = draft.title || 'Untitled Draft';
+                
+                const actions = document.createElement('div');
+                actions.style.cssText = `
+                    display: flex; 
+                    gap: 8px; 
+                    flex-shrink: 0; 
+                    align-items: center;
+                `;
 
-                // FIX: Correcting the syntax error and applying the styles
-                const loadBtn = li.querySelector(".load-draft-btn");
-                if (loadBtn) Object.assign(loadBtn.style, baseDraftButtonStyle, {
-                    background: primaryPink, // Primary Pink background
+                // --- LOAD/EDIT BUTTON ---
+                const loadBtn = document.createElement('button');
+                loadBtn.textContent = 'Edit';
+                Object.assign(loadBtn.style, baseDraftButtonStyle, {
+                    background: primaryPink, // #ff3ebf
                     color: "white",
                     border: "none",
-                    padding: "8px 12px",
                 });
                 loadBtn.addEventListener("click", () => {
                     const d = drafts.find(d => d.id === draft.id);
                     if (d) {
+                        // Set state and populate modal
+                        editingDraftId = d.id;
+                        editingRecipeId = d.forRecipeId || null;
                         populateAddModalFromRecipeOrDraft(d);
                         ensureAddModalControls();
                         draftsModal.classList.add("hidden");
@@ -797,38 +846,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                     }
                 });
 
-
-                const deleteBtn = li.querySelector(".delete-draft-btn");
-                if (deleteBtn) Object.assign(deleteBtn.style, baseDraftButtonStyle, {
-                    // This section now uses correct object literal syntax (colons and string values)
+                // --- DELETE BUTTON ---
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                Object.assign(deleteBtn.style, baseDraftButtonStyle, {
                     background: "transparent",
-                    color: mauvePink,
-                    border: `2px solid ${lightPink}`,
-                    padding: "6px 10px",
+                    color: redMauvePink, // #b20050
+                    border: `2px solid ${lightPink}`, // #ffd1e8
                 });
                 deleteBtn.addEventListener("click", async () => {
                     // NOTE: Using native confirm as a placeholder for a custom UI modal
-                    if (!confirm(`Are you sure you want to delete the draft: "${draft.title}"?`)) return;
+                    if (!confirm(`Delete draft "${draft.title}"?`)) return;
                     if (db) {
                         await deleteDoc(doc(db, "drafts", draft.id));
-                        await openDraftsModal(); // Reload the modal content after deletion
-                        console.log(`Draft "${draft.title}" deleted.`);
+                        openDraftsModal(); // Reload the list
                     } else {
                         console.error("Database not initialized.");
                     }
                 });
 
+                actions.appendChild(loadBtn);
+                actions.appendChild(deleteBtn);
+                li.appendChild(titleContainer);
+                li.appendChild(actions);
+                draftsList.appendChild(li);
             });
-            draftsList.appendChild(ul);
         }
 
         draftsModal.classList.remove("hidden");
     }
-
-
-    // -----------------------------
-    // INITIAL LOAD
-    // -----------------------------
-    await loadRecipes();
-
-}); // end DOMContentLoaded
+    
+    // --- Initial Load ---
+    loadRecipes();
+}); // End DOMContentLoaded
