@@ -736,9 +736,12 @@ Object.assign(input.style, {
 
         const deleteBtn = li.querySelector(".delete-draft-btn");
         if (deleteBtn) Object.assign(deleteBtn.style, buttonStyle, {
-            background: primaryPink,
-            color: "white",
-            border: "none",
+        background= transparent,
+        color= #b20050,
+        border= 2px solid #ffd1e8,
+        padding= 6px 10px,
+        borderRadius= 8px,
+        cursor=pointer,
         });
         
         // ... (event listeners for Load and Delete remain the same)
