@@ -658,7 +658,9 @@ Object.assign(input.style, {
     if (!draftsModal) return;
 
     const primaryPink = "#ff3ebf";
-    const mauvePink = "#C55A8A";
+    const lightPink = "#ffe7f5"; // From old code
+    const lighterPinkBg = "#fff9fc"; // From old code
+    const darkMauve = "#a00064";
 
     await loadDrafts();
     draftsList.innerHTML = "";
@@ -668,6 +670,59 @@ Object.assign(input.style, {
     } else {
       const ul = document.createElement("ul");
       ul.className = "drafts-list";
+      
+      drafts.forEach(draft => {
+        const li = document.createElement("li");
+        li.className = "draft-item";
+
+        Object.assign(li.style, {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "8px", // Smaller padding
+            borderRadius: "10px", 
+            border: `1px solid ${lightPink}`, // Light pink border
+            background: lighterPinkBg, // Very light pink background
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "16px",
+            marginBottom: "10px", // Add space between rows
+        });
+        
+        li.innerHTML = `
+          <div class="draft-title-container" style="font-weight: 600; color: ${darkMauve}; flex-grow: 1; margin-right: 15px;">
+            <span>${draft.title || 'Untitled Draft'}</span>
+          </div>
+          <div class="draft-actions" style="display: flex; gap: 8px; flex-shrink: 0;">
+            <button class="load-draft-btn" data-id="${draft.id}">Load</button>
+            <button class="delete-draft-btn" data-id="${draft.id}">Delete</button>
+          </div>
+        `;
+        ul.appendChild(li);
+
+        // --- NEW/RESTORED BUTTON STYLING ---
+        const loadBtn = li.querySelector(".load-draft-btn");
+        Object.assign(loadBtn.style, {
+            background: primaryPink, // #ff3ebf
+            color: "white",
+            border: "none",
+            padding: "6px 10px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "14px",
+        });
+
+        const deleteBtn = li.querySelector(".delete-draft-btn");
+        Object.assign(deleteBtn.style, {
+            background: "transparent",
+            color: "#b20050", // Dark text for delete
+            border: "2px solid #ffd1e8", // Light pink border
+            padding: "6px 10px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "14px",
+        });
 
       const buttonStyle = {
           background: primaryPink,
