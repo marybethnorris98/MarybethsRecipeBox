@@ -663,47 +663,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     // SAVE DRAFT (Replaced alert with console.log)
     // -----------------------------
     async function saveDraft() {
-        if (!db) return customAlert("Cannot save draft: Database not initialized.");
+    if (!db) return customAlert("Cannot save draft: Database not initialized.");
 
-        const title = newTitle.value.trim() || `Draft: ${new Date().toLocaleTimeString()}`;
-        const category = newCategory.value || CATEGORIES[0];
-        const image = newImage.value.trim();
-        const description = newDesc.value.trim();
+    const title = newTitle.value.trim() || `Draft: ${new Date().toLocaleTimeString()}`;
+    const category = newCategory.value || CATEGORIES[0];
+    const image = newImage.value.trim();
+    const description = newDesc.value.trim();
 
-        const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-        const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
 
-        const data = {
-            title,
-            category,
-            image,
-            description,
-            ingredients,
-            instructions,
-            timestamp: serverTimestamp(),
-            // Preserve the ID of the recipe this draft originated from
-            forRecipeId: editingRecipeId || null, 
-        };
+    // Prepare data, ensuring serverTimestamp is always updated for sorting
+    const data = {
+        title,
+        category,
+        image,
+        description,
+        ingredients,
+        instructions,
+        timestamp: serverTimestamp(), 
+        forRecipeId: editingRecipeId || null,
+    };
 
-        let docRef;
-        try {
-            if (editingDraftId) {
-                docRef = doc(db, "drafts", editingDraftId);
-                await updateDoc(docRef, data);
-                console.log(`Draft "${title}" updated!`);
-            } else {
-                docRef = doc(collection(db, "drafts"));
-                await setDoc(docRef, data);
-                editingDraftId = docRef.id;
-                console.log(`Draft "${title}" saved!`);
-            }
-        } catch (e) {
-            console.error("Error saving draft:", e);
+    try {
+        if (editingDraftId) {
+            // Case 1: Updating an existing draft
+            const docRef = doc(db, "drafts", editingDraftId);
+            await updateDoc(docRef, data); 
+            console.log(`Draft "${title}" updated! ID: ${editingDraftId}`);
+        } else {
+            // Case 2: Creating a new draft
+            const docRef = doc(collection(db, "drafts"));
+            await setDoc(docRef, data); 
+            editingDraftId = docRef.id; // Store the new ID for subsequent updates
+            console.log(`Draft "${title}" saved! New ID: ${editingDraftId}`);
         }
+        
+        // CRITICAL: Reload drafts ONLY AFTER the database write is complete
+        await loadDrafts(); 
+        customAlert(`Draft saved successfully! Title: ${title}`);
 
-        await loadDrafts();
+    } catch (e) {
+        console.error("Critical Error saving draft:", e);
+        customAlert(`Error: Could not save draft. Check console for details.`);
     }
-
+}
     // -----------------------------
     // SAVE RECIPE (Replaced alert with console.log)
     // -----------------------------
