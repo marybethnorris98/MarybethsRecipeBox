@@ -163,12 +163,13 @@ const primaryPink = "#ff3ebf";
     borderRadius: "8px",
     padding: "10px",
     border: "1px solid #ccc",
-    width: "calc(100% - 22px)", // Adjust for padding
+    width: "calc(100% - 22px)", // Adjust for padding (10px left + 10px right + 2px border)
     boxSizing: "border-box", 
   };
 
   if (newTitle) Object.assign(newTitle.style, inputStyle);
-  if (newCategory) Object.assign(newCategory.style, inputStyle, { width: "100%" }); // Category selector usually needs full width
+  // FIX: Remove the manual { width: "100%" } override for newCategory to achieve uniformity
+  if (newCategory) Object.assign(newCategory.style, inputStyle); 
   if (newImage) Object.assign(newImage.style, inputStyle);
   if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" }); // Give textarea more height
   
@@ -538,7 +539,7 @@ Object.assign(input.style, {
     
     const removeBtn = document.createElement("button");
     removeBtn.type="button"; removeBtn.textContent="✖";
-   Object.assign(removeBtn.style, { // <-- FIX: Added 'O' to Object.assign
+   Object.assign(removeBtn.style, { 
         marginLeft: "8px",
         background: "transparent",
         border: "none",
@@ -789,4 +790,4 @@ Object.assign(input.style, {
   // -----------------------------
   await loadRecipes();
 
-});
+}); // end DOMContentLoaded
