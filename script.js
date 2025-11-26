@@ -498,18 +498,25 @@ const primaryPink = "#ff3ebf";
     container.appendChild(addBtn);
     container.appendChild(draftsBtn);
     document.body.appendChild(container);
-
-    addLogoutButton();
+    addLogoutButton(container);
   }
 
-  function addLogoutButton() {
-    if (!document.getElementById("adminControlsContainer")) return;
-    if (document.getElementById("logoutBtn")) return;
+  function addLogoutButton(**containerElement**) {
+    if (!containerElement) return; // Safely exit if no container
+    if (containerElement.querySelector("#logoutBtn")) return; // Use querySelector on the element
+
     const logoutBtn = document.createElement("button");
     logoutBtn.id = "logoutBtn";
     logoutBtn.textContent = "Logout";
     Object.assign(logoutBtn.style, { background:"#ff3ebf", color:"white", padding:"12px 16px", borderRadius:"14px", border:"none", fontSize:"16px", cursor:"pointer", fontFamily:"Poppins, sans-serif", boxShadow:"0 8px 20px rgba(0,0,0,0.15)" });
-    logoutBtn.onclick = () => { isAdmin=false; localStorage.removeItem("admin"); location.reload(); };
+    logoutBtn.onclick = () => { 
+        isAdmin=false; 
+        localStorage.removeItem("admin"); 
+        **window.location.href = window.location.href.split('#')[0]; // Use this for a cleaner reload, removes hash if present**
+    };
+
+    containerElement.appendChild(logoutBtn);
+  }
 
     document.getElementById("adminControlsContainer").appendChild(logoutBtn);
   }
