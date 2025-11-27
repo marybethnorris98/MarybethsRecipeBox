@@ -894,4 +894,4 @@ saveRecipeBtn?.addEventListener("click", saveRecipe);
     
     // --- Initial Load ---
     loadRecipes();
-}); // End DOMContentLoaded
+});
