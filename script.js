@@ -500,10 +500,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         // 2. Save Draft Button (Existing Logic Reused/Kept)
         let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
-        // ... (rest of the Save Draft logic is fine) ...
-
-        // 1. Ensure the Save Draft button exists and has the correct listener
-        let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
         if (!saveDraftBtnElement) {
             saveDraftBtnElement = document.createElement("button");
             saveDraftBtnElement.id = "saveDraftBtn";
