@@ -1,17 +1,6 @@
-// -----------------------------
-// DEBUGGING & SETUP
-// -----------------------------
 console.log("FULL admin + viewer script loaded");
-
-// Replaces alert/confirm functions to avoid breaking the Canvas environment
 const customAlert = (message) => {
     console.log(`[USER ALERT]: ${message}`);
-    // NOTE: In a production environment, this should be replaced by a custom modal UI.
-};
-
-// -----------------------------
-// FIREBASE IMPORTS (Updated to v11.6.1 standard)
-// -----------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
     getFirestore,
@@ -27,10 +16,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-
-// -----------------------------
-// FIREBASE CONFIG & INITIALIZATION (Using environment variables)
-// -----------------------------
 const firebaseConfig = {
     apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
   authDomain: "recipeapp-248a1.firebaseapp.com",
@@ -54,23 +39,15 @@ if (Object.keys(firebaseConfig).length > 0) {
 } else {
     console.error("Firebase config is missing. Data persistence will not work.");
 }
-
-
-// -----------------------------
-// ADMIN & COLOR STATE
-// -----------------------------
 let isAdmin = localStorage.getItem("admin") === "true";
 
-// Custom Colors from your previous code
 const primaryPink = "#ff3ebf";
 const mauvePink = "#a00064"; 
-const redMauvePink = "#b20050"; // Used for delete button text
 const lightPinkBorder = "#ffe7f5"; // Used for draft item border
 const lightPink = "#ffd1e8"; // Used for delete button border in drafts modal
 const lighterPinkBg = "#fff9fc"; // Used for draft item background
 const draftsTitleColor = "#a00064";
 
-// Base styles for the buttons in the Drafts modal (REFINED)
 const baseDraftButtonStyle = {
     fontFamily: "Poppins, sans-serif",
     fontSize: "14px",
@@ -84,10 +61,6 @@ const baseDraftButtonStyle = {
     padding: "6px 10px",
 };
 
-
-// -----------------------------
-// DEFAULT RECIPES (Unused, kept for reference)
-// -----------------------------
 const defaultRecipes = [
     {
         title: "Blueberry Pancakes",
@@ -98,25 +71,15 @@ const defaultRecipes = [
         instructions: ["Mix dry ingredients.", "Add egg & milk.", "Fold in blueberries.", "Cook on skillet until golden."],
         hidden: false
     },
-    // ... (other default recipes)
 ];
 
-// -----------------------------
-// CATEGORIES
-// -----------------------------
 const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"];
 
-// -----------------------------
-// STATE VARIABLES
-// -----------------------------
 let recipes = [];
 let drafts = [];
 let editingDraftId = null; // ID of the draft being edited/loaded
 let editingRecipeId = null; // ID of the recipe being edited/loaded
 
-// -----------------------------
-// DOM ELEMENTS (Declared globally or in the event listener scope)
-// -----------------------------
 let recipeGrid, searchInput, categoryFilter;
 let addRecipeModal, newTitle, newCategory, newImage, newDesc, ingredientsList, instructionsList, saveRecipeBtn, addIngredientBtn, addInstructionBtn, saveDraftBtn;
 let viewer, closeBtn;
@@ -215,10 +178,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (newImage) Object.assign(newImage.style, inputStyle);
     if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" });
 
-
-    // -----------------------------
-    // CATEGORY DROPDOWN
-    // -----------------------------
     function populateCategorySelects() {
         [newCategory, categoryFilter].forEach(select => {
             if (!select) return;
@@ -239,9 +198,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     populateCategorySelects();
 
-    // -----------------------------
-    // FIRESTORE FETCH RECIPES & DRAFTS
-    // -----------------------------
     async function loadRecipes() {
         if (!db) return;
         const recipesCol = collection(db, "recipes");
@@ -267,10 +223,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("Error loading drafts:", e);
         }
     }
-
-    // -----------------------------
-    // RENDER RECIPES (No changes needed here)
-    // -----------------------------
     function renderRecipes() {
         if (!recipeGrid) return;
         const searchTerm = (searchInput?.value || "").toLowerCase();
@@ -334,10 +286,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             recipeGrid.appendChild(card);
         });
     }
-
-    // -----------------------------
-    // OPEN RECIPE MODAL (No critical changes, just customAlert for delete)
-    // -----------------------------
     function openRecipeModal(recipe) {
         if (!recipe || !viewer) return;
 
@@ -425,10 +373,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         viewer.style.display = "flex";
     }
-
-    // -----------------------------
-    // CLOSE MODAL
-    // -----------------------------
     if (closeBtn) {
         closeBtn.addEventListener("click", () => { viewer.style.display = "none"; });
         viewer.addEventListener("click", e => { if (e.target === viewer) viewer.style.display = "none"; });
@@ -444,22 +388,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     }
-
-    // -----------------------------
-    // SEARCH & FILTER
-    // -----------------------------
     searchInput?.addEventListener("input", renderRecipes);
     categoryFilter?.addEventListener("change", renderRecipes);
 
-    // -----------------------------
-    // ADMIN LOGIN
-    // -----------------------------
     const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join("");
     function openLoginModal() { loginModal?.classList.remove("hidden"); loginError.style.display = "none"; }
 
     loginBtn?.addEventListener("click", () => {
         const entered = document.getElementById("adminPassword")?.value || "";
-        // WARNING: This is a trivial password hash, not secure.
         if (entered.split("").reverse().join("") === ADMIN_PASSWORD_HASH) {
             isAdmin = true;
             localStorage.setItem("admin", "true");
@@ -476,10 +412,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     if (isAdmin) injectAdminUI();
-
-    // -----------------------------
-    // ADMIN UI
-    // -----------------------------
     function ensureAddModalControls() {
         if (!addRecipeModal) return;
         const modalContent = addRecipeModal.querySelector(".modal-content");
@@ -596,10 +528,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         containerElement.appendChild(logoutBtn);
     }
-
-    // -----------------------------
-    // MODAL HELPERS (No critical changes)
-    // -----------------------------
     function makeRowInput(placeholder = "") {
         const row = document.createElement("div");
         row.className = "admin-row";
@@ -675,9 +603,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     addIngredientBtn?.addEventListener("click", () => ingredientsList.appendChild(makeRowInput("Ingredient")));
     addInstructionBtn?.addEventListener("click", () => instructionsList.appendChild(makeRowInput("Step")));
- // -----------------------------
-// SAVE DRAFT (Replaced alert with console.log)
-// -----------------------------
+    
 async function saveDraft() {
     if (!db) return customAlert("Cannot save draft: Database not initialized.");
 
@@ -689,7 +615,6 @@ async function saveDraft() {
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
     const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
 
-    // Prepare data, ensuring serverTimestamp is always updated for sorting
     const data = {
         title,
         category,
@@ -737,15 +662,13 @@ async function saveDraft() {
         console.error("Error saving draft:", e);
         customAlert("Failed to save draft. See console for details.");
     }
-} // End of saveDraft function
-
-// -----------------------------
-// SAVE RECIPE (Moved outside of saveDraft and completed)
-// -----------------------------
+} 
 async function saveRecipe
-// -----------------------------
-// DRAFTS MODAL (FIXED SYNTAX AND STYLES) - COMPLETED
-// -----------------------------
+    customAlert("Save Recipe function placeholder called. Add your logic!");
+    await loadRecipes(); // Ensure recipes refresh after saving
+    clearAddModal();
+    addRecipeModal.classList.add("hidden");
+}
 async function openDraftsModal() {
     if (!draftsModal || !draftsList) return;
 
@@ -818,7 +741,7 @@ async function openDraftsModal() {
             deleteBtn.textContent = "Delete";
             Object.assign(deleteBtn.style, baseDraftButtonStyle, {
                 background: "white",
-                color: redMauvePink,
+                color: MauvePink,
                 border: `1px solid ${lightPink}`,
             });
             deleteBtn.onmouseenter = () => deleteBtn.style.background = lightPinkBorder;
@@ -841,8 +764,6 @@ async function openDraftsModal() {
             draftsList.appendChild(draftItem);
         });
     }
-
-    // Set up modal background click to close
     draftsModal.addEventListener("click", e => {
         if (e.target === draftsModal) {
             draftsModal.classList.add("hidden");
