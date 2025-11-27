@@ -665,11 +665,67 @@ async function saveDraft() {
         customAlert("Failed to save draft. See console for details.");
     }
 } 
-async function saveRecipe
-    customAlert("Save Recipe function placeholder called. Add your logic!");
-    await loadRecipes(); // Ensure recipes refresh after saving
-    clearAddModal();
-    addRecipeModal.classList.add("hidden");
+async function saveRecipe() {
+    if (!db) return customAlert("Cannot save recipe: Database not initialized.");
+
+    // 1. --- COLLECT DATA ---
+    const title = newTitle.value.trim();
+    if (!title) return customAlert("Recipe title is required.");
+
+    const category = newCategory.value || CATEGORIES[0];
+    const image = newImage.value.trim();
+    const description = newDesc.value.trim();
+
+    // Convert DOM elements to arrays of strings
+    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+
+    const recipeData = {
+        title,
+        category,
+        image,
+        description,
+        ingredients,
+        instructions,
+        hidden: false, // Recipes should be visible by default when published
+        // Optionally add credits/timestamp here if needed
+    };
+
+    try {
+        let savedRecipeId;
+
+        if (editingRecipeId) {
+            // Case 1: Updating an existing published recipe
+            const docRef = doc(db, "recipes", editingRecipeId);
+            await updateDoc(docRef, recipeData);
+            savedRecipeId = editingRecipeId;
+            console.log(`Recipe "${title}" updated! ID: ${savedRecipeId}`);
+
+        } else {
+            // Case 2: Creating a new recipe
+            const docRef = doc(collection(db, "recipes"));
+            await setDoc(docRef, recipeData);
+            savedRecipeId = docRef.id;
+            console.log(`Recipe "${title}" saved! New ID: ${savedRecipeId}`);
+        }
+        
+        // --- DRAFT CLEANUP LOGIC ---
+        if (editingDraftId) {
+            // Delete the draft that was just published/used to update the recipe
+            await deleteDoc(doc(db, "drafts", editingDraftId));
+            console.log(`Associated draft (${editingDraftId}) deleted successfully.`);
+        }
+        
+        // 2. --- CLEAN UP & REFRESH ---
+        await loadRecipes(); // Reload the main recipe grid
+        customAlert(`Recipe "${title}" saved successfully!`);
+        clearAddModal();
+        addRecipeModal.classList.add("hidden");
+
+    } catch (e) {
+        console.error("Error saving recipe:", e);
+        customAlert("Failed to save recipe. See console for details.");
+    }
 }
 async function openDraftsModal() {
     if (!draftsModal || !draftsList) return;
