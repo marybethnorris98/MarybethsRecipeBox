@@ -864,8 +864,8 @@ saveRecipeBtn?.addEventListener("click", saveRecipe);
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete";
             Object.assign(deleteBtn.style, baseDraftButtonStyle, {
-                background: "white",
-                color: redMauvePink,
+                background: white,
+                color: MauvePink,
                 border: `2px solid ${lightPink}`,
             });
             deleteBtn.addEventListener("click", async () => {
