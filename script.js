@@ -485,12 +485,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const modalContent = addRecipeModal.querySelector(".modal-content");
         if (!modalContent) return;
         let saveBtn = modalContent.querySelector("#saveRecipeBtn");
-        if (saveBtn) {
-            const newSaveBtn = saveBtn.cloneNode(true);
-            saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-            newSaveBtn.addEventListener("click", saveRecipe);
-            saveBtn = newSaveBtn; // Update the reference
-        }
+        // Fix: Reattach listener for Save Recipe Button to prevent breaking after draft load
+    if (saveBtn) {
+        const newSaveBtn = saveBtn.cloneNode(true); // Create a clean copy of the button
+        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn); // Replace the old button with the clean copy
+        newSaveBtn.addEventListener("click", saveRecipe); // Attach the working saveRecipe function
+        saveBtn = newSaveBtn; // Update the reference
+    }
 
         // 1. Ensure the Save Draft button exists and has the correct listener
         let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
@@ -713,14 +714,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         // CRITICAL: Reload drafts ONLY AFTER the database write is complete
         await loadDrafts(); 
-        customAlert(`Draft saved successfully! Title: ${title}`);
-
-    } catch (e) {
-        console.error("Critical Error saving draft:", e);
-        customAlert(`Error: Could not save draft. Check console for details.`);
-    }
-}
-    // -----------------------------
+        
+    // -------const feedback = document.createElement("p");
+    feedback.textContent = `✅ Draft "${title}" saved successfully!`;
+    feedback.style.cssText = "color: #a00064; font-weight: bold; margin-bottom: 10px; text-align: center; font-family: Poppins, sans-serif; background: #fff9fc; padding: 10px; border-radius: 8px;";
+    
+    // We assume 'saveDraftBtnElement' is the button element reference
+    const saveDraftBtnElement = document.getElementById("saveDraftBtn");
+    if (saveDraftBtnElement) {
+        saveDraftBtnElement.parentNode.insertBefore(feedback, saveDraftBtnElement); 
+        // Automatically remove the message after 3 seconds
+        setTimeout(() => feedback.remove(), 3000); 
+    }----------------------
     // SAVE RECIPE (Replaced alert with console.log)
     // -----------------------------
 // -----------------------------
