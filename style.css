@@ -410,13 +410,7 @@ if (categoryDropdown) {
   border: 2px dashed #f039b1;  /* indicate hidden */
   cursor: pointer;     /* still clickable */
 }
-.card-info-icon {
-    display: none !important;
-}
 
-#recipeGrid .card .card-info-icon {
-    display: block !important;
-}
 /* Add this rule to style.css */
 .tooltip-container {
     position: relative; 
