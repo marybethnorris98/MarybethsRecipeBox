@@ -725,12 +725,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         saveDraftBtnElement.parentNode.insertBefore(feedback, saveDraftBtnElement); 
         // Automatically remove the message after 3 seconds
         setTimeout(() => feedback.remove(), 3000); 
-    }----------------------
-    // SAVE RECIPE (Replaced alert with console.log)
-    // -----------------------------
-// -----------------------------
-// SAVE RECIPE LOGIC (NAMED FUNCTION)
-// -----------------------------
+    }
 async function saveRecipe() {
     if (!db) return customAlert("Cannot save recipe: Database not initialized.");
 
