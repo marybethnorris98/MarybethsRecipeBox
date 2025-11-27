@@ -130,6 +130,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     draftsList = document.getElementById("draftsList");
 
+    const defaultCloseBtn = draftsModal.querySelector(".close") || draftsModal.querySelector("#closeViewerBtn");
+if (defaultCloseBtn) defaultCloseBtn.style.display = 'none';
+
     // --- Apply Styles ---
     if (saveRecipeBtn) {
         Object.assign(saveRecipeBtn.style, {
