@@ -734,6 +734,9 @@ async function saveDraft() {
             // Automatically remove the message after 3 seconds
             setTimeout(() => feedback.remove(), 3000);
         }
+        clearAddModal();
+        addRecipeModal.classList.add("hidden");
+        
     } catch (e) {
         console.error("Error saving draft:", e);
         customAlert("Failed to save draft. See console for details.");
@@ -743,46 +746,7 @@ async function saveDraft() {
 // -----------------------------
 // SAVE RECIPE (Moved outside of saveDraft and completed)
 // -----------------------------
-async function saveRecipe() {
-    if (!db) return customAlert("Cannot save recipe: Database not initialized.");
-
-    const title = newTitle.value.trim(), category = newCategory.value || CATEGORIES[0],
-        image = newImage.value.trim(), description = newDesc.value.trim();
-    if (!title || !image || !description) return customAlert("Fill title, image, and description.");
-
-    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-
-    const data = { title, category, image, description, ingredients, instructions, hidden: false, credits: "", timestamp: serverTimestamp() };
-
-    try {
-        if (editingRecipeId) {
-            // Case 1: Updating an existing recipe
-            await setDoc(doc(db, "recipes", editingRecipeId), data);
-        } else {
-            // Case 2: Creating a new recipe
-            const newDoc = doc(collection(db, "recipes"));
-            await setDoc(newDoc, data);
-        }
-
-        // After successfully saving/updating the recipe, delete the associated draft if one exists
-        if (editingDraftId) {
-            await deleteDoc(doc(db, "drafts", editingDraftId));
-            await loadDrafts(); // Update drafts list
-            console.log(`Associated draft (${editingDraftId}) deleted.`);
-        }
-    } catch (e) {
-        console.error("Error saving recipe:", e);
-        customAlert("Failed to save recipe. See console for details.");
-    }
-
-    clearAddModal();
-    editingRecipeId = null;
-    editingDraftId = null;
-    addRecipeModal.classList.add("hidden");
-    await loadRecipes();
-}
-
+async function saveRecipe
 // -----------------------------
 // DRAFTS MODAL (FIXED SYNTAX AND STYLES) - COMPLETED
 // -----------------------------
