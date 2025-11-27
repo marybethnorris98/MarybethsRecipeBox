@@ -422,8 +422,3 @@ if (categoryDropdown) {
 body > .tooltip-container {
     display: none !important;
 }
- 
-.barbie-header .tooltip-container, 
-.controls .tooltip-container {
-    display: none !important;
-}
