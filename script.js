@@ -670,12 +670,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     addIngredientBtn?.addEventListener("click", () => ingredientsList.appendChild(makeRowInput("Ingredient")));
     addInstructionBtn?.addEventListener("click", () => instructionsList.appendChild(makeRowInput("Step")));
-
-
-    // -----------------------------
-    // SAVE DRAFT (Replaced alert with console.log)
-    // -----------------------------
-    async function saveDraft() {
+ // -----------------------------
+// SAVE DRAFT (Replaced alert with console.log)
+// -----------------------------
+async function saveDraft() {
     if (!db) return customAlert("Cannot save draft: Database not initialized.");
 
     const title = newTitle.value.trim() || `Draft: ${new Date().toLocaleTimeString()}`;
@@ -694,7 +692,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         description,
         ingredients,
         instructions,
-        timestamp: serverTimestamp(), 
+        timestamp: serverTimestamp(),
         forRecipeId: editingRecipeId || null,
     };
 
@@ -702,59 +700,71 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (editingDraftId) {
             // Case 1: Updating an existing draft
             const docRef = doc(db, "drafts", editingDraftId);
-            await updateDoc(docRef, data); 
+            await updateDoc(docRef, data);
             console.log(`Draft "${title}" updated! ID: ${editingDraftId}`);
         } else {
             // Case 2: Creating a new draft
             const docRef = doc(collection(db, "drafts"));
-            await setDoc(docRef, data); 
+            await setDoc(docRef, data);
             editingDraftId = docRef.id; // Store the new ID for subsequent updates
             console.log(`Draft "${title}" saved! New ID: ${editingDraftId}`);
         }
-        
+
         // CRITICAL: Reload drafts ONLY AFTER the database write is complete
-        await loadDrafts(); 
-        
-    // -------const feedback = document.createElement("p");
-    feedback.textContent = `✅ Draft "${title}" saved successfully!`;
-    feedback.style.cssText = "color: #a00064; font-weight: bold; margin-bottom: 10px; text-align: center; font-family: Poppins, sans-serif; background: #fff9fc; padding: 10px; border-radius: 8px;";
-    
-    // We assume 'saveDraftBtnElement' is the button element reference
-    const saveDraftBtnElement = document.getElementById("saveDraftBtn");
-    if (saveDraftBtnElement) {
-        saveDraftBtnElement.parentNode.insertBefore(feedback, saveDraftBtnElement); 
-        // Automatically remove the message after 3 seconds
-        setTimeout(() => feedback.remove(), 3000); 
+        await loadDrafts();
+
+        // FIX: The line below had an incomplete comment (// -------) causing a syntax error.
+        const feedback = document.createElement("p");
+        feedback.textContent = `✅ Draft "${title}" saved successfully!`;
+        feedback.style.cssText = "color: #a00064; font-weight: bold; margin-bottom: 10px; text-align: center; font-family: Poppins, sans-serif; background: #fff9fc; padding: 10px; border-radius: 8px;";
+
+        // We assume 'saveDraftBtnElement' is the button element reference
+        const saveDraftBtnElement = document.getElementById("saveDraftBtn");
+        if (saveDraftBtnElement) {
+            saveDraftBtnElement.parentNode.insertBefore(feedback, saveDraftBtnElement);
+            // Automatically remove the message after 3 seconds
+            setTimeout(() => feedback.remove(), 3000);
+        }
+    } catch (e) {
+        console.error("Error saving draft:", e);
+        customAlert("Failed to save draft. See console for details.");
     }
+} // End of saveDraft function
+
+// -----------------------------
+// SAVE RECIPE (Moved outside of saveDraft and completed)
+// -----------------------------
 async function saveRecipe() {
     if (!db) return customAlert("Cannot save recipe: Database not initialized.");
 
     const title = newTitle.value.trim(), category = newCategory.value || CATEGORIES[0],
         image = newImage.value.trim(), description = newDesc.value.trim();
-    if (!title || !image || !description) return customAlert("Fill title, image, description.");
+    if (!title || !image || !description) return customAlert("Fill title, image, and description.");
 
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
     const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
 
     const data = { title, category, image, description, ingredients, instructions, hidden: false, credits: "", timestamp: serverTimestamp() };
 
-    let recipeDocId = editingRecipeId;
     try {
         if (editingRecipeId) {
+            // Case 1: Updating an existing recipe
             await setDoc(doc(db, "recipes", editingRecipeId), data);
         } else {
+            // Case 2: Creating a new recipe
             const newDoc = doc(collection(db, "recipes"));
             await setDoc(newDoc, data);
-            recipeDocId = newDoc.id;
         }
 
         // After successfully saving/updating the recipe, delete the associated draft if one exists
         if (editingDraftId) {
             await deleteDoc(doc(db, "drafts", editingDraftId));
             await loadDrafts(); // Update drafts list
+            console.log(`Associated draft (${editingDraftId}) deleted.`);
         }
     } catch (e) {
         console.error("Error saving recipe:", e);
+        customAlert("Failed to save recipe. See console for details.");
     }
 
     clearAddModal();
@@ -767,15 +777,16 @@ async function saveRecipe() {
 // Attach the listener using the named function reference.
 saveRecipeBtn?.addEventListener("click", saveRecipe);
 
-    // -----------------------------
-    // DRAFTS MODAL (FIXED SYNTAX AND STYLES)
-    // -----------------------------
-    async function openDraftsModal() {
+
+// -----------------------------
+// DRAFTS MODAL (FIXED SYNTAX AND STYLES) - COMPLETED
+// -----------------------------
+async function openDraftsModal() {
     if (!draftsModal || !draftsList) return;
 
     await loadDrafts();
     draftsList.innerHTML = "";
-    
+
     // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
     const modalContent = draftsModal.querySelector(".modal-content");
     if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
@@ -800,48 +811,23 @@ saveRecipeBtn?.addEventListener("click", saveRecipe);
         x.addEventListener("click", () => {
             draftsModal.classList.add("hidden");
         });
-
-        modalContent.style.position = modalContent.style.position || "relative";
         modalContent.appendChild(x);
     }
-    // --- END DRAFTS MODAL CLOSE BUTTON INJECTION ---
-
+    
+    // --- RENDER DRAFTS LIST ---
     if (drafts.length === 0) {
-        draftsList.innerHTML = "<p style='font-family: Poppins, sans-serif; text-align: center; color: #888;'>No drafts saved.</p>";
+        draftsList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">You have no saved drafts.</p>`;
     } else {
         drafts.forEach(draft => {
-            const li = document.createElement("li");
-            li.className = "draft-item";
+            const draftItem = document.createElement("div");
+            draftItem.style.cssText = `display:flex; justify-content:space-between; align-items:center; padding:10px 15px; border-radius:8px; border: 1px solid ${lightPinkBorder}; background:${lighterPinkBg};`;
 
-            // APPLYING STYLING TO THE LIST ITEM CONTAINER
-            Object.assign(li.style, {
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px 15px",
-                border: `1px solid ${lightPinkBorder}`,
-                borderRadius: "10px",
-                backgroundColor: lighterPinkBg,
-                fontFamily: "Poppins, sans-serif",
-                gap: "10px",
-            });
+            const title = document.createElement("span");
+            title.textContent = draft.title || "(Untitled Draft)";
+            title.style.cssText = `font-family: Poppins, sans-serif; font-weight: 600; color: ${draftsTitleColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%;`;
 
-            // Draft Title Display
-            const titleDisplay = document.createElement("span");
-            titleDisplay.textContent = draft.title || "Untitled Draft";
-            Object.assign(titleDisplay.style, {
-                flexGrow: 1,
-                fontWeight: "600",
-                color: draftsTitleColor,
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-            });
-
-            // Action Buttons Container
-            const actions = document.createElement("div");
-            actions.style.display = "flex";
-            actions.style.gap = "8px";
+            const buttonGroup = document.createElement("div");
+            buttonGroup.style.cssText = `display:flex; gap:8px; flex-shrink:0;`;
 
             // Load Button
             const loadBtn = document.createElement("button");
@@ -851,47 +837,59 @@ saveRecipeBtn?.addEventListener("click", saveRecipe);
                 color: "white",
                 border: "none",
             });
-            loadBtn.addEventListener("click", () => {
+            loadBtn.onmouseenter = () => loadBtn.style.background = primaryPink;
+            loadBtn.onmouseleave = () => loadBtn.style.background = mauvePink;
+            loadBtn.onclick = () => {
                 editingDraftId = draft.id;
                 editingRecipeId = draft.forRecipeId || null;
                 populateAddModalFromRecipeOrDraft(draft);
                 ensureAddModalControls();
                 draftsModal.classList.add("hidden");
                 addRecipeModal.classList.remove("hidden");
-            });
+            };
 
             // Delete Button
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete";
             Object.assign(deleteBtn.style, baseDraftButtonStyle, {
-                background: white,
-                color: MauvePink,
-                border: `2px solid ${lightPink}`,
+                background: "white",
+                color: redMauvePink,
+                border: `1px solid ${lightPink}`,
             });
-            deleteBtn.addEventListener("click", async () => {
-                // NOTE: Using native confirm as a placeholder for a custom UI modal
-                if (!confirm(`Permanently delete draft "${draft.title}"?`)) return;
-
-                if (db) {
+            deleteBtn.onmouseenter = () => deleteBtn.style.background = lightPinkBorder;
+            deleteBtn.onmouseleave = () => deleteBtn.style.background = "white";
+            deleteBtn.onclick = async () => {
+                if (!confirm(`Delete draft: "${draft.title}"?`)) return;
+                try {
                     await deleteDoc(doc(db, "drafts", draft.id));
                     await openDraftsModal(); // Reload the modal to update the list
-                } else {
-                    console.error("Database not initialized.");
+                } catch (e) {
+                    console.error("Error deleting draft:", e);
+                    customAlert("Failed to delete draft.");
                 }
-            });
+            };
 
-            actions.appendChild(loadBtn);
-            actions.appendChild(deleteBtn);
-
-            li.appendChild(titleDisplay);
-            li.appendChild(actions);
-            draftsList.appendChild(li);
+            buttonGroup.appendChild(loadBtn);
+            buttonGroup.appendChild(deleteBtn);
+            draftItem.appendChild(title);
+            draftItem.appendChild(buttonGroup);
+            draftsList.appendChild(draftItem);
         });
     }
 
+    // Set up modal background click to close
+    draftsModal.addEventListener("click", e => {
+        if (e.target === draftsModal) {
+            draftsModal.classList.add("hidden");
+        }
+    });
+
     draftsModal.classList.remove("hidden");
 }
-    
-    // --- Initial Load ---
-    loadRecipes();
-});
+
+    // Load initial data
+    if (db) {
+        await loadRecipes();
+        await loadDrafts(); // Initial load of drafts
+    }
+}); // End of DOMContentLoaded
