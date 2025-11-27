@@ -1,6 +1,3 @@
-console.log("FULL admin + viewer script loaded");
-const customAlert = (message) => {
-    console.log(`[USER ALERT]: ${message}`);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
     getFirestore,
@@ -15,6 +12,11 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+console.log("FULL admin + viewer script loaded");
+const customAlert = (message) => {
+    console.log(`[USER ALERT]: ${message}`);
+};
 
 const firebaseConfig = {
     apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
