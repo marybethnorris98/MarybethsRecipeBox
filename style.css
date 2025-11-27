@@ -417,3 +417,8 @@ if (categoryDropdown) {
 #recipeGrid .card .card-info-icon {
     display: block !important;
 }
+/* Add this rule to style.css */
+.tooltip-container {
+    position: relative; 
+    display: inline-block;
+}
