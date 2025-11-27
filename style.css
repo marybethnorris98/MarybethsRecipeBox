@@ -70,6 +70,7 @@ body {
 
 /* CARD */
 .card {
+  position: relative;
   background: #FFF9FD;
   border: 2px solid #FFD7E8;
   border-radius: 22px;
@@ -413,7 +414,6 @@ if (categoryDropdown) {
 
 /* Add this rule to style.css */
 .tooltip-container {
-    position: relative; 
     position: absolute; 
     top: 12px;
     right: 12px;
