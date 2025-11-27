@@ -484,7 +484,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!addRecipeModal) return;
         const modalContent = addRecipeModal.querySelector(".modal-content");
         if (!modalContent) return;
-        const saveBtn = modalContent.querySelector("#saveRecipeBtn");
+        let saveBtn = modalContent.querySelector("#saveRecipeBtn");
+        if (saveBtn) {
+            const newSaveBtn = saveBtn.cloneNode(true);
+            saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+            newSaveBtn.addEventListener("click", saveRecipe);
+            saveBtn = newSaveBtn; // Update the reference
+        }
 
         // 1. Ensure the Save Draft button exists and has the correct listener
         let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
@@ -717,43 +723,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -----------------------------
     // SAVE RECIPE (Replaced alert with console.log)
     // -----------------------------
-    saveRecipeBtn?.addEventListener("click", async () => {
-        if (!db) return customAlert("Cannot save recipe: Database not initialized.");
+// -----------------------------
+// SAVE RECIPE LOGIC (NAMED FUNCTION)
+// -----------------------------
+async function saveRecipe() {
+    if (!db) return customAlert("Cannot save recipe: Database not initialized.");
 
-        const title = newTitle.value.trim(), category = newCategory.value || CATEGORIES[0],
-            image = newImage.value.trim(), description = newDesc.value.trim();
-        if (!title || !image || !description) return customAlert("Fill title, image, description.");
+    const title = newTitle.value.trim(), category = newCategory.value || CATEGORIES[0],
+        image = newImage.value.trim(), description = newDesc.value.trim();
+    if (!title || !image || !description) return customAlert("Fill title, image, description.");
 
-        const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
-        const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+    const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
+    const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
 
-        const data = { title, category, image, description, ingredients, instructions, hidden: false, credits: "", timestamp: serverTimestamp() };
+    const data = { title, category, image, description, ingredients, instructions, hidden: false, credits: "", timestamp: serverTimestamp() };
 
-        let recipeDocId = editingRecipeId;
-        try {
-            if (editingRecipeId) {
-                await setDoc(doc(db, "recipes", editingRecipeId), data);
-            } else {
-                const newDoc = doc(collection(db, "recipes"));
-                await setDoc(newDoc, data);
-                recipeDocId = newDoc.id;
-            }
-
-            // After successfully saving/updating the recipe, delete the associated draft if one exists
-            if (editingDraftId) {
-                await deleteDoc(doc(db, "drafts", editingDraftId));
-                await loadDrafts(); // Update drafts list
-            }
-        } catch (e) {
-            console.error("Error saving recipe:", e);
+    let recipeDocId = editingRecipeId;
+    try {
+        if (editingRecipeId) {
+            await setDoc(doc(db, "recipes", editingRecipeId), data);
+        } else {
+            const newDoc = doc(collection(db, "recipes"));
+            await setDoc(newDoc, data);
+            recipeDocId = newDoc.id;
         }
 
-        clearAddModal();
-        editingRecipeId = null;
-        editingDraftId = null;
-        addRecipeModal.classList.add("hidden");
-        await loadRecipes();
-    });
+        // After successfully saving/updating the recipe, delete the associated draft if one exists
+        if (editingDraftId) {
+            await deleteDoc(doc(db, "drafts", editingDraftId));
+            await loadDrafts(); // Update drafts list
+        }
+    } catch (e) {
+        console.error("Error saving recipe:", e);
+    }
+
+    clearAddModal();
+    editingRecipeId = null;
+    editingDraftId = null;
+    addRecipeModal.classList.add("hidden");
+    await loadRecipes();
+}
+
+// Attach the listener using the named function reference.
+saveRecipeBtn?.addEventListener("click", saveRecipe);
 
     // -----------------------------
     // DRAFTS MODAL (FIXED SYNTAX AND STYLES)
