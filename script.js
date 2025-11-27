@@ -484,18 +484,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!addRecipeModal) return;
         const modalContent = addRecipeModal.querySelector(".modal-content");
         if (!modalContent) return;
-        let saveBtn = modalContent.querySelector("#saveRecipeBtn");
-        // Fix: Reattach listener for Save Recipe Button to prevent breaking after draft load
-    if (saveBtn) {
-        // Remove any existing listeners first to prevent duplicates
-        const clone = saveBtn.cloneNode(true);
-        saveBtn.parentNode.replaceChild(clone, saveBtn);
+    // 1. Save Recipe Button FIX: Ensure listener is attached to the active element
+        let currentSaveBtn = modalContent.querySelector("#saveRecipeBtn");
+        if (currentSaveBtn) {
+            // Clone the button to remove old listeners
+            const newSaveBtn = currentSaveBtn.cloneNode(true);
+            currentSaveBtn.parentNode.replaceChild(newSaveBtn, currentSaveBtn);
+            
+            // CRITICAL: Update the GLOBAL variable (saveRecipeBtn)
+            saveRecipeBtn = newSaveBtn;
+            
+            // Attach the working saveRecipe function
+            saveRecipeBtn.addEventListener("click", saveRecipe);
+        }
         
-        // CRITICAL: Update the global variable and assign the listener
-        saveRecipeBtn = clone;
-        saveRecipeBtn.addEventListener("click", saveRecipe);
-        saveBtn = saveRecipeBtn; // Update local reference too
-    }
+        // 2. Save Draft Button (Existing Logic Reused/Kept)
+        let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
+        // ... (rest of the Save Draft logic is fine) ...
 
         // 1. Ensure the Save Draft button exists and has the correct listener
         let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
