@@ -268,20 +268,37 @@ document.addEventListener("DOMContentLoaded", async () => {
             card.appendChild(img);
             card.appendChild(content);
 
-            // Info icon
-            const infoIcon = document.createElement("div");
-            infoIcon.className = "card-info-icon";
-            infoIcon.textContent = "i";
+           // --- START REPLACEMENT CODE ---
+
+            // Create a single container for the icon and tooltip
+            const tooltipContainer = document.createElement("div");
+            tooltipContainer.className = "tooltip-container"; 
+
+            // Info icon (remains the same)
+            const infoIcon = document.createElement("div");
+            infoIcon.className = "card-info-icon";
+            infoIcon.textContent = "i";
+            
+            // Tooltip (remains the same)
             const tooltip = document.createElement("div");
-            tooltip.className = "card-info-tooltip";
-            tooltip.textContent = recipe.credits || "No credits added.";
-            infoIcon.addEventListener("click", e => {
-                e.stopPropagation();
-                tooltip.classList.toggle("visible");
-            });
-            document.addEventListener("click", () => tooltip.classList.remove("visible"));
-            card.appendChild(infoIcon);
-            card.appendChild(tooltip);
+            tooltip.className = "card-info-tooltip";
+            tooltip.textContent = recipe.credits || "No credits added.";
+            
+            // Event Listeners (remain the same)
+            infoIcon.addEventListener("click", e => {
+                e.stopPropagation();
+                tooltip.classList.toggle("visible");
+            });
+            document.addEventListener("click", () => tooltip.classList.remove("visible"));
+            
+            // Append icon and tooltip to the new container
+            tooltipContainer.appendChild(infoIcon);
+            tooltipContainer.appendChild(tooltip);
+            
+            // Append the container to the card
+            card.appendChild(tooltipContainer); 
+
+            // --- END REPLACEMENT CODE ---
 
             card.addEventListener("click", () => openRecipeModal(recipe));
 
