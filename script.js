@@ -408,7 +408,17 @@ previewImageTag = document.getElementById("previewImageTag");
 
         if (isAdmin) {
             modalEditBtn.style.display = "inline-block";
+            Object.assign(modalEditBtn.style, {
+    backgroundColor: "#ff3ebf", // Primary Pink
+    color: "white",
+    border: "none",
+});
             modalDeleteBtn.style.display = "inline-block";
+            Object.assign(modalDeleteBtn.style, {
+    backgroundColor: "#a00064", // Mauve Pink
+    color: "white",
+    border: "none",
+                
             hideBtn.style.display = "inline-block";
 
             modalEditBtn.onclick = () => {
@@ -434,6 +444,11 @@ previewImageTag = document.getElementById("previewImageTag");
             };
 
             hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
+            Object.assign(hideBtn.style, {
+    backgroundColor: "white", 
+    color: "#ff3ebf", // Primary Pink Text
+    border: "2px solid #ff3ebf", // Primary Pink Border
+});
             hideBtn.onclick = async e => {
                 e.stopPropagation();
                 if (db) {
