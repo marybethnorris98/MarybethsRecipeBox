@@ -644,15 +644,16 @@ previewImageTag = document.getElementById("previewImageTag");
     function clearAddModal() {
         newTitle.value = ""; 
         newCategory.value = CATEGORIES[0]; 
-        newImage.value = ""; 
         newDesc.value = "";
         newCredits.value = "";
         if (imageUpload) imageUpload.value = "";
     if (newImageURL) newImageURL.value = "";
     if (previewImageTag) previewImageTag.src = "";
+        
     const previewDiv = document.getElementById('imagePreview');
     if (previewDiv) previewDiv.style.display = 'none';
     if (imageUploadLabel) imageUploadLabel.textContent = 'Click to Select Image';
+        
     // --- END NEW IMAGE CLEARING ---
         ingredientsList.innerHTML = ""; 
         instructionsList.innerHTML = "";
@@ -666,7 +667,6 @@ previewImageTag = document.getElementById("previewImageTag");
 
         newTitle.value = d.title || ""; 
         newCategory.value = d.category || CATEGORIES[0]; 
-        newImage.value = d.image || ""; 
         newDesc.value = d.description || "";
         newCredits.value = d.credits || "";
 
