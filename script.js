@@ -91,6 +91,8 @@ let viewer, closeBtn;
 let loginModal, loginBtn, loginError;
 let draftsModal, draftsList, closeDraftsBtn;
 
+let imageUpload, newImageURL, imageUploadLabel, previewImageTag;
+
 document.addEventListener("DOMContentLoaded", async () => {
     // --- DOM ELEMENT Assignments ---
     recipeGrid = document.getElementById("recipeGrid");
@@ -204,7 +206,6 @@ previewImageTag = document.getElementById("previewImageTag");
 
     if (newTitle) Object.assign(newTitle.style, inputStyle);
     if (newCategory) Object.assign(newCategory.style, inputStyle);
-    if (newImage) Object.assign(newImage.style, inputStyle);
     if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" });
 
    async function uploadImage() {
@@ -709,7 +710,6 @@ async function saveDraft() {
 
     const title = newTitle.value.trim() || `Draft: ${new Date().toLocaleTimeString()}`;
     const category = newCategory.value || CATEGORIES[0];
-    const image = newImage.value.trim();
     const description = newDesc.value.trim();
     const credits = newCredits.value.trim();
 
