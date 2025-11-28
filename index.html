@@ -85,7 +85,18 @@
 
       <input id="newTitle" placeholder="Title" style="width:100%;padding:10px;margin:8px 0;">
       <select id="newCategory" style="width:100%;padding:10px;margin:8px 0;"></select>
-      <input id="newImage" placeholder="Image URL" style="width:100%;padding:10px;margin:8px 0;">
+
+        <div style="margin: 8px 0; border: 2px dashed #ff3ebf; padding: 15px; border-radius: 12px; text-align: center;">
+          <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+          <label for="imageUpload" id="imageUploadLabel" style="cursor: pointer; color: #a00064; font-weight: 600; display: block; padding: 8px 0;">
+              Click to Select Image
+          </label>
+          <div id="imagePreview" style="display:none; margin-top: 10px;">
+              <img id="previewImageTag" src="" alt="Selected Image Preview" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ccc;">
+          </div>
+      </div>
+      <input type="hidden" id="newImageURL" value="">
+      
       <textarea id="newDesc" placeholder="Short description" style="width:100%;padding:10px;margin:8px 0;"></textarea>
 
       <label for="newCredits" style="font-weight:600; font-size:14px; color:#a00064; margin-top:8px; display:block;">Credits/Source (for tooltip):</label>
