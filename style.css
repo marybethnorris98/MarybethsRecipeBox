@@ -440,3 +440,39 @@ body > .tooltip-container {
     color: #a00064; /* mauvePink text */
     border-color: #ff3ebf; /* primaryPink border */
 }
+/* Styling for the new image upload container in the Add Recipe modal */
+#imageUploadContainer {
+    max-width: 250px; /* Limits the width of the upload area */
+    margin: 8px auto 15px auto; /* Centers it and adds bottom margin */
+    border: 2px dashed #ff3ebf;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    background-color: #fff9fc; /* Light background for visibility */
+}
+
+#imageUploadLabel {
+    cursor: pointer;
+    color: #a00064; /* Mauve pink for the text */
+    font-weight: 600;
+    display: block;
+    padding: 6px 0;
+    font-size: 14px; /* Smaller font size for the label */
+    transition: color 0.2s ease;
+}
+
+#imageUploadLabel:hover {
+    color: #ff3ebf; /* Primary pink on hover */
+}
+
+#imagePreview {
+    margin-top: 8px;
+}
+
+#previewImageTag {
+    max-width: 100%;
+    max-height: 100px; /* Smaller image preview */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    object-fit: contain; /* Ensures the whole image is visible */
+}
