@@ -19,7 +19,7 @@ import {
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
+  apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
   authDomain: "recipeapp-248a1.firebaseapp.com",
   projectId: "recipeapp-248a1",
   storageBucket: "recipeapp-248a1.firebasestorage.app",
@@ -84,6 +84,7 @@ let editingRecipeId = null; // ID of the recipe being edited/loaded
 
 let recipeGrid, searchInput, categoryFilter;
 let addRecipeModal, newTitle, newCategory, newImage, newDesc, ingredientsList, instructionsList, saveRecipeBtn, addIngredientBtn, addInstructionBtn, saveDraftBtn;
+let newCredits;
 let viewer, closeBtn;
 let loginModal, loginBtn, loginError;
 let draftsModal, draftsList, closeDraftsBtn;
@@ -99,6 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     newCategory = document.getElementById("newCategory");
     newImage = document.getElementById("newImage");
     newDesc = document.getElementById("newDesc");
+    newCredits = document.getElementById("newCredits");
     ingredientsList = document.getElementById("ingredientsList");
     instructionsList = document.getElementById("instructionsList");
     saveRecipeBtn = document.getElementById("saveRecipeBtn");
@@ -582,8 +584,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function clearAddModal() {
-        newTitle.value = ""; newCategory.value = CATEGORIES[0]; newImage.value = ""; newDesc.value = "";
-        ingredientsList.innerHTML = ""; instructionsList.innerHTML = "";
+        newTitle.value = ""; 
+        newCategory.value = CATEGORIES[0]; 
+        newImage.value = ""; 
+        newDesc.value = "";
+        newCredits.value = "";
+        ingredientsList.innerHTML = ""; 
+        instructionsList.innerHTML = "";
         editingDraftId = null; 
         editingRecipeId = null;
     }
@@ -596,6 +603,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         newCategory.value = d.category || CATEGORIES[0]; 
         newImage.value = d.image || ""; 
         newDesc.value = d.description || "";
+        newCredits.value = d.credits || "";
         
         (d.ingredients || []).forEach(i => { const r = makeRowInput("Ingredient"); r.querySelector("input").value = i; ingredientsList.appendChild(r); });
         (d.instructions || []).forEach(s => { const r = makeRowInput("Step"); r.querySelector("input").value = s; instructionsList.appendChild(r); });
@@ -630,6 +638,7 @@ async function saveDraft() {
     const category = newCategory.value || CATEGORIES[0];
     const image = newImage.value.trim();
     const description = newDesc.value.trim();
+    const credits = newCredits.value.trim();
 
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
     const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
@@ -639,6 +648,7 @@ async function saveDraft() {
         category,
         image,
         description,
+        credits,
         ingredients,
         instructions,
         timestamp: serverTimestamp(),
