@@ -435,3 +435,8 @@ if (categoryDropdown) {
 body > .tooltip-container {
     display: none !important;
 }
+.modalHideBtn {
+    background: white;
+    color: #a00064; /* mauvePink text */
+    border-color: #ff3ebf; /* primaryPink border */
+}
