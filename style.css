@@ -229,8 +229,8 @@ body {
   font-size: 13px;
 }
 
-.edit-btn { background: #ff6b9a; }
-.delete-btn { background: #ff6b9a; color: white; }
+.edit-btn { background: #ff3ebf; }
+.delete-btn { background: #ff3ebf; color: white; }
 
 .modal-btn {
   background-color: #ffd6ee;       /* pink background matching Delete button */
