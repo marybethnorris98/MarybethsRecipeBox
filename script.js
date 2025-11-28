@@ -787,7 +787,6 @@ async function saveRecipe() {
     if (!title) return customAlert("Recipe title is required.");
 
     const category = newCategory.value || CATEGORIES[0];
-    const image = newImage.value.trim();
     const description = newDesc.value.trim();
 
     // Convert DOM elements to arrays of strings
