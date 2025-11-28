@@ -418,9 +418,8 @@ previewImageTag = document.getElementById("previewImageTag");
     backgroundColor: "#a00064", // Mauve Pink
     color: "white",
     border: "none",
+    });
                 
-            hideBtn.style.display = "inline-block";
-
             modalEditBtn.onclick = () => {
                 editingRecipeId = recipe.id;
                 editingDraftId = null;
@@ -431,8 +430,6 @@ previewImageTag = document.getElementById("previewImageTag");
             };
 
             modalDeleteBtn.onclick = async () => {
-                // NOTE: Using native confirm as a placeholder for a custom UI modal, 
-                // but alert/confirm are generally forbidden in the environment.
                 if (!confirm(`Delete "${recipe.title}"?`)) return;
                 if (db) {
                        await deleteDoc(doc(db, "recipes", recipe.id));
@@ -443,6 +440,7 @@ previewImageTag = document.getElementById("previewImageTag");
                 viewer.style.display = "none";
             };
 
+            hideBtn.style.display = "inline-block";
             hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
             Object.assign(hideBtn.style, {
     backgroundColor: "white", 
