@@ -415,7 +415,7 @@ previewImageTag = document.getElementById("previewImageTag");
 });
             modalDeleteBtn.style.display = "inline-block";
             Object.assign(modalDeleteBtn.style, {
-    backgroundColor: "#a00064", // Mauve Pink
+    backgroundColor: "#ff3ebf", // Mauve Pink
     color: "white",
     border: "none",
     });
