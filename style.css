@@ -164,28 +164,41 @@ body {
   background: #ff3ebf;
   color: white;
   border: none;
-  padding: 10px 14px;
+  padding: 14px 18px;         /* Increased padding */
+  font-size: 18px;            /* Increased text size */
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;          /* Added bold weight */
   border-radius: 12px;
-  font-size: 14px;
-  margin-bottom: 16px;
-  cursor: pointer;
   width: 100%;
+  cursor: pointer;
+  margin-bottom: 15px;
+  margin-top: 5px;
+  transition: background 0.2s ease;
+}
+
+.small-add-btn:hover {
+  background: #d633a0;        /* Optional: Darker pink on hover */
 }
 
 .save-btn {
   background: #ff3ebf;
-        color: white;
-        border: none;
-        padding: 14px 18px;
-        fontSize: 18px;
-        fontFamily: Poppins, San-Serif;
-        borderRadius: 12px;
-        width: 100%;
-        cursor: pointer;
-        marginBottom: 15px;
-        marginTop: 15 px;
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  font-size: 18px;            /* Fixed typo */
+  font-family: "Poppins", sans-serif; /* Fixed typo */
+  font-weight: bold;
+  border-radius: 12px;        /* Fixed typo */
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 15px;        /* Fixed typo */
+  margin-top: 15px;           /* Fixed typo: removed space in "15 px" */
+  transition: background 0.2s ease;
 }
 
+.save-btn:hover {
+  background: #d633a0;
+}
 .admin-row {
   display: flex;
   gap: 10px;
