@@ -16,6 +16,7 @@ import {
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js"; // <--- ADD THIS LINE
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -27,12 +28,13 @@ const firebaseConfig = {
   appId: "1:629558122940:web:65dcca8ea0c572ccdf33b9"
 };
 
-let app, db, auth;
+let app, db, auth, storage;
 
 if (Object.keys(firebaseConfig).length > 0) {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
+    storage = getStorage(app);
 
     // Minimal Anonymous Auth setup
     signInAnonymously(auth).catch(error => {
@@ -98,7 +100,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     addRecipeModal = document.getElementById("addRecipeModal");
     newTitle = document.getElementById("newTitle");
     newCategory = document.getElementById("newCategory");
-    newImage = document.getElementById("newImage");
+    imageUpload = document.getElementById("imageUpload"); // <--- NEW ASSIGNMENT
+newImageURL = document.getElementById("newImageURL"); // <--- NEW ASSIGNMENT
+imageUploadLabel = document.getElementById("imageUploadLabel"); // <--- NEW ASSIGNMENT
+previewImageTag = document.getElementById("previewImageTag");
     newDesc = document.getElementById("newDesc");
     newCredits = document.getElementById("newCredits");
     ingredientsList = document.getElementById("ingredientsList");
@@ -114,6 +119,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     loginModal = document.getElementById("loginModal");
     loginBtn = document.getElementById("loginBtn");
     loginError = document.getElementById("loginError");
+
+    imageUpload?.addEventListener("change", () => {
+    const file = imageUpload.files[0];
+    if (file) {
+        // 1. Show preview
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImageTag.src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+
+        // 2. Update label text
+        imageUploadLabel.textContent = file.name;
+
+    } else {
+        document.getElementById('imagePreview').style.display = 'none';
+        imageUploadLabel.textContent = 'Click to Select Image';
+    }
+});
 
     // DRAFTS MODAL Elements must be created if they don't exist in HTML
     draftsModal = document.getElementById("draftsModal");
@@ -182,6 +207,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (newImage) Object.assign(newImage.style, inputStyle);
     if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" });
 
+   async function uploadImage() {
+    const file = imageUpload.files[0];
+    if (!file) {
+        // No new file selected, return existing URL or null
+        return newImageURL.value || null;
+    }
+
+    try {
+        imageUploadLabel.textContent = "Uploading... please wait.";
+        
+        // Use the title (or fallback to timestamp) for the file name
+        const recipeTitle = newTitle.value.trim() || `unnamed-recipe-${Date.now()}`;
+        // Create a storage reference
+        const storageRef = ref(storage, `recipe_images/${recipeTitle}-${file.name}`);
+
+        // Upload the file
+        const snapshot = await uploadBytes(storageRef, file);
+
+        // Get the public download URL
+        const url = await getDownloadURL(snapshot.ref);
+        
+        imageUploadLabel.textContent = "✅ Upload successful!";
+        return url;
+
+    } catch (e) {
+        console.error("Error uploading image:", e);
+        imageUploadLabel.textContent = "❌ Upload Failed!";
+        // Allow save to proceed, but image will be missing
+        return null; 
+    }
+}
+    
     function populateCategorySelects() {
         [newCategory, categoryFilter].forEach(select => {
             if (!select) return;
@@ -589,6 +646,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         newImage.value = ""; 
         newDesc.value = "";
         newCredits.value = "";
+        if (imageUpload) imageUpload.value = "";
+    if (newImageURL) newImageURL.value = "";
+    if (previewImageTag) previewImageTag.src = "";
+    const previewDiv = document.getElementById('imagePreview');
+    if (previewDiv) previewDiv.style.display = 'none';
+    if (imageUploadLabel) imageUploadLabel.textContent = 'Click to Select Image';
+    // --- END NEW IMAGE CLEARING ---
         ingredientsList.innerHTML = ""; 
         instructionsList.innerHTML = "";
         editingDraftId = null; 
@@ -604,6 +668,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         newImage.value = d.image || ""; 
         newDesc.value = d.description || "";
         newCredits.value = d.credits || "";
+
+        if (d.image && previewImageTag && newImageURL) {
+        newImageURL.value = d.image; // Store existing URL in the hidden field
+        previewImageTag.src = d.image;
+        document.getElementById('imagePreview').style.display = 'block';
+        imageUploadLabel.textContent = 'Image loaded (Click to replace)';
+    }
         
         (d.ingredients || []).forEach(i => { const r = makeRowInput("Ingredient"); r.querySelector("input").value = i; ingredientsList.appendChild(r); });
         (d.instructions || []).forEach(s => { const r = makeRowInput("Step"); r.querySelector("input").value = s; instructionsList.appendChild(r); });
@@ -634,6 +705,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function saveDraft() {
     if (!db) return customAlert("Cannot save draft: Database not initialized.");
 
+    const finalImageURL = await uploadImage();
+
     const title = newTitle.value.trim() || `Draft: ${new Date().toLocaleTimeString()}`;
     const category = newCategory.value || CATEGORIES[0];
     const image = newImage.value.trim();
@@ -646,7 +719,7 @@ async function saveDraft() {
     const data = {
         title,
         category,
-        image,
+        image: finalImageURL,
         description,
         credits,
         ingredients,
@@ -694,6 +767,7 @@ async function saveDraft() {
 } 
 async function saveRecipe() {
     if (!db) return customAlert("Cannot save recipe: Database not initialized.");
+    const finalImageURL = await uploadImage();
 
     // 1. --- COLLECT DATA ---
     const title = newTitle.value.trim();
@@ -710,12 +784,11 @@ async function saveRecipe() {
     const recipeData = {
         title,
         category,
-        image,
+        image: finalImageURL,
         description,
         ingredients,
         instructions,
-        hidden: false, // Recipes should be visible by default when published
-        // Optionally add credits/timestamp here if needed
+        hidden: false, 
     };
 
     try {
