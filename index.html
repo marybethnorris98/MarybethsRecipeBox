@@ -122,6 +122,20 @@
     </div>
 </div>
 
+  <div id="credits-input-tooltip-container" style="position: relative; margin-bottom: 15px;">
+    <label for="newCredits" style="font-family: Poppins, sans-serif; font-weight: 600; display: block; margin-bottom: 5px;">Credits (Optional)</label>
+    
+    <input type="text" id="newCredits" placeholder="Source, Author, or Credit Link" style="width: calc(100% - 22px); box-sizing: border-box; font-family: Poppins, sans-serif; border-radius: 8px; padding: 10px; border: 1px solid #ccc;">
+
+    <div id="newCreditsInfoIcon" style="position: absolute; right: 10px; top: 35px; width: 20px; height: 20px; border-radius: 50%; background: #ccc; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; cursor: pointer; z-index: 20;">
+        i
+    </div>
+
+    <div id="newCreditsTooltip" class="hidden-tooltip" style="position: absolute; bottom: 100%; left: 0; transform: translateY(-5px); background: #333; color: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; white-space: nowrap; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100;">
+        This field is for crediting the original creator or source of the recipe.
+    </div>
+</div>
+
   <!-- YOUR SCRIPT -->
    <script type="module" src="script.js"></script>
 
