@@ -980,4 +980,5 @@ async function openDraftsModal() {
         await loadRecipes();
         await loadDrafts(); 
     }
+}
 }); 
