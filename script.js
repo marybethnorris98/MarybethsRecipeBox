@@ -486,12 +486,17 @@ previewImageTag = document.getElementById("previewImageTag");
         }
 
         viewer.style.display = "flex";
-        document.body.style.overflow = "auto";
+        document.body.classList.add('modal-open');
     
     }
     if (closeBtn) {
         closeBtn.addEventListener("click", () => { viewer.style.display = "none"; });
+        document.body.classList.remove('modal-open');
+        });
         viewer.addEventListener("click", e => { if (e.target === viewer) viewer.style.display = "none"; });
+document.body.classList.remove('modal-open');
+            }
+        });
     }
     if (addRecipeModal) {
         addRecipeModal.addEventListener("click", e => {
