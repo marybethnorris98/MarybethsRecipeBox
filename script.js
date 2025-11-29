@@ -975,11 +975,9 @@ async function openDraftsModal() {
     });
 
     draftsModal.classList.remove("hidden");
-}
 
-    // Load initial data
     if (db) {
         await loadRecipes();
-        await loadDrafts(); // Initial load of drafts
+        await loadDrafts(); 
     }
-}); // End of DOMContentLoaded
+}); 
