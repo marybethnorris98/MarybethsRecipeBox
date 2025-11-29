@@ -490,11 +490,15 @@ previewImageTag = document.getElementById("previewImageTag");
     
     }
     if (closeBtn) {
-        closeBtn.addEventListener("click", () => { viewer.style.display = "none"; });
-        document.body.classList.remove('modal-open');
+        closeBtn.addEventListener("click", () => { 
+            viewer.style.display = "none"; 
+            document.body.classList.remove('modal-open');
         });
-        viewer.addEventListener("click", e => { if (e.target === viewer) viewer.style.display = "none"; });
-document.body.classList.remove('modal-open');
+        
+        viewer.addEventListener("click", e => { 
+            if (e.target === viewer) {
+                viewer.style.display = "none";
+                document.body.classList.remove('modal-open');
             }
         });
     }
