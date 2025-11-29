@@ -815,7 +815,6 @@ async function saveRecipe() {
     if (!db) return customAlert("Cannot save recipe: Database not initialized.");
     const finalImageURL = await uploadImage();
 
-    // 1. --- COLLECT DATA ---
     const title = newTitle.value.trim();
     if (!title) return customAlert("Recipe title is required.");
 
@@ -823,7 +822,6 @@ async function saveRecipe() {
     const description = newDesc.value.trim();
     const credits = newCredits.value.trim();
 
-    // Convert DOM elements to arrays of strings
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
     const instructions = [...instructionsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
 
@@ -868,6 +866,10 @@ async function saveRecipe() {
         customAlert(`Recipe "${title}" saved successfully!`);
         clearAddModal();
         addRecipeModal.classList.add("hidden");
+
+        document.body.classList.remove('modal-open'); 
+
+        await loadRecipes();
 
     } catch (e) {
         console.error("Error saving recipe:", e);
