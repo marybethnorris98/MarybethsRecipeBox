@@ -968,16 +968,18 @@ async function openDraftsModal() {
             draftsList.appendChild(draftItem);
         });
     }
-    draftsModal.addEventListener("click", e => {
-        if (e.target === draftsModal) {
-            draftsModal.classList.add("hidden");
-        }
+   draftsModal.addEventListener("click", e => {
+        if (e.target === draftsModal) {
+            draftsModal.classList.add("hidden");
+        }
+    }); 
 
-    draftsModal.classList.remove("hidden");
-    }
+    draftsModal.classList.remove("hidden"); // <--- This line is outside the listener, where it belongs.
+
+} 
+        
 if (db) {
-    await loadRecipes();
-    await loadDrafts(); 
+    await loadRecipes();
+    await loadDrafts(); 
 }
-
 });
