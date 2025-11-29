@@ -8,7 +8,6 @@ body {
   line-height: 1.4;
 }
 
-/* BARBIE HEADER */
 .barbie-header {
   width: 100%;
   padding: 80px 0 100px;
@@ -28,7 +27,6 @@ body {
 }
 .sparkles { position: relative; width: 100%; height: 0; }
 
-/* Sparkle positions */
 .star { position: absolute; font-size: 42px; color: white; opacity: 0.95;
   text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 14px rgba(255,255,255,0.9), 0 0 22px rgba(255,255,255,0.85);
 }
@@ -60,7 +58,6 @@ body {
   border-radius: 14px;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -68,7 +65,6 @@ body {
   padding: 28px;
 }
 
-/* CARD */
 .card {
   position: relative;
   background: #FFF9FD;
@@ -86,7 +82,6 @@ body {
 .card-category { font-size: 14px; color: #D986A8; font-weight: 600; text-transform: capitalize; margin-bottom: 10px; }
 .card-desc { font-size: 15px; color: #3b3b3b; line-height: 1.55; opacity: 0.9; }
 
-/* ADD-RECIPE MODAL (admin) */
 .modal { 
   position: fixed;
   inset: 0;
@@ -97,13 +92,11 @@ body {
   z-index: 1000;
 }
 
-/* Hidden state */
 .hidden {
   display: none !important;  /* ← NOW hidden works */
 }
 .modal .modal-content { background: #FFF9FD; padding: 28px; border-radius: 22px; width: 90%; max-width: 440px; border: 2px solid #FFD7E8; box-shadow: 0 8px 26px rgba(255, 150, 200, 0.28); }
 
-/* RECIPE VIEWER OVERLAY (style A) */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -137,7 +130,7 @@ body {
   padding-right: 12px;
 }
 
-/* optional cute scrollbar */
+
 #addRecipeModal .modal-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -147,8 +140,6 @@ body {
   border-radius: 6px;
 }
 
-
-/* UTIL */
 .hidden { display: none; }
 
 .admin-input {
@@ -262,7 +253,6 @@ body {
   padding: 20px;
 }
 
-// Change font for category dropdown
 const categoryDropdown = document.getElementById("categoryFilter");
 if (categoryDropdown) {
   categoryDropdown.style.fontFamily = "Poppins, sans-serif"; // change to your preferred font
@@ -381,7 +371,7 @@ if (categoryDropdown) {
 .card-info-tooltip.visible {
   display: block;
 }
-/* Admin sees hidden recipes faded with dashed border */
+
 .hidden-recipe {
   opacity: 0.4;
   border: 2px dashed #ff3ebf;
@@ -440,7 +430,6 @@ body > .tooltip-container {
     color: #a00064; /* mauvePink text */
     border-color: #ff3ebf; /* primaryPink border */
 }
-/* Styling for the new image upload container in the Add Recipe modal */
 #imageUploadContainer {
     max-width: 250px; /* Limits the width of the upload area */
     margin: 8px auto 15px auto; /* Centers it and adds bottom margin */
@@ -448,21 +437,21 @@ body > .tooltip-container {
     padding: 10px;
     border-radius: 12px;
     text-align: center;
-    background-color: #fff9fc; /* Light background for visibility */
+    background-color: #fff9fc; 
 }
 
 #imageUploadLabel {
     cursor: pointer;
-    color: #a00064; /* Mauve pink for the text */
+    color: #a00064; 
     font-weight: 600;
     display: block;
     padding: 6px 0;
-    font-size: 14px; /* Smaller font size for the label */
+    font-size: 14px; 
     transition: color 0.2s ease;
 }
 
 #imageUploadLabel:hover {
-    color: #ff3ebf; /* Primary pink on hover */
+    color: #ff3ebf; 
 }
 
 #imagePreview {
@@ -471,8 +460,16 @@ body > .tooltip-container {
 
 #previewImageTag {
     max-width: 100%;
-    max-height: 100px; /* Smaller image preview */
+    max-height: 100px; 
     border-radius: 8px;
     border: 1px solid #ccc;
-    object-fit: contain; /* Ensures the whole image is visible */
+    object-fit: contain; 
+}
+.modal-open {
+    overflow: hidden; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
