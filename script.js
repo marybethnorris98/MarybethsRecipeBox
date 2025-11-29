@@ -974,10 +974,10 @@ async function openDraftsModal() {
         }
 
     draftsModal.classList.remove("hidden");
-
-    if (db) {
-        await loadRecipes();
-        await loadDrafts(); 
     }
+if (db) {
+    await loadRecipes();
+    await loadDrafts(); 
 }
-}); 
+
+});
