@@ -390,6 +390,7 @@ previewImageTag = document.getElementById("previewImageTag");
 
         if (modalIngredients) {
             modalIngredients.innerHTML = "";
+            modalIngredients.classList.remove("scrollable-list");
             (recipe.ingredients || []).forEach(i => {
                 const li = document.createElement("li");
                 li.textContent = i;
@@ -399,6 +400,7 @@ previewImageTag = document.getElementById("previewImageTag");
 
         if (modalInstructions) {
             modalInstructions.innerHTML = "";
+            modalInstructions.classList.remove("scrollable-list");
             (recipe.instructions || []).forEach(s => {
                 const li = document.createElement("li");
                 li.textContent = s;
