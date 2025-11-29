@@ -972,7 +972,6 @@ async function openDraftsModal() {
         if (e.target === draftsModal) {
             draftsModal.classList.add("hidden");
         }
-    });
 
     draftsModal.classList.remove("hidden");
 
