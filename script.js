@@ -98,6 +98,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     recipeGrid = document.getElementById("recipeGrid");
     searchInput = document.getElementById("searchInput");
     categoryFilter = document.getElementById("categoryFilter");
+// --- Tooltip Event Listener for newCredits field ---
+    const newCreditsInfoIcon = document.getElementById("newCreditsInfoIcon");
+    const newCreditsTooltip = document.getElementById("newCreditsTooltip");
+
+    if (newCreditsInfoIcon && newCreditsTooltip) {
+        // Toggle visibility on click
+        newCreditsInfoIcon.addEventListener("click", e => {
+            e.stopPropagation(); // Prevent modal click handler from triggering
+            newCreditsTooltip.classList.toggle("visible-tooltip");
+            newCreditsTooltip.classList.toggle("hidden-tooltip");
+        });
+
+        // Hide when clicking anywhere else on the document
+        document.addEventListener("click", () => {
+            newCreditsTooltip.classList.remove("visible-tooltip");
+            newCreditsTooltip.classList.add("hidden-tooltip");
+        });
+    }
+    // ---------------------------------------------------
+    
 
     addRecipeModal = document.getElementById("addRecipeModal");
     newTitle = document.getElementById("newTitle");
