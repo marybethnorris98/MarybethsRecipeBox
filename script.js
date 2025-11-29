@@ -792,6 +792,7 @@ async function saveRecipe() {
 
     const category = newCategory.value || CATEGORIES[0];
     const description = newDesc.value.trim();
+    const credits = newCredits.value.trim();
 
     // Convert DOM elements to arrays of strings
     const ingredients = [...ingredientsList.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean);
@@ -802,6 +803,7 @@ async function saveRecipe() {
         category,
         image: finalImageURL,
         description,
+        credits,
         ingredients,
         instructions,
         hidden: false, 
