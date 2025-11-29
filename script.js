@@ -466,6 +466,8 @@ previewImageTag = document.getElementById("previewImageTag");
         }
 
         viewer.style.display = "flex";
+        document.body.style.overflow = "auto";
+    
     }
     if (closeBtn) {
         closeBtn.addEventListener("click", () => { viewer.style.display = "none"; });
