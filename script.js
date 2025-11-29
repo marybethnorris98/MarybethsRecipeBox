@@ -488,7 +488,6 @@ previewImageTag = document.getElementById("previewImageTag");
         viewer.style.display = "flex";
         document.body.classList.add('modal-open');
     
-    }
     if (closeBtn) {
         closeBtn.addEventListener("click", () => { 
             viewer.style.display = "none"; 
