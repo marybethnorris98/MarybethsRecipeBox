@@ -397,7 +397,6 @@ previewImageTag = document.getElementById("previewImageTag");
         const modalEditBtn = document.getElementById("modalEditBtn");
         const modalDeleteBtn = document.getElementById("modalDeleteBtn");
         const hideBtn = document.getElementById("modalHideBtn");
-}
 
         editingRecipeId = recipe.id;
 
@@ -489,7 +488,7 @@ previewImageTag = document.getElementById("previewImageTag");
 
         viewer.style.display = "flex";
         document.body.classList.add('modal-open');
-    });
+    }
     
     if (closeBtn) {
         closeBtn.addEventListener("click", () => { 
