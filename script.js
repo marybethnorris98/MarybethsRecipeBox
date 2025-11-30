@@ -605,7 +605,6 @@ previewImageTag = document.getElementById("previewImageTag");
                     addRecipeModal.classList.add("hidden");
                     document.body.classList.remove('modal-open');
                 }
-            });
             modalContent.style.position = modalContent.style.position || "relative";
             modalContent.appendChild(x);
         }
