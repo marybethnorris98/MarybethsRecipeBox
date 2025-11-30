@@ -119,7 +119,18 @@ body {
   box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 .close-btn { border: none; background: none; font-size: 24px; cursor: pointer; position: absolute; right: 32px; top: 24px; }
-.modal-image { width: 100%; border-radius: 18px; margin-bottom: 20px; }
+.modal-image { 
+  width: 100%; 
+  border-radius: 18px; 
+  margin-bottom: 20px; 
+  max-height: 40vh; /* Set a maximum height (e.g., 40% of the viewport height) */
+  width: auto; /* Let the width adjust to maintain aspect ratio */
+  max-width: 100%; /* Ensure it doesn't spill over modal boundaries */
+  object-fit: contain; /* Ensures the whole image is visible without cropping */
+  display: block; /* Centers the image */
+  margin-left: auto;
+  margin-right: auto;
+}
 .modal-title { font-family: "Parisienne", cursive; font-size: 42px; margin: 0; text-align: center; }
 .modal-category { display: inline-block; background: #ffd8f2; padding: 6px 16px; border-radius: 20px; margin: 10px auto 20px auto; color: #a50065; font-weight: 600; text-align: center; }
 .modal-ingredients li, .modal-instructions li { margin-bottom: 8px; line-height: 1.5; }
