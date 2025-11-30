@@ -542,21 +542,21 @@ previewImageTag = document.getElementById("previewImageTag");
         if (!addRecipeModal) return;
         const modalContent = addRecipeModal.querySelector(".modal-content");
         if (!modalContent) return;
-    // 1. Save Recipe Button FIX: Ensure listener is attached to the active element
+    
         let currentSaveBtn = modalContent.querySelector("#saveRecipeBtn");
         if (currentSaveBtn) {
-            // Clone the button to remove old listeners
+            
             const newSaveBtn = currentSaveBtn.cloneNode(true);
             currentSaveBtn.parentNode.replaceChild(newSaveBtn, currentSaveBtn);
             
-            // CRITICAL: Update the GLOBAL variable (saveRecipeBtn)
+            
             saveRecipeBtn = newSaveBtn;
             
             // Attach the working saveRecipe function
             saveRecipeBtn.addEventListener("click", saveRecipe);
         }
         
-        // 2. Save Draft Button (Existing Logic Reused/Kept)
+        
         let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
         if (!saveDraftBtnElement) {
             saveDraftBtnElement = document.createElement("button");
@@ -570,13 +570,13 @@ previewImageTag = document.getElementById("previewImageTag");
             }
         }
 
-        // Listener Cleanup and Reattachment for Save Draft
+        
         const newDraftBtn = saveDraftBtnElement.cloneNode(true);
         saveDraftBtnElement.parentNode.replaceChild(newDraftBtn, saveDraftBtnElement);
         newDraftBtn.addEventListener("click", saveDraft);
         saveDraftBtnElement = newDraftBtn;
 
-        // Apply matching styles (Primary Pink: #ff3ebf)
+       
         Object.assign(saveDraftBtnElement.style, {
             background: primaryPink,
             color: "white",
@@ -592,7 +592,7 @@ previewImageTag = document.getElementById("previewImageTag");
             fontWeight: "bold",
         });
 
-        // 3. Big X close button
+        
        if (!modalContent.querySelector(".add-modal-close-x")) {
             const x = document.createElement("button");
             // ... button setup ...
@@ -868,15 +868,11 @@ async function saveRecipe() {
             console.log(`Associated draft (${editingDraftId}) deleted successfully.`);
         }
         
-        // 2. --- CLEAN UP & REFRESH ---
         await loadRecipes(); // Reload the main recipe grid
         customAlert(`Recipe "${title}" saved successfully!`);
         clearAddModal();
         addRecipeModal.classList.add("hidden");
-
         document.body.classList.remove('modal-open'); 
-
-        await loadRecipes();
 
     } catch (e) {
         console.error("Error saving recipe:", e);
