@@ -397,15 +397,6 @@ previewImageTag = document.getElementById("previewImageTag");
         const modalEditBtn = document.getElementById("modalEditBtn");
         const modalDeleteBtn = document.getElementById("modalDeleteBtn");
         const hideBtn = document.getElementById("modalHideBtn");
-        if (hideButton) {
-    hideButton.onclick = () => {
-        
-        // 1. Hide the modal viewer
-        viewer.style.display = "none";
-        
-        // 2. 🔑 ADD THIS LINE TO UNLOCK SCROLL
-        document.body.classList.remove('modal-open'); 
-    };
 }
 
         editingRecipeId = recipe.id;
@@ -488,6 +479,7 @@ previewImageTag = document.getElementById("previewImageTag");
                     console.error("Database not initialized.");
                 }
                 viewer.style.display = "none";
+                document.body.classList.remove('modal-open');
             };
         } else {
             modalEditBtn.style.display = "none";
