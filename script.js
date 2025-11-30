@@ -509,6 +509,7 @@ previewImageTag = document.getElementById("previewImageTag");
                 if (confirm("Discard unsaved changes and close?")) {
                     clearAddModal();
                     addRecipeModal.classList.add("hidden");
+                    document.body.classList.remove('modal-open');
                 }
             }
         });
@@ -600,10 +601,9 @@ previewImageTag = document.getElementById("previewImageTag");
             x.title = "Close and discard";
             x.style = "position:absolute;right:18px;top:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#a00;";
             x.addEventListener("click", () => {
-                // NOTE: Using native confirm as a placeholder for a custom UI modal
-                if (confirm("Discard changes and close?")) {
                     clearAddModal();
                     addRecipeModal.classList.add("hidden");
+                    document.body.classList.remove('modal-open');
                 }
             });
             modalContent.style.position = modalContent.style.position || "relative";
@@ -622,7 +622,14 @@ previewImageTag = document.getElementById("previewImageTag");
         addBtn.textContent = "+ Add Recipe";
         Object.assign(addBtn.style, { background: primaryPink, color: "white", padding: "12px 16px", borderRadius: "14px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "Poppins, sans-serif", boxShadow: "0 8px 20px rgba(0,0,0,0.15)" });
 
-        addBtn.onclick = () => { editingDraftId = null; editingRecipeId = null; ensureAddModalControls(); clearAddModal(); addRecipeModal.classList.remove("hidden"); };
+        addBtn.onclick = () => { 
+            editingDraftId = null; 
+            editingRecipeId = null; 
+            ensureAddModalControls(); 
+            clearAddModal(); 
+            addRecipeModal.classList.remove("hidden");
+            document.body.classList.add('modal-open');
+        };
 
         const draftsBtn = document.createElement("button");
         draftsBtn.textContent = "Drafts";
@@ -905,6 +912,7 @@ async function openDraftsModal() {
 
         x.addEventListener("click", () => {
             draftsModal.classList.add("hidden");
+            document.body.classList.remove('modal-open');
         });
         modalContent.appendChild(x);
     }
@@ -974,6 +982,8 @@ async function openDraftsModal() {
    draftsModal.addEventListener("click", e => {
         if (e.target === draftsModal) {
             draftsModal.classList.add("hidden");
+            document.body.classList.add('modal-open'); 
+            draftsModal.classList.remove("hidden");
         }
     }); 
 
