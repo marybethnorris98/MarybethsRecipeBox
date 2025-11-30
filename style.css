@@ -478,3 +478,7 @@ body > .tooltip-container {
     width: 100%;
     height: 100%;
 }
+body.modal-open {
+    overflow: hidden;
+    height: 100vh; /* Optional, but helps lock vertical scroll */
+}
