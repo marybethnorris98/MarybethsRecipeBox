@@ -373,6 +373,9 @@ if (categoryDropdown) {
 
 .card-info-tooltip.visible {
   display: block;
+  white-space: normal;
+  max-width: 250px;
+  word-break: break-word;
 }
 
 .hidden-recipe {
@@ -381,7 +384,6 @@ if (categoryDropdown) {
   position: relative;
 }
 
-/* Optional HIDDEN label on card */
 .hidden-recipe::after {
   content: "HIDDEN";
   position: absolute;
@@ -418,7 +420,7 @@ if (categoryDropdown) {
   cursor: pointer;     /* still clickable */
 }
 
-/* Add this rule to style.css */
+
 .tooltip-container {
     position: absolute; 
     top: 12px;
