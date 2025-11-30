@@ -120,15 +120,13 @@ body {
 }
 .close-btn { border: none; background: none; font-size: 24px; cursor: pointer; position: absolute; right: 32px; top: 24px; }
 .modal-image { 
-  width: 100%; 
+  width: 280px;
+  height: 200px;
   border-radius: 18px; 
   margin-bottom: 20px; 
-  max-height: 40vh; /* Set a maximum height (e.g., 40% of the viewport height) */
-  width: auto; /* Let the width adjust to maintain aspect ratio */
-  max-width: 100%; /* Ensure it doesn't spill over modal boundaries */
-  object-fit: contain; /* Ensures the whole image is visible without cropping */
-  display: block; /* Centers the image */
-  margin-left: auto;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
   margin-right: auto;
 }
 .modal-title { font-family: "Parisienne", cursive; font-size: 42px; margin: 0; text-align: center; }
