@@ -602,7 +602,6 @@ previewImageTag = document.getElementById("previewImageTag");
                 if (confirm("Discard changes and close?")) { 
                     clearAddModal();
                     addRecipeModal.classList.add("hidden");
-                    // Scroll fix line:
                     document.body.classList.remove('modal-open');
                 }
             }); 
@@ -813,6 +812,8 @@ async function saveDraft() {
         }
         clearAddModal();
         addRecipeModal.classList.add("hidden");
+        document.body.classList.remove('modal-open');
+        
         
     } catch (e) {
         console.error("Error saving draft:", e);
