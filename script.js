@@ -593,23 +593,23 @@ previewImageTag = document.getElementById("previewImageTag");
         });
 
         // 3. Big X close button
-        if (!modalContent.querySelector(".add-modal-close-x")) {
-            const x = document.createElement("button");
-            x.className = "add-modal-close-x";
-            x.type = "button";
-            x.innerText = "✖";
-            x.title = "Close and discard";
-            x.style = "position:absolute;right:18px;top:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#a00;";
-            x.addEventListener("click", () => {
-                    clearAddModal();
-                    addRecipeModal.classList.add("hidden");
-                    document.body.classList.remove('modal-open');
-            }
-                });
-            modalContent.style.position = modalContent.style.position || "relative";
-            modalContent.appendChild(x);
-        }
-    }
+       if (!modalContent.querySelector(".add-modal-close-x")) {
+            const x = document.createElement("button");
+            // ... button setup ...
+            x.addEventListener("click", () => {
+                // Re-adding the original confirm prompt logic:
+                if (confirm("Discard changes and close?")) { 
+                    clearAddModal();
+                    addRecipeModal.classList.add("hidden");
+                    // Scroll fix line:
+                    document.body.classList.remove('modal-open');
+                }
+            }); 
+            
+            modalContent.style.position = modalContent.style.position || "relative";
+            modalContent.appendChild(x);
+        }
+    }
 
     function injectAdminUI() {
         if (document.getElementById("adminControlsContainer")) return;
