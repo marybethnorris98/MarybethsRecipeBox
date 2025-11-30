@@ -332,6 +332,9 @@ if (categoryDropdown) {
 
 .card-info-tooltip.visible {
   display: block;
+  white-space: normal;
+  max-width: 250px;
+  word-break: break-word;
 }
 /* INFO ICON */
 .card-info-icon {
