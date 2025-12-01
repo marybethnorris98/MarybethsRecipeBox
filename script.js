@@ -206,13 +206,41 @@ previewImageTag = document.getElementById("previewImageTag");
 }
 
 // Listener for clicking outside the modal content to close
-recipeIndexModal?.addEventListener("click", e => {
+recipeIndexModal.addEventListener("click", e => {
     if (e.target === recipeIndexModal) {
         recipeIndexModal.classList.add("hidden");
         document.body.classList.remove('modal-open'); // Remove modal lock
     }
 });
 
+    const controlsContainer = document.getElementById("controlsContainerId"); 
+
+if (controlsContainer) {
+    const indexBtn = document.createElement("button");
+    indexBtn.textContent = "Can't find what you're looking for?";
+    Object.assign(indexBtn.style, {
+        fontFamily: "Poppins, sans-serif",
+        fontSize: "16px",
+        padding: "10px 15px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontWeight: "600",
+        background: primaryPink,
+        color: "white",
+        border: "none",
+        marginTop: "15px", 
+        width: "100%", 
+        transition: "background 0.15s ease",
+    });
+
+    indexBtn.onmouseenter = () => indexBtn.style.background = White;
+    indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
+    
+    // This links the button to the function we define in Step 4
+    indexBtn.onclick = openRecipeIndexModal; 
+    
+    controlsContainer.appendChild(indexBtn);
+}
     // --- Apply Styles ---
     if (saveRecipeBtn) {
         Object.assign(saveRecipeBtn.style, {
