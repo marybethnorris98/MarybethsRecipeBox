@@ -105,19 +105,20 @@ async function openRecipeIndexModal() {
                 // Add hover style
                 item.onmouseover = () => item.style.textDecoration = "underline";
                 item.onmouseout = () => item.style.textDecoration = "none";
-
-                // Event handler to open the existing recipe viewer modal
-                item.onclick = (e) => {
-                    e.preventDefault();
-                    // 'recipes' array is assumed to be loaded globally by loadRecipes()
-                    const fullRecipe = recipes.find(r => r.id === recipe.id);
-                    if (fullRecipe) {
-                        openRecipeModal(fullRecipe);
-                        recipeIndexModal.classList.add("hidden"); 
-                    } else {
-                        customAlert(`Error: Could not find recipe details for ${recipe.title}.`);
-                    }
-                };
+               
+item.onclick = (e) => {
+    e.preventDefault();
+    // Use the recipe object we already fetched for the index — avoids race/lookup issues
+    try {
+        openRecipeModal(recipe);
+        // Close the index modal and remove modal styling
+        recipeIndexModal.classList.add("hidden");
+        document.body.classList.remove('modal-open');
+    } catch (err) {
+        console.error("Failed to open recipe from index:", err);
+        customAlert(`Error opening "${recipe.title}". See console for details.`);
+    }
+};
 
                 categoryContainer.appendChild(item);
             });
