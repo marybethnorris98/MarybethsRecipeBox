@@ -18,51 +18,98 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js"; // <--- ADD THIS LINE
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
 async function openRecipeIndexModal() {
     if (!db || !recipeIndexModal || !recipeIndexList) return;
 
     recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">Loading recipes...</p>`;
     
-    // We query all recipes, sorted by title
+    // We query all recipes, sorted by category then title
     const recipesCol = collection(db, "recipes");
-    const q = query(recipesCol, orderBy("title")); 
+    const q = query(recipesCol, orderBy("category"), orderBy("title")); 
     
     try {
         const snapshot = await getDocs(q);
         const allRecipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        recipeIndexList.innerHTML = ""; // Clear the 'Loading' message
+        recipeIndexList.innerHTML = "";
 
         if (allRecipes.length === 0) {
             recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">No recipes found.</p>`;
-        } else {
-            allRecipes.forEach(recipe => {
-                if (!isAdmin && recipe.hidden) return; 
+            recipeIndexModal.classList.remove("hidden");
+            document.body.classList.add('modal-open');
+            return;
+        }
+        
+        // 1. Group recipes by category
+        const categorizedRecipes = allRecipes.reduce((acc, recipe) => {
+            if (!isAdmin && recipe.hidden) return acc;
+            const category = recipe.category || "Uncategorized";
+            if (!acc[category]) {
+                acc[category] = [];
+            }
+            acc[category].push(recipe);
+            return acc;
+        }, {});
 
+        // 2. Sort categories alphabetically
+        const sortedCategories = Object.keys(categorizedRecipes).sort();
+
+        // 3. Render the list with Two-Column Layout
+        sortedCategories.forEach(category => {
+            
+            // Category Header (spans both columns visually)
+            const header = document.createElement("h3");
+            header.textContent = category.toUpperCase();
+            header.style.cssText = `
+                font-family: Poppins, sans-serif;
+                font-size: 1.1em;
+                font-weight: 700;
+                color: ${primaryPink};
+                margin-top: 20px;
+                margin-bottom: 5px;
+                border-bottom: 2px solid ${lightPinkBorder};
+                padding-bottom: 4px;
+                width: 100%; 
+            `;
+            recipeIndexList.appendChild(header);
+
+            // Container for Two-Column Recipe Links (using CSS Grid)
+            const categoryContainer = document.createElement("div");
+            categoryContainer.style.cssText = `
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Two equal columns */
+                gap: 5px 15px; /* Vertical and horizontal gap */
+                width: 100%;
+                margin-bottom: 15px;
+            `;
+            
+            // 4. Loop and render recipe links inside the container
+            categorizedRecipes[category].forEach(recipe => {
                 const item = document.createElement("a");
                 item.textContent = recipe.title || "(Untitled)";
                 
-                // Styling the link
+                // Styling the link for cookbook index feel
                 item.style.cssText = `
                     font-family: Poppins, sans-serif; 
-                    font-weight: 500; 
-                    color: ${primaryPink};
+                    font-weight: 400; 
+                    font-size: 0.85em; /* Smaller font size */
+                    color: #555; 
                     text-decoration: none;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background: ${lighterPinkBg};
-                    border: 1px solid ${lightPinkBorder};
+                    padding: 4px 0px; 
                     display: block;
-                    transition: background 0.15s ease;
+                    white-space: nowrap; /* Prevent wrapping */
+                    overflow: hidden; 
+                    text-overflow: ellipsis; 
                 `;
                 
-                item.onmouseover = () => item.style.background = lightPink;
-                item.onmouseout = () => item.style.background = lighterPinkBg;
+                // Add hover style
+                item.onmouseover = () => item.style.textDecoration = "underline";
+                item.onmouseout = () => item.style.textDecoration = "none";
 
-                // Clicking the link opens the existing recipe viewer modal
+                // Event handler to open the existing recipe viewer modal
                 item.onclick = (e) => {
                     e.preventDefault();
+                    // 'recipes' array is assumed to be loaded globally by loadRecipes()
                     const fullRecipe = recipes.find(r => r.id === recipe.id);
                     if (fullRecipe) {
                         openRecipeModal(fullRecipe);
@@ -72,9 +119,11 @@ async function openRecipeIndexModal() {
                     }
                 };
 
-                recipeIndexList.appendChild(item);
+                categoryContainer.appendChild(item);
             });
-        }
+            
+            recipeIndexList.appendChild(categoryContainer);
+        });
         
         recipeIndexModal.classList.remove("hidden");
         document.body.classList.add('modal-open');
@@ -85,6 +134,7 @@ async function openRecipeIndexModal() {
         recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: red;">Failed to load index.</p>`;
     }
 }
+
 const firebaseConfig = {
   apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
   authDomain: "recipeapp-248a1.firebaseapp.com",
