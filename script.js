@@ -376,7 +376,7 @@ if (recipeGrid) {
 
 if (controlsContainer) {
     const indexBtn = document.createElement("button");
-    indexBtn.textContent = "Can't find what you're looking for?";
+    indexBtn.textContent = "Can't find something? See All Recipes";
     Object.assign(indexBtn.style, {
         fontFamily: "Poppins, sans-serif",
         fontSize: "16px",
@@ -395,10 +395,9 @@ if (controlsContainer) {
     indexBtn.onmouseenter = () => indexBtn.style.background = White;
     indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
     
-    // This links the button to the function we define in Step 4
     indexBtn.onclick = openRecipeIndexModal; 
     
-    controlsContainer.appendChild(indexBtn);
+    controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
 }
     // --- Apply Styles ---
     if (saveRecipeBtn) {
