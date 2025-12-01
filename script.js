@@ -19,6 +19,72 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js"; // <--- ADD THIS LINE
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+async function openRecipeIndexModal() {
+    if (!db || !recipeIndexModal || !recipeIndexList) return;
+
+    recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">Loading recipes...</p>`;
+    
+    // We query all recipes, sorted by title
+    const recipesCol = collection(db, "recipes");
+    const q = query(recipesCol, orderBy("title")); 
+    
+    try {
+        const snapshot = await getDocs(q);
+        const allRecipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        recipeIndexList.innerHTML = ""; // Clear the 'Loading' message
+
+        if (allRecipes.length === 0) {
+            recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">No recipes found.</p>`;
+        } else {
+            allRecipes.forEach(recipe => {
+                if (!isAdmin && recipe.hidden) return; 
+
+                const item = document.createElement("a");
+                item.textContent = recipe.title || "(Untitled)";
+                
+                // Styling the link
+                item.style.cssText = `
+                    font-family: Poppins, sans-serif; 
+                    font-weight: 500; 
+                    color: ${primaryPink};
+                    text-decoration: none;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    background: ${lighterPinkBg};
+                    border: 1px solid ${lightPinkBorder};
+                    display: block;
+                    transition: background 0.15s ease;
+                `;
+                
+                item.onmouseover = () => item.style.background = lightPink;
+                item.onmouseout = () => item.style.background = lighterPinkBg;
+
+                // Clicking the link opens the existing recipe viewer modal
+                item.onclick = (e) => {
+                    e.preventDefault();
+                    const fullRecipe = recipes.find(r => r.id === recipe.id);
+                    if (fullRecipe) {
+                        openRecipeModal(fullRecipe);
+                        recipeIndexModal.classList.add("hidden"); 
+                    } else {
+                        customAlert(`Error: Could not find recipe details for ${recipe.title}.`);
+                    }
+                };
+
+                recipeIndexList.appendChild(item);
+            });
+        }
+        
+        recipeIndexModal.classList.remove("hidden");
+        document.body.classList.add('modal-open');
+        
+    } catch (e) {
+        console.error("Error loading recipe index:", e);
+        customAlert("Failed to load recipe index. Check console for details.");
+        recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: red;">Failed to load index.</p>`;
+    }
+}
 const firebaseConfig = {
   apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
   authDomain: "recipeapp-248a1.firebaseapp.com",
@@ -201,25 +267,26 @@ previewImageTag = document.getElementById("previewImageTag");
     if (closeIndexBtn) {
     closeIndexBtn.addEventListener("click", () => {
         recipeIndexModal.classList.add("hidden");
-        document.body.classList.remove('modal-open'); // Remove modal lock
+        document.body.classList.remove('modal-open'); 
     });
 }
 
-// Listener for clicking outside the modal content to close
-recipeIndexModal.addEventListener("click", e => {
+recipeIndexModal?.addEventListener("click", e => {
     if (e.target === recipeIndexModal) {
         recipeIndexModal.classList.add("hidden");
-        document.body.classList.remove('modal-open'); // Remove modal lock
+        document.body.classList.remove('modal-open');
     }
 });
 if (recipeGrid) {
     const buttonWrapper = document.createElement("div");
-    // Styling the wrapper to occupy full width
+    
     buttonWrapper.style.cssText = `
         width: 100%;
-        margin: 20px 0; /* Add top/bottom spacing */
-        padding: 0 10px; 
+        max-width: 90%; 
+        margin: 20px auto; 
         box-sizing: border-box; 
+        display: flex;
+        justify-content: center;
     `;
 
     const indexBtn = document.createElement("button");
@@ -234,28 +301,25 @@ if (recipeGrid) {
         background: primaryPink,
         color: "white",
         border: "none",
-        width: "100%", 
+        width: "fit-content", 
+        minWidth: "250px", 
         transition: "background 0.15s ease",
     });
 
     indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
     indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
     
-    indexBtn.onclick = () => openRecipeIndexModal();
+    indexBtn.onclick = () => openRecipeIndexModal(); 
     
     buttonWrapper.appendChild(indexBtn);
     
-    // GUARANTEED PLACEMENT: Insert the button wrapper right before the main recipe grid element
-    // Assuming 'recipeGrid' has a parent (which it must to be visible)
     if (recipeGrid.parentElement) {
         recipeGrid.parentElement.insertBefore(buttonWrapper, recipeGrid);
     } else {
-        // Fallback: If recipeGrid has no parent yet (unlikely, but safe)
         document.body.appendChild(buttonWrapper);
     }
 }
     
-
     const controlsContainer = document.getElementById("controlsContainerId"); 
 
 if (controlsContainer) {
