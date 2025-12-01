@@ -241,7 +241,7 @@ if (recipeGrid) {
     indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
     indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
     
-    indexBtn.onclick = openRecipeIndexModal; 
+    indexBtn.onclick = () => openRecipeIndexModal();
     
     buttonWrapper.appendChild(indexBtn);
     
