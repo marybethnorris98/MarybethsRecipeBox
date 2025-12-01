@@ -212,6 +212,49 @@ recipeIndexModal.addEventListener("click", e => {
         document.body.classList.remove('modal-open'); // Remove modal lock
     }
 });
+if (recipeGrid) {
+    const buttonWrapper = document.createElement("div");
+    // Styling the wrapper to occupy full width
+    buttonWrapper.style.cssText = `
+        width: 100%;
+        margin: 20px 0; /* Add top/bottom spacing */
+        padding: 0 10px; 
+        box-sizing: border-box; 
+    `;
+
+    const indexBtn = document.createElement("button");
+    indexBtn.textContent = "Can't find what you're looking for? See All";
+    Object.assign(indexBtn.style, {
+        fontFamily: "Poppins, sans-serif",
+        fontSize: "16px",
+        padding: "10px 15px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontWeight: "600",
+        background: primaryPink,
+        color: "white",
+        border: "none",
+        width: "100%", 
+        transition: "background 0.15s ease",
+    });
+
+    indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
+    indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
+    
+    indexBtn.onclick = openRecipeIndexModal; 
+    
+    buttonWrapper.appendChild(indexBtn);
+    
+    // GUARANTEED PLACEMENT: Insert the button wrapper right before the main recipe grid element
+    // Assuming 'recipeGrid' has a parent (which it must to be visible)
+    if (recipeGrid.parentElement) {
+        recipeGrid.parentElement.insertBefore(buttonWrapper, recipeGrid);
+    } else {
+        // Fallback: If recipeGrid has no parent yet (unlikely, but safe)
+        document.body.appendChild(buttonWrapper);
+    }
+}
+    
 
     const controlsContainer = document.getElementById("controlsContainerId"); 
 
