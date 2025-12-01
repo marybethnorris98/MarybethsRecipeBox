@@ -81,8 +81,9 @@ const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"
 
 let recipes = [];
 let drafts = [];
-let editingDraftId = null; // ID of the draft being edited/loaded
-let editingRecipeId = null; // ID of the recipe being edited/loaded
+let editingDraftId = null; 
+let editingRecipeId = null;
+let recipeIndexModal, recipeIndexList;
 
 let recipeGrid, searchInput, categoryFilter;
 let addRecipeModal, newTitle, newCategory, newImage, newDesc, ingredientsList, instructionsList, saveRecipeBtn, addIngredientBtn, addInstructionBtn, saveDraftBtn;
@@ -178,6 +179,39 @@ previewImageTag = document.getElementById("previewImageTag");
         document.body.appendChild(draftsModal);
     }
     draftsList = document.getElementById("draftsList");
+    recipeIndexModal = document.getElementById("recipeIndexModal");
+    if (!recipeIndexModal) {
+        recipeIndexModal = document.createElement("div");
+        recipeIndexModal.id = "recipeIndexModal";
+        recipeIndexModal.className = "modal hidden";
+        recipeIndexModal.style.zIndex = 1300; 
+        recipeIndexModal.innerHTML = `
+            <div class="modal-content" style="max-width:520px; position:relative; padding-top: 30px;">
+                <h2 style="margin-top:0; font-family: Poppins, sans-serif;">📖 Full Recipe Index</h2>
+                <div id="recipeIndexList" style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+                    <p style="text-align:center;">Loading recipes...</p>
+                </div>
+                <button class="modal-close-x" id="closeIndexBtn" style="position: absolute; right: 18px; top: 14px; background: transparent; border: none; font-size: 22px; cursor: pointer; color: ${primaryPink};">✖</button>
+            </div>
+        `;
+        document.body.appendChild(recipeIndexModal);
+    }
+    recipeIndexList = document.getElementById("recipeIndexList");
+    const closeIndexBtn = document.getElementById("closeIndexBtn");
+    if (closeIndexBtn) {
+    closeIndexBtn.addEventListener("click", () => {
+        recipeIndexModal.classList.add("hidden");
+        document.body.classList.remove('modal-open'); // Remove modal lock
+    });
+}
+
+// Listener for clicking outside the modal content to close
+recipeIndexModal?.addEventListener("click", e => {
+    if (e.target === recipeIndexModal) {
+        recipeIndexModal.classList.add("hidden");
+        document.body.classList.remove('modal-open'); // Remove modal lock
+    }
+});
 
     // --- Apply Styles ---
     if (saveRecipeBtn) {
