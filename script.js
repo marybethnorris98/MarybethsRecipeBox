@@ -111,11 +111,10 @@ item.onclick = (e) => {
     e.stopPropagation();
 
     // Instantly remove the index modal so it can't block the click
+  recipeIndexModal.style.display = "none";
     recipeIndexModal.classList.add("hidden");
-    recipeIndexModal.style.display = "none"; 
-    document.body.classList.remove('modal-open');
-
-    // Ensure the overlay is gone before opening the recipe
+    document.body.classList.remove("modal-open");
+    
     setTimeout(() => {
         openRecipeModal(recipe);
     }, 20);
@@ -218,7 +217,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     recipeGrid = document.getElementById("recipeGrid");
     searchInput = document.getElementById("searchInput");
     categoryFilter = document.getElementById("categoryFilter");
-// --- Tooltip Event Listener for newCredits field ---
+
     const newCreditsInfoIcon = document.getElementById("newCreditsInfoIcon");
     const newCreditsTooltip = document.getElementById("newCreditsTooltip");
 
@@ -375,76 +374,37 @@ if (recipeGrid) {
     }
 }
     
-const controlsContainer = document.getElementById("controlsContainerId");
+const controlsContainer = document.querySelector(".controls");
 
 if (controlsContainer) {
-    // Ensure the container is laid out as a row so controls sit next to each other
+    // make the controls row-friendly
     controlsContainer.style.display = "flex";
     controlsContainer.style.alignItems = "center";
     controlsContainer.style.gap = "10px";
-    // If the container is narrow, allow wrapping
     controlsContainer.style.flexWrap = "wrap";
 
+    // create the index button
     const indexBtn = document.createElement("button");
     indexBtn.textContent = "See All";
-    Object.assign(indexBtn.style, {
-        fontFamily: "Poppins, sans-serif",
-        fontSize: "14px",
-        padding: "8px 12px",
-        borderRadius: "8px",
-        cursor: "pointer",
-        fontWeight: "600",
-        background: primaryPink,
-        color: "white",
-        border: "none",
-        whiteSpace: "nowrap"
-    });
+    indexBtn.style.fontFamily = "Poppins, sans-serif";
+    indexBtn.style.fontSize = "14px";
+    indexBtn.style.padding = "8px 12px";
+    indexBtn.style.borderRadius = "8px";
+    indexBtn.style.cursor = "pointer";
+    indexBtn.style.fontWeight = "600";
+    indexBtn.style.background = primaryPink;
+    indexBtn.style.color = "white";
+    indexBtn.style.border = "none";
+    indexBtn.style.whiteSpace = "nowrap";
 
     indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
     indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
 
     indexBtn.onclick = openRecipeIndexModal;
-        if (categoryFilter && categoryFilter.parentNode === controlsContainer) {
-        controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
-    } else {
-        controlsContainer.appendChild(indexBtn);
-    }
+
+    // insert immediately after the category dropdown
+    controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
 }
-
-    if (saveRecipeBtn) {
-        Object.assign(saveRecipeBtn.style, {
-            background: primaryPink,
-            color: "white",
-            border: "none",
-            padding: "14px 18px",
-            fontSize: "18px",
-            fontFamily: "Poppins, San-Serif",
-            borderRadius: "12px",
-            width: "100%",
-            cursor: "pointer",
-            marginBottom: "15px",
-            marginTop: "15px",
-            fontWeight: "bold",
-        });
-    }
-
-    if (searchInput) {
-        Object.assign(searchInput.style, {
-            fontFamily: "Poppins, sans-serif",
-        });
-    }
-
-    if (categoryFilter) {
-        Object.assign(categoryFilter.style, {
-            fontFamily: "Poppins, sans-serif",
-            color: primaryPink,
-            fontWeight: "bold",
-            border: `2px solid ${primaryPink}`,
-            borderRadius: "8px",
-            padding: "8px 12px",
-        });
-    }
-
     // APPLY POPPINS TO ADD RECIPE MODAL INPUTS
     const inputStyle = {
         fontFamily: "Poppins, sans-serif",
