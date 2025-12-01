@@ -372,34 +372,42 @@ if (recipeGrid) {
     }
 }
     
-    const controlsContainer = document.getElementById("controlsContainerId"); 
+const controlsContainer = document.getElementById("controlsContainerId");
 
 if (controlsContainer) {
+    // Ensure the container is laid out as a row so controls sit next to each other
+    controlsContainer.style.display = "flex";
+    controlsContainer.style.alignItems = "center";
+    controlsContainer.style.gap = "10px";
+    // If the container is narrow, allow wrapping
+    controlsContainer.style.flexWrap = "wrap";
+
     const indexBtn = document.createElement("button");
-    indexBtn.textContent = "Can't find something? See All Recipes";
+    indexBtn.textContent = "See All";
     Object.assign(indexBtn.style, {
         fontFamily: "Poppins, sans-serif",
-        fontSize: "16px",
-        padding: "10px 15px",
+        fontSize: "14px",
+        padding: "8px 12px",
         borderRadius: "8px",
         cursor: "pointer",
         fontWeight: "600",
         background: primaryPink,
         color: "white",
         border: "none",
-        marginTop: "15px", 
-        width: "100%", 
-        transition: "background 0.15s ease",
+        whiteSpace: "nowrap"
     });
 
-    indexBtn.onmouseenter = () => indexBtn.style.background = White;
+    indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
     indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
-    
-    indexBtn.onclick = openRecipeIndexModal; 
-    
-    controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
+
+    indexBtn.onclick = openRecipeIndexModal;
+        if (categoryFilter && categoryFilter.parentNode === controlsContainer) {
+        controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
+    } else {
+        controlsContainer.appendChild(indexBtn);
+    }
 }
-    // --- Apply Styles ---
+
     if (saveRecipeBtn) {
         Object.assign(saveRecipeBtn.style, {
             background: primaryPink,
