@@ -108,17 +108,19 @@ async function openRecipeIndexModal() {
                
 item.onclick = (e) => {
     e.preventDefault();
-    // Use the recipe object we already fetched for the index — avoids race/lookup issues
-    try {
+    e.stopPropagation();
+
+    // Instantly remove the index modal so it can't block the click
+    recipeIndexModal.classList.add("hidden");
+    recipeIndexModal.style.display = "none"; 
+    document.body.classList.remove('modal-open');
+
+    // Ensure the overlay is gone before opening the recipe
+    setTimeout(() => {
         openRecipeModal(recipe);
-        // Close the index modal and remove modal styling
-        recipeIndexModal.classList.add("hidden");
-        document.body.classList.remove('modal-open');
-    } catch (err) {
-        console.error("Failed to open recipe from index:", err);
-        customAlert(`Error opening "${recipe.title}". See console for details.`);
-    }
+    }, 20);
 };
+
 
                 categoryContainer.appendChild(item);
             });
