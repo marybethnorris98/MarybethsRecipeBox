@@ -110,16 +110,9 @@ item.onclick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Instantly remove the index modal so it can't block the click
-  recipeIndexModal.style.display = "none";
-    recipeIndexModal.classList.add("hidden");
-    document.body.classList.remove("modal-open");
-    
-    setTimeout(() => {
-        openRecipeModal(recipe);
-    }, 20);
+    recipeIndexModal.classList.add("hidden"); 
+    openRecipeModal(recipe); 
 };
-
 
                 categoryContainer.appendChild(item);
             });
@@ -415,6 +408,16 @@ if (controlsContainer) {
         boxSizing: "border-box",
     };
 
+    const selectStyle = {
+        fontFamily: "Poppins, sans-serif",
+        borderRadius: "8px",
+        padding: "10px",
+        border: "1px solid #ccc",
+        width: "100%", 
+        boxSizing: "border-box",
+        appearance: "none", 
+    };
+    
     if (newTitle) Object.assign(newTitle.style, inputStyle);
     if (newCategory) Object.assign(newCategory.style, inputStyle);
     if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" });
