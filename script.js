@@ -333,39 +333,6 @@ if (recipeGrid) {
         display: flex;
         justify-content: center;
     `;
-
-    const indexBtn = document.createElement("button");
-    indexBtn.textContent = "Can't find what you're looking for? See All";
-    Object.assign(indexBtn.style, {
-        fontFamily: "Poppins, sans-serif",
-        fontSize: "16px",
-        padding: "10px 15px",
-        borderRadius: "8px",
-        cursor: "pointer",
-        fontWeight: "600",
-        background: primaryPink,
-        color: "white",
-        border: "none",
-        width: "fit-content", 
-        minWidth: "250px", 
-        transition: "background 0.15s ease",
-    });
-
-    indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
-    indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
-    
-    indexBtn.addEventListener('click', () => {
-                openRecipeIndexModal();
-    });
-    
-    buttonWrapper.appendChild(indexBtn);
-    
-    if (recipeGrid.parentElement) {
-        recipeGrid.parentElement.insertBefore(buttonWrapper, recipeGrid);
-    } else {
-        document.body.appendChild(buttonWrapper);
-    }
-}
     
 const controlsContainer = document.querySelector(".controls");
 
