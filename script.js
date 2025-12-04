@@ -18,103 +18,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js"; // <--- ADD THIS LINE
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-async function openRecipeIndexModal() {
-    if (!db || !recipeIndexModal || !recipeIndexList) return;
-
-    recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">Loading recipes...</p>`;
-    
-    const recipesCol = collection(db, "recipes");
-    const q = query(recipesCol, orderBy("category"), orderBy("title")); 
-    
-    try {
-        const snapshot = await getDocs(q);
-        const allRecipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        recipeIndexList.innerHTML = "";
-
-        if (allRecipes.length === 0) {
-            recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">No recipes found.</p>`;
-            recipeIndexModal.classList.remove("hidden");
-            document.body.classList.add('modal-open');
-            return;
-        }
-        
-        const categorizedRecipes = allRecipes.reduce((acc, recipe) => {
-            if (!isAdmin && recipe.hidden) return acc;
-            const category = recipe.category || "Uncategorized";
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push(recipe);
-            return acc;
-        }, {});
-
-        const sortedCategories = Object.keys(categorizedRecipes).sort();
-
-        sortedCategories.forEach(category => {
-            const header = document.createElement("h3");
-            header.textContent = category.toUpperCase();
-            header.style.cssText = `
-                font-family: Poppins, sans-serif;
-                font-size: 1.1em;
-                font-weight: 700;
-                color: ${primaryPink};
-                margin-top: 20px;
-                margin-bottom: 5px;
-                border-bottom: 2px solid ${lightPinkBorder};
-                padding-bottom: 4px;
-                width: 100%; 
-            `;
-            recipeIndexList.appendChild(header);
-            const categoryContainer = document.createElement("div");
-            categoryContainer.style.cssText = `
-                display: grid;
-                grid-template-columns: 1fr 1fr; /* Two equal columns */
-                gap: 5px 15px; /* Vertical and horizontal gap */
-                width: 100%;
-                margin-bottom: 15px;
-            `;
-            categorizedRecipes[category].forEach(recipe => {
-                const item = document.createElement("a");
-                item.textContent = recipe.title || "(Untitled)";
-                item.style.cssText = `
-                    font-family: Poppins, sans-serif; 
-                    font-weight: 400; 
-                    font-size: 0.85em; /* Smaller font size */
-                    color: #555; 
-                    text-decoration: none;
-                    padding: 4px 0px; 
-                    display: block;
-                    white-space: nowrap; /* Prevent wrapping */
-                    overflow: hidden; 
-                    text-overflow: ellipsis; 
-                `;
-                item.onmouseover = () => item.style.textDecoration = "underline";
-                item.onmouseout = () => item.style.textDecoration = "none";
-               
-item.onclick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    recipeIndexModal.classList.add("hidden"); 
-    openRecipeModal(recipe); 
-};
-
-                categoryContainer.appendChild(item);
-            });
-            
-            recipeIndexList.appendChild(categoryContainer);
-        });
-        
-        recipeIndexModal.classList.remove("hidden");
-        document.body.classList.add('modal-open');
-        
-    } catch (e) {
-        console.error("Error loading recipe index:", e);
-        customAlert("Failed to load recipe index. Check console for details.");
-        recipeIndexList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: red;">Failed to load index.</p>`;
-    }
-}
 
 const firebaseConfig = {
   apiKey: "AIzaSyC95ggTgS2Ew1MavuzEZrIvq6itTyxVdhA",
@@ -133,6 +36,7 @@ if (Object.keys(firebaseConfig).length > 0) {
     auth = getAuth(app);
     storage = getStorage(app);
 
+    // Minimal Anonymous Auth setup
     signInAnonymously(auth).catch(error => {
         console.error("Anonymous sign-in failed:", error);
     });
@@ -143,9 +47,9 @@ let isAdmin = localStorage.getItem("admin") === "true";
 
 const primaryPink = "#ff3ebf";
 const mauvePink = "#a00064"; 
-const lightPinkBorder = "#ffe7f5"; 
-const lightPink = "#ffd1e8"; 
-const lighterPinkBg = "#fff9fc"; 
+const lightPinkBorder = "#ffe7f5"; // Used for draft item border
+const lightPink = "#ffd1e8"; // Used for delete button border in drafts modal
+const lighterPinkBg = "#fff9fc"; // Used for draft item background
 const draftsTitleColor = "#a00064";
 
 const baseDraftButtonStyle = {
@@ -177,9 +81,8 @@ const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"
 
 let recipes = [];
 let drafts = [];
-let editingDraftId = null; 
-let editingRecipeId = null;
-let recipeIndexModal, recipeIndexList;
+let editingDraftId = null; // ID of the draft being edited/loaded
+let editingRecipeId = null; // ID of the recipe being edited/loaded
 
 let recipeGrid, searchInput, categoryFilter;
 let addRecipeModal, newTitle, newCategory, newImage, newDesc, ingredientsList, instructionsList, saveRecipeBtn, addIngredientBtn, addInstructionBtn, saveDraftBtn;
@@ -191,32 +94,37 @@ let draftsModal, draftsList, closeDraftsBtn;
 let imageUpload, newImageURL, imageUploadLabel, previewImageTag;
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // --- DOM ELEMENT Assignments ---
     recipeGrid = document.getElementById("recipeGrid");
     searchInput = document.getElementById("searchInput");
     categoryFilter = document.getElementById("categoryFilter");
-
+// --- Tooltip Event Listener for newCredits field ---
     const newCreditsInfoIcon = document.getElementById("newCreditsInfoIcon");
     const newCreditsTooltip = document.getElementById("newCreditsTooltip");
 
     if (newCreditsInfoIcon && newCreditsTooltip) {
+        // Toggle visibility on click
         newCreditsInfoIcon.addEventListener("click", e => {
-            e.stopPropagation(); 
+            e.stopPropagation(); // Prevent modal click handler from triggering
             newCreditsTooltip.classList.toggle("visible-tooltip");
             newCreditsTooltip.classList.toggle("hidden-tooltip");
         });
 
+        // Hide when clicking anywhere else on the document
         document.addEventListener("click", () => {
             newCreditsTooltip.classList.remove("visible-tooltip");
             newCreditsTooltip.classList.add("hidden-tooltip");
         });
     }
+    // ---------------------------------------------------
     
+
     addRecipeModal = document.getElementById("addRecipeModal");
     newTitle = document.getElementById("newTitle");
     newCategory = document.getElementById("newCategory");
-    imageUpload = document.getElementById("imageUpload");
-newImageURL = document.getElementById("newImageURL"); 
-imageUploadLabel = document.getElementById("imageUploadLabel");
+    imageUpload = document.getElementById("imageUpload"); // <--- NEW ASSIGNMENT
+newImageURL = document.getElementById("newImageURL"); // <--- NEW ASSIGNMENT
+imageUploadLabel = document.getElementById("imageUploadLabel"); // <--- NEW ASSIGNMENT
 previewImageTag = document.getElementById("previewImageTag");
     newDesc = document.getElementById("newDesc");
     newCredits = document.getElementById("newCredits");
@@ -237,7 +145,7 @@ previewImageTag = document.getElementById("previewImageTag");
     imageUpload?.addEventListener("change", () => {
     const file = imageUpload.files[0];
     if (file) {
-        
+        // 1. Show preview
         const reader = new FileReader();
         reader.onload = e => {
             previewImageTag.src = e.target.result;
@@ -245,6 +153,7 @@ previewImageTag = document.getElementById("previewImageTag");
         };
         reader.readAsDataURL(file);
 
+        // 2. Update label text
         imageUploadLabel.textContent = file.name;
 
     } else {
@@ -253,11 +162,12 @@ previewImageTag = document.getElementById("previewImageTag");
     }
 });
 
+    // DRAFTS MODAL Elements must be created if they don't exist in HTML
     draftsModal = document.getElementById("draftsModal");
     if (!draftsModal) {
         draftsModal = document.createElement("div");
         draftsModal.id = "draftsModal";
-        draftsModal.className = "modal hidden";
+        draftsModal.className = "modal hidden"; // Initialize hidden
         draftsModal.style.zIndex = 1300;
         draftsModal.innerHTML = `
             <div class="modal-content" style="max-width:520px; position:relative; padding-top: 30px;">
@@ -268,78 +178,43 @@ previewImageTag = document.getElementById("previewImageTag");
         document.body.appendChild(draftsModal);
     }
     draftsList = document.getElementById("draftsList");
-    recipeIndexModal = document.getElementById("recipeIndexModal");
-    if (!recipeIndexModal) {
-        recipeIndexModal = document.createElement("div");
-        recipeIndexModal.id = "recipeIndexModal";
-        recipeIndexModal.className = "modal hidden";
-        recipeIndexModal.style.zIndex = 1300; 
-        recipeIndexModal.innerHTML = `
-            <div class="modal-content" style="max-width:520px; position:relative; padding-top: 30px;">
-                <h2 style="margin-top:0; font-family: Poppins, sans-serif;">📖 Full Recipe Index</h2>
-                <div id="recipeIndexList" style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
-                    <p style="text-align:center;">Loading recipes...</p>
-                </div>
-                <button class="modal-close-x" id="closeIndexBtn" style="position: absolute; right: 18px; top: 14px; background: transparent; border: none; font-size: 22px; cursor: pointer; color: ${primaryPink};">✖</button>
-            </div>
-        `;
-        document.body.appendChild(recipeIndexModal);
+
+    // --- Apply Styles ---
+    if (saveRecipeBtn) {
+        Object.assign(saveRecipeBtn.style, {
+            background: primaryPink,
+            color: "white",
+            border: "none",
+            padding: "14px 18px",
+            fontSize: "18px",
+            fontFamily: "Poppins, San-Serif",
+            borderRadius: "12px",
+            width: "100%",
+            cursor: "pointer",
+            marginBottom: "15px",
+            marginTop: "15px",
+            fontWeight: "bold",
+        });
     }
-    recipeIndexList = document.getElementById("recipeIndexList");
-    const closeIndexBtn = document.getElementById("closeIndexBtn");
-    if (closeIndexBtn) {
-    closeIndexBtn.addEventListener("click", () => {
-        recipeIndexModal.classList.add("hidden");
-        document.body.classList.remove('modal-open'); 
-    });
-}
 
-recipeIndexModal?.addEventListener("click", e => {
-    if (e.target === recipeIndexModal) {
-        recipeIndexModal.classList.add("hidden");
-        document.body.classList.remove('modal-open');
+    if (searchInput) {
+        Object.assign(searchInput.style, {
+            fontFamily: "Poppins, sans-serif",
+        });
     }
-});
-if (recipeGrid) {
-    const buttonWrapper = document.createElement("div");
-    
-    buttonWrapper.style.cssText = `
-        width: 100%;
-        max-width: 90%; 
-        margin: 20px auto; 
-        box-sizing: border-box; 
-        display: flex;
-        justify-content: center;
-    `;
-    
-const controlsContainer = document.querySelector(".controls");
 
-if (controlsContainer) {
-    controlsContainer.style.display = "flex";
-    controlsContainer.style.alignItems = "center";
-    controlsContainer.style.gap = "10px";
-    controlsContainer.style.flexWrap = "wrap";
+    if (categoryFilter) {
+        Object.assign(categoryFilter.style, {
+            fontFamily: "Poppins, sans-serif",
+            color: primaryPink,
+            fontWeight: "bold",
+            border: `2px solid ${primaryPink}`,
+            borderRadius: "8px",
+            padding: "8px 12px",
+        });
+    }
 
-    const indexBtn = document.createElement("button");
-    indexBtn.textContent = "See All";
-    indexBtn.style.fontFamily = "Poppins, sans-serif";
-    indexBtn.style.fontSize = "14px";
-    indexBtn.style.padding = "8px 12px";
-    indexBtn.style.borderRadius = "8px";
-    indexBtn.style.cursor = "pointer";
-    indexBtn.style.fontWeight = "600";
-    indexBtn.style.background = primaryPink;
-    indexBtn.style.color = "white";
-    indexBtn.style.border = "none";
-    indexBtn.style.whiteSpace = "nowrap";
-
-    indexBtn.onmouseenter = () => indexBtn.style.background = mauvePink;
-    indexBtn.onmouseleave = () => indexBtn.style.background = primaryPink;
-
-    indexBtn.onclick = openRecipeIndexModal;
-
-    controlsContainer.insertBefore(indexBtn, categoryFilter.nextSibling);
-}
+    // APPLY POPPINS TO ADD RECIPE MODAL INPUTS
     const inputStyle = {
         fontFamily: "Poppins, sans-serif",
         borderRadius: "8px",
@@ -349,16 +224,6 @@ if (controlsContainer) {
         boxSizing: "border-box",
     };
 
-    const selectStyle = {
-        fontFamily: "Poppins, sans-serif",
-        borderRadius: "8px",
-        padding: "10px",
-        border: "1px solid #ccc",
-        width: "100%", 
-        boxSizing: "border-box",
-        appearance: "none", 
-    };
-    
     if (newTitle) Object.assign(newTitle.style, inputStyle);
     if (newCategory) Object.assign(newCategory.style, inputStyle);
     if (newDesc) Object.assign(newDesc.style, inputStyle, { height: "100px" });
@@ -366,15 +231,22 @@ if (controlsContainer) {
    async function uploadImage() {
     const file = imageUpload.files[0];
     if (!file) {
+        // No new file selected, return existing URL or null
         return newImageURL.value || null;
     }
 
     try {
         imageUploadLabel.textContent = "Uploading... please wait.";
         
+        // Use the title (or fallback to timestamp) for the file name
         const recipeTitle = newTitle.value.trim() || `unnamed-recipe-${Date.now()}`;
+        // Create a storage reference
         const storageRef = ref(storage, `recipe_images/${recipeTitle}-${file.name}`);
+
+        // Upload the file
         const snapshot = await uploadBytes(storageRef, file);
+
+        // Get the public download URL
         const url = await getDownloadURL(snapshot.ref);
         
         imageUploadLabel.textContent = "✅ Upload successful!";
@@ -383,6 +255,7 @@ if (controlsContainer) {
     } catch (e) {
         console.error("Error uploading image:", e);
         imageUploadLabel.textContent = "❌ Upload Failed!";
+        // Allow save to proceed, but image will be missing
         return null; 
     }
 }
@@ -423,6 +296,7 @@ if (controlsContainer) {
     async function loadDrafts() {
         if (!db) return;
         const draftsCol = collection(db, "drafts");
+        // Using "timestamp" is okay for drafts as sorting is secondary
         const q = query(draftsCol, orderBy("timestamp", "desc"));
         try {
             const snapshot = await getDocs(q);
@@ -474,28 +348,38 @@ if (controlsContainer) {
             card.appendChild(img);
             card.appendChild(content);
 
+           // --- START REPLACEMENT CODE ---
+
+            // Create a single container for the icon and tooltip
             const tooltipContainer = document.createElement("div");
             tooltipContainer.className = "tooltip-container"; 
 
-            const infoIcon = document.createElement("div");
-            infoIcon.className = "card-info-icon";
-            infoIcon.textContent = "i";
-            
+            // Info icon (remains the same)
+            const infoIcon = document.createElement("div");
+            infoIcon.className = "card-info-icon";
+            infoIcon.textContent = "i";
+            
+            // Tooltip (remains the same)
             const tooltip = document.createElement("div");
-            tooltip.className = "card-info-tooltip";
-            tooltip.textContent = recipe.credits || "No credits added.";
-            
-            infoIcon.addEventListener("click", e => {
-                e.stopPropagation();
-                tooltip.classList.toggle("visible");
-            });
-            document.addEventListener("click", () => tooltip.classList.remove("visible"));
-            
+            tooltip.className = "card-info-tooltip";
+            tooltip.textContent = recipe.credits || "No credits added.";
+            
+            // Event Listeners (remain the same)
+            infoIcon.addEventListener("click", e => {
+                e.stopPropagation();
+                tooltip.classList.toggle("visible");
+            });
+            document.addEventListener("click", () => tooltip.classList.remove("visible"));
+            
+            // Append icon and tooltip to the new container
             tooltipContainer.appendChild(infoIcon);
             tooltipContainer.appendChild(tooltip);
             
-            card.appendChild(tooltipContainer); 
-            
+            // Append the container to the card
+            card.appendChild(tooltipContainer); 
+
+            // --- END REPLACEMENT CODE ---
+
             card.addEventListener("click", () => openRecipeModal(recipe));
 
             recipeGrid.appendChild(card);
@@ -547,13 +431,13 @@ if (controlsContainer) {
         if (isAdmin) {
             modalEditBtn.style.display = "inline-block";
             Object.assign(modalEditBtn.style, {
-    backgroundColor: "#ff3ebf", 
+    backgroundColor: "#ff3ebf", // Primary Pink
     color: "white",
     border: "none",
 });
             modalDeleteBtn.style.display = "inline-block";
             Object.assign(modalDeleteBtn.style, {
-    backgroundColor: "#ff3ebf", 
+    backgroundColor: "#ff3ebf", // Mauve Pink
     color: "white",
     border: "none",
     });
@@ -582,8 +466,8 @@ if (controlsContainer) {
             hideBtn.textContent = recipe.hidden ? "Unhide" : "Hide";
             Object.assign(hideBtn.style, {
     backgroundColor: "white", 
-    color: "#ff3ebf",
-    border: "2px solid #ff3ebf", 
+    color: "#ff3ebf", // Primary Pink Text
+    border: "2px solid #ff3ebf", // Primary Pink Border
 });
             hideBtn.onclick = async e => {
                 e.stopPropagation();
@@ -622,6 +506,7 @@ if (controlsContainer) {
     if (addRecipeModal) {
         addRecipeModal.addEventListener("click", e => {
             if (e.target === addRecipeModal) {
+                // NOTE: Using native confirm as a placeholder for a custom UI modal
                 if (confirm("Discard unsaved changes and close?")) {
                     clearAddModal();
                     addRecipeModal.classList.add("hidden");
@@ -659,17 +544,21 @@ if (controlsContainer) {
         const modalContent = addRecipeModal.querySelector(".modal-content");
         if (!modalContent) return;
     
-        let currentSaveBtn = modalContent.querySelector("#saveRecipeBtn");
-        if (currentSaveBtn) {
-            
-            const newSaveBtn = currentSaveBtn.cloneNode(true);
-            currentSaveBtn.parentNode.replaceChild(newSaveBtn, currentSaveBtn);
-            saveRecipeBtn = newSaveBtn;
-            
-            saveRecipeBtn.addEventListener("click", saveRecipe);
-        }
-     
-        let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
+        let currentSaveBtn = modalContent.querySelector("#saveRecipeBtn");
+        if (currentSaveBtn) {
+            
+            const newSaveBtn = currentSaveBtn.cloneNode(true);
+            currentSaveBtn.parentNode.replaceChild(newSaveBtn, currentSaveBtn);
+            
+            
+            saveRecipeBtn = newSaveBtn;
+            
+            // Attach the working saveRecipe function
+            saveRecipeBtn.addEventListener("click", saveRecipe);
+        }
+        
+        
+        let saveDraftBtnElement = modalContent.querySelector("#saveDraftBtn");
         if (!saveDraftBtnElement) {
             saveDraftBtnElement = document.createElement("button");
             saveDraftBtnElement.id = "saveDraftBtn";
@@ -682,10 +571,13 @@ if (controlsContainer) {
             }
         }
 
+        
         const newDraftBtn = saveDraftBtnElement.cloneNode(true);
         saveDraftBtnElement.parentNode.replaceChild(newDraftBtn, saveDraftBtnElement);
         newDraftBtn.addEventListener("click", saveDraft);
         saveDraftBtnElement = newDraftBtn;
+
+       
         Object.assign(saveDraftBtnElement.style, {
             background: primaryPink,
             color: "white",
@@ -700,20 +592,24 @@ if (controlsContainer) {
             marginTop: "15px",
             fontWeight: "bold",
         });
+
+        
        if (!modalContent.querySelector(".add-modal-close-x")) {
-            const x = document.createElement("button");
-            x.addEventListener("click", () => {
-                if (confirm("Discard changes and close?")) { 
-                    clearAddModal();
-                    addRecipeModal.classList.add("hidden");
-                    document.body.classList.remove('modal-open');
-                }
-            }); 
-            
-            modalContent.style.position = modalContent.style.position || "relative";
-            modalContent.appendChild(x);
-        }
-    }
+            const x = document.createElement("button");
+            // ... button setup ...
+            x.addEventListener("click", () => {
+                // Re-adding the original confirm prompt logic:
+                if (confirm("Discard changes and close?")) { 
+                    clearAddModal();
+                    addRecipeModal.classList.add("hidden");
+                    document.body.classList.remove('modal-open');
+                }
+            }); 
+            
+            modalContent.style.position = modalContent.style.position || "relative";
+            modalContent.appendChild(x);
+        }
+    }
 
     function injectAdminUI() {
         if (document.getElementById("adminControlsContainer")) return;
@@ -737,6 +633,7 @@ if (controlsContainer) {
 
         const draftsBtn = document.createElement("button");
         draftsBtn.textContent = "Drafts";
+        // Matching style for consistency with Add button, but you can change it if preferred
         Object.assign(draftsBtn.style, { background: primaryPink, color: "white", padding: "12px 16px", borderRadius: "14px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "Poppins, sans-serif", boxShadow: "0 8px 20px rgba(0,0,0,0.15)" });
         draftsBtn.onclick = openDraftsModal;
 
@@ -757,6 +654,7 @@ if (controlsContainer) {
         logoutBtn.onclick = () => {
             isAdmin = false;
             localStorage.removeItem("admin");
+            // Reloads the page to clear the admin UI
             window.location.href = window.location.href.split('#')[0]; 
         };
 
@@ -765,7 +663,7 @@ if (controlsContainer) {
     function makeRowInput(placeholder = "") {
         const row = document.createElement("div");
         row.className = "admin-row";
-        row.style.display = "flex"; 
+        row.style.display = "flex"; // Ensure flex layout for button alignment
         row.style.alignItems = "center";
         const input = document.createElement("input");
         input.type = "text"; input.placeholder = placeholder; input.value = "";
@@ -808,7 +706,8 @@ if (controlsContainer) {
     const previewDiv = document.getElementById('imagePreview');
     if (previewDiv) previewDiv.style.display = 'none';
     if (imageUploadLabel) imageUploadLabel.textContent = 'Click to Select Image';
-  
+        
+    // --- END NEW IMAGE CLEARING ---
         ingredientsList.innerHTML = ""; 
         instructionsList.innerHTML = "";
         editingDraftId = null; 
@@ -825,7 +724,7 @@ if (controlsContainer) {
         newCredits.value = d.credits || "";
 
         if (d.image && previewImageTag && newImageURL) {
-        newImageURL.value = d.image; 
+        newImageURL.value = d.image; // Store existing URL in the hidden field
         previewImageTag.src = d.image;
         document.getElementById('imagePreview').style.display = 'block';
         imageUploadLabel.textContent = 'Image loaded (Click to replace)';
@@ -833,18 +732,22 @@ if (controlsContainer) {
         
         (d.ingredients || []).forEach(i => { const r = makeRowInput("Ingredient"); r.querySelector("input").value = i; ingredientsList.appendChild(r); });
         (d.instructions || []).forEach(s => { const r = makeRowInput("Step"); r.querySelector("input").value = s; instructionsList.appendChild(r); });
-      
-        if (d.timestamp && d.id) {
+        
+        // Determine if this is a draft or a saved recipe
+        if (d.timestamp && d.id) { // Simple check for draft structure
+             // Check if this ID exists in our local drafts array (if loaded)
              const isDraft = drafts.some(draft => draft.id === d.id);
 
              if(isDraft) {
                 editingDraftId = d.id;
                 editingRecipeId = d.forRecipeId || null;
              } else {
+                // Must be a saved recipe being edited
                 editingDraftId = null;
                 editingRecipeId = d.id;
              }
         } else {
+            // Assume initial state for new creation or loading saved recipe for editing
             editingDraftId = null;
             editingRecipeId = d.id;
         }
@@ -880,23 +783,31 @@ async function saveDraft() {
 
     try {
         if (editingDraftId) {
+            // Case 1: Updating an existing draft
             const docRef = doc(db, "drafts", editingDraftId);
             await updateDoc(docRef, data);
             console.log(`Draft "${title}" updated! ID: ${editingDraftId}`);
         } else {
+            // Case 2: Creating a new draft
             const docRef = doc(collection(db, "drafts"));
             await setDoc(docRef, data);
-            editingDraftId = docRef.id; 
+            editingDraftId = docRef.id; // Store the new ID for subsequent updates
             console.log(`Draft "${title}" saved! New ID: ${editingDraftId}`);
         }
 
+        // CRITICAL: Reload drafts ONLY AFTER the database write is complete
         await loadDrafts();
+
+        // FIX: The line below had an incomplete comment (// -------) causing a syntax error.
         const feedback = document.createElement("p");
         feedback.textContent = `✅ Draft "${title}" saved successfully!`;
         feedback.style.cssText = "color: #a00064; font-weight: bold; margin-bottom: 10px; text-align: center; font-family: Poppins, sans-serif; background: #fff9fc; padding: 10px; border-radius: 8px;";
+
+        // We assume 'saveDraftBtnElement' is the button element reference
         const saveDraftBtnElement = document.getElementById("saveDraftBtn");
         if (saveDraftBtnElement) {
             saveDraftBtnElement.parentNode.insertBefore(feedback, saveDraftBtnElement);
+            // Automatically remove the message after 3 seconds
             setTimeout(() => feedback.remove(), 3000);
         }
         clearAddModal();
@@ -938,23 +849,28 @@ async function saveRecipe() {
         let savedRecipeId;
 
         if (editingRecipeId) {
+            // Case 1: Updating an existing published recipe
             const docRef = doc(db, "recipes", editingRecipeId);
             await updateDoc(docRef, recipeData);
             savedRecipeId = editingRecipeId;
             console.log(`Recipe "${title}" updated! ID: ${savedRecipeId}`);
 
         } else {
+            // Case 2: Creating a new recipe
             const docRef = doc(collection(db, "recipes"));
             await setDoc(docRef, recipeData);
             savedRecipeId = docRef.id;
             console.log(`Recipe "${title}" saved! New ID: ${savedRecipeId}`);
         }
+        
+        // --- DRAFT CLEANUP LOGIC ---
         if (editingDraftId) {
+            // Delete the draft that was just published/used to update the recipe
             await deleteDoc(doc(db, "drafts", editingDraftId));
             console.log(`Associated draft (${editingDraftId}) deleted successfully.`);
         }
         
-        await loadRecipes();
+        await loadRecipes(); // Reload the main recipe grid
         customAlert(`Recipe "${title}" saved successfully!`);
         clearAddModal();
         addRecipeModal.classList.add("hidden");
@@ -970,7 +886,8 @@ async function openDraftsModal() {
 
     await loadDrafts();
     draftsList.innerHTML = "";
-    
+
+    // --- DRAFTS MODAL CLOSE BUTTON INJECTION ---
     const modalContent = draftsModal.querySelector(".modal-content");
     if (modalContent && !modalContent.querySelector(".draft-modal-close-x")) {
         const x = document.createElement("button");
@@ -998,6 +915,7 @@ async function openDraftsModal() {
         modalContent.appendChild(x);
     }
     
+    // --- RENDER DRAFTS LIST ---
     if (drafts.length === 0) {
         draftsList.innerHTML = `<p style="font-family: Poppins, sans-serif; text-align: center; color: #777;">You have no saved drafts.</p>`;
     } else {
@@ -1012,6 +930,7 @@ async function openDraftsModal() {
             const buttonGroup = document.createElement("div");
             buttonGroup.style.cssText = `display:flex; gap:8px; flex-shrink:0;`;
 
+            // Load Button
             const loadBtn = document.createElement("button");
             loadBtn.textContent = "Load";
             Object.assign(loadBtn.style, baseDraftButtonStyle, {
@@ -1030,6 +949,7 @@ async function openDraftsModal() {
                 addRecipeModal.classList.remove("hidden");
             };
 
+            // Delete Button
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete";
             Object.assign(deleteBtn.style, baseDraftButtonStyle, {
@@ -1043,7 +963,7 @@ async function openDraftsModal() {
                 if (!confirm(`Delete draft: "${draft.title}"?`)) return;
                 try {
                     await deleteDoc(doc(db, "drafts", draft.id));
-                    await openDraftsModal(); 
+                    await openDraftsModal(); // Reload the modal to update the list
                 } catch (e) {
                     console.error("Error deleting draft:", e);
                     customAlert("Failed to delete draft.");
@@ -1058,20 +978,20 @@ async function openDraftsModal() {
         });
     }
    draftsModal.addEventListener("click", e => {
-        if (e.target === draftsModal) {
-            draftsModal.classList.add("hidden");
+        if (e.target === draftsModal) {
+            draftsModal.classList.add("hidden");
             document.body.classList.add('modal-open'); 
             draftsModal.classList.remove("hidden");
-        }
-    }); 
+        }
+    }); 
 
-    draftsModal.classList.remove("hidden");
+    draftsModal.classList.remove("hidden"); // <--- This line is outside the listener, where it belongs.
 
 } 
         
 if (db) {
-    await loadRecipes();
-    await loadDrafts(); 
+    await loadRecipes();
+    await loadDrafts(); 
 }
 
 
