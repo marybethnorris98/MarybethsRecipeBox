@@ -1,7 +1,7 @@
 console.log("FULL admin + viewer script loaded");
 const customAlert = (message) => {
     console.log(`[USER ALERT]: ${message}`);
-};
+}; 
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
@@ -80,6 +80,7 @@ const defaultRecipes = [
 const CATEGORIES = ["Breakfast", "Meals", "Snacks", "Sides", "Dessert", "Drinks"];
 
 let recipes = [];
+let showFeaturedOnly = false;
 let drafts = [];
 let editingDraftId = null; // ID of the draft being edited/loaded
 let editingRecipeId = null; // ID of the recipe being edited/loaded
@@ -90,6 +91,7 @@ let newCredits;
 let viewer, closeBtn;
 let loginModal, loginBtn, loginError;
 let draftsModal, draftsList, closeDraftsBtn;
+let featuredBtn;
 
 let imageUpload, newImageURL, imageUploadLabel, previewImageTag;
 
@@ -97,6 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- DOM ELEMENT Assignments ---
     recipeGrid = document.getElementById("recipeGrid");
     searchInput = document.getElementById("searchInput");
+    featuredBtn = document.getElementById("featuredBtn");
     categoryFilter = document.getElementById("categoryFilter");
 // --- Tooltip Event Listener for newCredits field ---
     const newCreditsInfoIcon = document.getElementById("newCreditsInfoIcon");
@@ -315,6 +318,8 @@ previewImageTag = document.getElementById("previewImageTag");
         recipes.forEach(recipe => {
             if (!isAdmin && recipe.hidden) return;
 
+            if (showFeaturedOnly && !recipe.featured) return;
+
             if (selectedCategory !== "all" && recipe.category !== selectedCategory) return;
             if (!recipe.title.toLowerCase().includes(searchTerm) &&
                 !recipe.description.toLowerCase().includes(searchTerm)) return;
@@ -397,6 +402,7 @@ previewImageTag = document.getElementById("previewImageTag");
         const modalEditBtn = document.getElementById("modalEditBtn");
         const modalDeleteBtn = document.getElementById("modalDeleteBtn");
         const hideBtn = document.getElementById("modalHideBtn");
+        const featureBtn = document.getElementById("modalFeatureBtn");
 
         editingRecipeId = recipe.id;
 
@@ -435,13 +441,44 @@ previewImageTag = document.getElementById("previewImageTag");
     color: "white",
     border: "none",
 });
+
+            
+
+if (featureBtn) {
+    featureBtn.style.display = "inline-block";
+    featureBtn.textContent = recipe.featured ? "Unfeature" : "⭐ Feature";
+
+    featureBtn.onclick = async () => {
+        await updateDoc(doc(db, "recipes", recipe.id), {
+            featured: !recipe.featured
+        });
+        await loadRecipes();
+        viewer.style.display = "none";
+        document.body.classList.remove('modal-open');
+    };
+}
             modalDeleteBtn.style.display = "inline-block";
             Object.assign(modalDeleteBtn.style, {
     backgroundColor: "#ff3ebf", // Mauve Pink
     color: "white",
     border: "none",
     });
-                
+
+// Function to toggle featured
+function toggleFeatured(showFeaturedOnly) {
+  if(showFeaturedOnly) {
+    featuredBtn.classList.add("active");
+  } else {
+    featuredBtn.classList.remove("active");
+  }
+}
+
+// Example usage: toggle when button is clicked
+featuredBtn.addEventListener("click", () => {
+  const isActive = featuredBtn.classList.contains("active");
+  toggleFeatured(!isActive);
+});
+     
             modalEditBtn.onclick = () => {
                 editingRecipeId = recipe.id;
                 editingDraftId = null;
@@ -517,6 +554,11 @@ previewImageTag = document.getElementById("previewImageTag");
     }
     searchInput?.addEventListener("input", renderRecipes);
     categoryFilter?.addEventListener("change", renderRecipes);
+    featuredBtn?.addEventListener("click", () => {
+    showFeaturedOnly = !showFeaturedOnly;
+
+    renderRecipes();
+});
 
     const ADMIN_PASSWORD_HASH = "pinkrecipes".split("").reverse().join("");
     function openLoginModal() { loginModal?.classList.remove("hidden"); loginError.style.display = "none"; }
@@ -843,6 +885,7 @@ async function saveRecipe() {
         ingredients,
         instructions,
         hidden: false, 
+        featured: false,
     };
 
     try {
